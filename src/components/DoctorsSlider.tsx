@@ -5,7 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import DoctorCard from "./DoctorCard";
+import DoctorCardColumn from "./DoctorCardColumn"; // Changed to DoctorCardColumn
 import { Doctor } from "@/data/doctors";
 import { cn } from "@/lib/utils";
 
@@ -63,7 +63,7 @@ const DoctorsSlider: React.FC<DoctorsSliderProps> = ({ doctors }) => {
         <div className="flex -ml-4">
           {doctors.map((doctor) => (
             <div key={doctor.id} className="flex-none w-full sm:w-1/2 lg:w-1/3 pl-4">
-              <DoctorCard doctor={doctor} />
+              <DoctorCardColumn doctor={doctor} /> {/* Using DoctorCardColumn here */}
             </div>
           ))}
         </div>
