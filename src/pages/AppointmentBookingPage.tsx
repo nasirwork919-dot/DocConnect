@@ -220,7 +220,7 @@ const AppointmentBookingPage = () => {
                               <SelectContent>
                                 {ALL_DOCTORS.map((doc) => (
                                   <SelectItem key={doc.id} value={doc.id} className="font-sans">
-                                    {doc.name} - {doc.specialization} (${doc.fees})
+                                    {doc.name} - {doc.specialization} (${doc.consultationFee})
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -498,7 +498,7 @@ const AppointmentBookingPage = () => {
                           <p><strong>Doctor:</strong> {doctor?.name} ({doctor?.specialization})</p>
                           <p><strong>Date:</strong> {form.getValues("appointmentDate") ? format(form.getValues("appointmentDate"), "PPP") : "N/A"}</p>
                           <p><strong>Time:</strong> {form.getValues("appointmentTime")}</p>
-                          <p><strong>Consultation Fee:</strong> ${doctor?.fees}</p>
+                          <p><strong>Consultation Fee:</strong> ${doctor?.consultationFee}</p>
                           <p><strong>Patient Name:</strong> {form.getValues("fullName")}</p>
                           <p><strong>Email:</strong> {form.getValues("email")}</p>
                           <p><strong>Phone:</strong> {form.getValues("phone")}</p>

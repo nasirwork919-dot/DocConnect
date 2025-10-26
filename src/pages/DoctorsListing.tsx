@@ -52,7 +52,7 @@ const DoctorsListing = () => {
         (availability === "tomorrow" && doctor.availabilityStatus.includes("Tomorrow"));
 
       // Fee Range Filter
-      const fee = doctor.fees;
+      const fee = doctor.consultationFee; // Use consultationFee from Doctor interface
       const matchesMinFee = minFee === "" || fee >= parseFloat(minFee);
       const matchesMaxFee = maxFee === "" || fee <= parseFloat(maxFee);
 
@@ -140,7 +140,7 @@ const DoctorsListing = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all" className="font-sans">All Locations</SelectItem>
-                <SelectItem value="main branch" className="font-sans">Main Branch Hospital</SelectItem>
+                <SelectItem value="main branch hospital" className="font-sans">Main Branch Hospital</SelectItem>
                 <SelectItem value="downtown clinic" className="font-sans">Downtown Clinic</SelectItem>
                 <SelectItem value="uptown medical center" className="font-sans">Uptown Medical Center</SelectItem>
                 <SelectItem value="community health center" className="font-sans">Community Health Center</SelectItem>
@@ -210,6 +210,9 @@ const DoctorsListing = () => {
         </motion.div>
 
         {/* Doctor List */}
+        <h2 className="text-2xl font-bold mb-6 font-michroma">
+          {filteredDoctors.length} Doctor{filteredDoctors.length !== 1 ? "s" : ""} Found
+        </h2>
         <div className="grid grid-cols-1 gap-6">
           {filteredDoctors.length > 0 ? (
             filteredDoctors.map((doctor) => (

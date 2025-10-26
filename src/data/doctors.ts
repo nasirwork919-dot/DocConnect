@@ -21,33 +21,14 @@ export interface Doctor {
   availabilityStatus: string; // Simplified status for listing page
 }
 
-const generateAvailability = (doctorId: string) => {
-  const availability: { [key: string]: string[] } = {};
-  const today = new Date();
-
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const formattedDate = format(date, "yyyy-MM-dd");
-    const dayOfWeek = format(date, "EEEE").toLowerCase();
-
-    let slots: string[] = [];
-    if (dayOfWeek === "saturday" || dayOfWeek === "sunday") {
-      slots = []; // Closed on weekends for most
-    } else {
-      // Vary slots based on doctor ID for some diversity
-      if (parseInt(doctorId) % 3 === 0) {
-        slots = ["09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM"];
-      } else if (parseInt(doctorId) % 3 === 1) {
-        slots = ["08:00 AM", "09:00 AM", "12:00 PM", "01:00 PM", "04:00 PM"];
-      } else {
-        slots = ["10:00 AM", "11:00 AM", "01:00 PM", "03:00 PM", "05:00 PM"];
-      }
-    }
-    availability[formattedDate] = slots;
-  }
-  return availability;
-};
+const DOCTOR_NAMES = [
+  "Dr. James Griffith", "Dr. David Vaccum", "Dr. Sofia Khan", "Dr. Iqra Ahmed", "Dr. Nasir Ali",
+  "Dr. Emily White", "Dr. John Smith", "Dr. Sarah Chen", "Dr. Michael Brown", "Dr. Jessica Lee",
+  "Dr. Robert Johnson", "Dr. Maria Garcia", "Dr. William Davis", "Dr. Linda Rodriguez", "Dr. Richard Martinez",
+  "Dr. Susan Hernandez", "Dr. Charles Lopez", "Dr. Nancy Gonzalez", "Dr. Joseph Wilson", "Dr. Karen Anderson",
+  "Dr. Thomas Taylor", "Dr. Betty Thomas", "Dr. Paul Jackson", "Dr. Dorothy White", "Dr. Mark Harris",
+  "Dr. Sandra Martin", "Dr. Steven Thompson", "Dr. Ashley Moore", "Dr. Kevin Clark", "Dr. Laura Lewis"
+];
 
 const DOCTOR_IMAGES = [
   "https://images.unsplash.com/photo-1559839734-2b716b17f7ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Female doctor
@@ -76,17 +57,15 @@ const LOCATIONS = [
 const GENDERS = ["male", "female"];
 
 const generateDoctor = (id: number): Doctor => {
-  const gender = GENDERS[id % GENDERS.length] as "male" | "female";
-  const namePrefix = gender === "male" ? "Dr. John" : "Dr. Sarah";
-  const nameSuffix = ["Smith", "Doe", "Chen", "Brown", "Lee", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"][id % 10];
-  const name = `${namePrefix} ${nameSuffix} ${id}`;
-  const specialization = SPECIALIZATIONS[id % SPECIALIZATIONS.length];
-  const experience = 5 + (id % 15); // 5 to 19 years
-  const fees = 80 + (id % 10) * 10; // 80 to 170
-  const location = LOCATIONS[id % LOCATIONS.length];
-  const profilePhotoUrl = DOCTOR_IMAGES[id % DOCTOR_IMAGES.length];
-  const averageRating = (3.5 + (id % 10) * 0.1).toFixed(1); // 3.5 to 4.4
-  const reviewsCount = 50 + (id % 100);
+  const name = DOCTOR_NAMES[id - 1]; // Use specific names
+  const gender = name.includes("Dr. Sarah") || name.includes("Dr. Emily") || name.includes("Dr. Sofia") || name.includes("Dr. Iqra") || name.includes("Dr. Jessica") || name.includes("Dr. Maria") || name.includes("Dr. Linda") || name.includes("Dr. Nancy") || name.includes("Dr. Karen") || name.includes("Dr. Dorothy") || name.includes("Dr. Sandra") || name.includes("Dr. Ashley") || name.includes("Dr. Laura") ? "female" : "male";
+  const specialization = SPECIALIZATIONS[(id - 1) % SPECIALIZATIONS.length];
+  const experience = 5 + ((id - 1) % 15); // 5 to 19 years
+  const fees = 80 + ((id - 1) % 10) * 10; // 80 to 170
+  const location = LOCATIONS[(id - 1) % LOCATIONS.length];
+  const profilePhotoUrl = DOCTOR_IMAGES[(id - 1) % DOCTOR_IMAGES.length];
+  const averageRating = (3.5 + ((id - 1) % 10) * 0.1).toFixed(1); // 3.5 to 4.4
+  const reviewsCount = 50 + ((id - 1) % 100);
 
   const availabilitySchedule: { [key: string]: string } = {
     monday: "9:00 AM - 5:00 PM",
@@ -99,7 +78,7 @@ const generateDoctor = (id: number): Doctor => {
   };
 
   const realtimeStatusOptions: ("Online" | "In Clinic" | "Off")[] = ["Online", "In Clinic", "Off"];
-  const realtimeStatus = realtimeStatusOptions[id % realtimeStatusOptions.length];
+  const realtimeStatus = realtimeStatusOptions[(id - 1) % realtimeStatusOptions.length];
 
   const availabilityStatus = realtimeStatus === "Online" ? "Now Available" :
                              realtimeStatus === "In Clinic" ? "In Clinic" :
@@ -113,9 +92,9 @@ const generateDoctor = (id: number): Doctor => {
     experience,
     hospital: location,
     consultationFee: fees,
-    languages: ["English", (id % 2 === 0 ? "Spanish" : "French")],
-    contactEmail: `${name.toLowerCase().replace(/\s/g, ".")}@hospital.com`,
-    bio: `Dr. ${nameSuffix} is a dedicated ${specialization.toLowerCase()} with ${experience} years of experience. They are committed to providing patient-centered care with a focus on long-term health.`,
+    languages: ["English", ((id - 1) % 2 === 0 ? "Spanish" : "French")],
+    contactEmail: `${name.toLowerCase().replace(/dr\.\s/g, "").replace(/\s/g, ".")}@hospital.com`,
+    bio: `${name} is a dedicated ${specialization.toLowerCase()} with ${experience} years of experience. They are committed to providing patient-centered care with a focus on long-term health.`,
     availabilitySchedule,
     realtimeStatus,
     averageRating: parseFloat(averageRating),
@@ -127,7 +106,7 @@ const generateDoctor = (id: number): Doctor => {
   };
 };
 
-export const ALL_DOCTORS: Doctor[] = Array.from({ length: 50 }, (_, i) => generateDoctor(i + 1));
+export const ALL_DOCTORS: Doctor[] = Array.from({ length: 30 }, (_, i) => generateDoctor(i + 1));
 
 // For the Home page, we might want a smaller, curated list
 export const TOP_DOCTORS: Doctor[] = ALL_DOCTORS.slice(0, 6);

@@ -12,7 +12,7 @@ interface DoctorCardProps {
     name: string;
     specialization: string;
     experience: number;
-    fees: number;
+    consultationFee: number; // Changed from 'fees' to 'consultationFee'
     availabilityStatus: string;
     profilePhotoUrl?: string;
     location?: string;
@@ -58,7 +58,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
               <Briefcase className="h-4 w-4 mr-2 text-primary-blue" /> {doctor.experience} Years Experience
             </p>
             <p className="flex items-center justify-center md:justify-start">
-              <DollarSign className="h-4 w-4 mr-2 text-primary-blue" /> Consultation Fee: ${doctor.fees}
+              <DollarSign className="h-4 w-4 mr-2 text-primary-blue" /> Consultation Fee: ${doctor.consultationFee}
             </p>
             {doctor.location && (
               <p className="flex items-center justify-center md:justify-start">
