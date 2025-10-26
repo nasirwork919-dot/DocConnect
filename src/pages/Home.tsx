@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import DoctorCard from "@/components/DoctorCard"; // Import DoctorCard
 import { TOP_DOCTORS } from "@/data/doctors"; // Import TOP_DOCTORS from new data file
 import React, { useState } from "react"; // Import useState
+import DoctorsSlider from "@/components/DoctorsSlider"; // Import the new DoctorsSlider component
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
@@ -181,19 +182,7 @@ const Home = () => {
         <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80"></div> {/* Overlay */}
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-heading-dark dark:text-white font-michroma">Meet Our Top Doctors</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {TOP_DOCTORS.map((doctor) => (
-              <motion.div
-                key={doctor.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <DoctorCard doctor={doctor} />
-              </motion.div>
-            ))}
-          </div>
+          <DoctorsSlider doctors={TOP_DOCTORS} />
           <div className="text-center mt-10">
             <MotionButton asChild size="lg" className="bg-primary-blue hover:bg-primary-blue/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">View All Doctors</Link>
