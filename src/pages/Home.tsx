@@ -35,7 +35,7 @@ const Home = () => {
       {/* Hero Banner */}
       <section
         className="relative bg-cover bg-center py-20 md:py-32"
-        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1580281657521-47b2fe8a9e1a?auto=format&fit=crop&w=1920&q=80')` }}
+        style={{ backgroundImage: `url('https://i.pinimg.com/736x/6c/37/78/6c37789996911b63291ba857a6f16b42.jpg')` }}
       >
         <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
         <div className="container mx-auto px-4 text-center relative z-10">
