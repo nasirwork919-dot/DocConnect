@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import DoctorCard from "@/components/DoctorCard";
 import { SlidersHorizontal, Search } from "lucide-react";
-import { motion } from "framer-motion"; // Import motion
+import { motion, useInView } from "framer-motion"; // Import useInView
 import { ALL_DOCTORS, Doctor } from "@/data/doctors"; // Import ALL_DOCTORS from new data file
 
 // Create a motion-compatible Button component
@@ -24,6 +24,13 @@ const DoctorsListing = () => {
   const [maxFee, setMaxFee] = useState<string>(searchParams.get("maxFee") || "");
   const [showAvailableNow, setShowAvailableNow] = useState(searchParams.get("availableNow") === "true");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+
+  // Refs for filter sections
+  const quickSearchRef = useRef(null);
+  const quickSearchInView = useInView(quickSearchRef, { amount: 0.1 });
+
+  const advancedFiltersRef = useRef(null);
+  const advancedFiltersInView = useInView(advancedFiltersRef, { amount: 0.1 });
 
   const filteredDoctors = useMemo(() => {
     return ALL_DOCTORS.filter((doctor: Doctor) => {
@@ -88,8 +95,8 @@ const DoctorsListing = () => {
           <div className="relative z-10 container mx-auto px-4">
             {/* Quick Doctor Search */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              ref={quickSearchRef}
+              animate={{ opacity: quickSearchInView ? 1 : 0, y: quickSearchInView ? 0 : 20 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="bg-card-background p-6 rounded-2xl shadow-[0_4px_14px_rgba(0,0,0,0.07)] mb-8"
             >
@@ -132,8 +139,8 @@ const DoctorsListing = () => {
 
             {/* Advanced Filters Section */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              ref={advancedFiltersRef}
+              animate={{ opacity: advancedFiltersInView ? 1 : 0, y: advancedFiltersInView ? 0 : 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="bg-card-background p-6 rounded-2xl shadow-[0_4px_14px_rgba(0,0,0,0.07)]"
             >
@@ -229,7 +236,7 @@ const DoctorsListing = () => {
                 key={doctor.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
+                viewport={{ once: false, amount: 0.1 }} // Changed once to false for continuous animation
                 transition={{ duration: 0.5 }}
               >
                 <DoctorCard doctor={doctor} />
