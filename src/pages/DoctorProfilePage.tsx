@@ -64,7 +64,7 @@ const DoctorProfilePage = () => {
               className="flex-shrink-0"
             >
               <Avatar className="h-32 w-32 md:h-48 md:w-48">
-                <AvatarImage src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"} alt={doctor.name} />
+                <AvatarImage src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"} alt={doctor.name} className="object-cover object-top" />
                 <AvatarFallback className="text-5xl bg-muted-foreground/20 text-foreground">
                   {doctor.name.split(" ").map(n => n[0]).join("")}
                 </AvatarFallback>

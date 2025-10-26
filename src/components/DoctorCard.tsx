@@ -34,6 +34,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
               <AvatarImage
                 src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"}
                 alt={doctor.name}
+                className="object-cover object-top"
               />
               <AvatarFallback className="bg-muted-foreground/20 text-foreground">
                 {doctor.name.split(" ").map(n => n[0]).join("")}
