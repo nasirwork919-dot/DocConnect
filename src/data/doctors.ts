@@ -31,10 +31,10 @@ const DOCTOR_NAMES = [
 ];
 
 const DOCTOR_IMAGES = [
-  "https://i.pinimg.com/564x/01/11/6e/01116e24131211112111111111111111.jpg", // Female doctor
-  "https://i.pinimg.com/564x/02/22/7e/02227e24131211111111111111111111.jpg", // Male doctor
-  "https://i.pinimg.com/564x/03/33/8f/03338f24131211111111111111111111.jpg", // Female doctor
-  "https://i.pinimg.com/564x/04/44/9e/04449e24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/736x/79/f0/6c/79f06c1462a362cb5189edbd9818979f.jpg", // Male doctor (Dr. James Griffith)
+  "https://i.pinimg.com/1200x/28/90/51/28905133f922c06fd8a2c8a72ea3266a.jpg", // Male doctor (Dr. David Vaccum)
+  "https://i.pinimg.com/736x/87/45/53/874553cbe71582d0e4288dfb1cbf048f.jpg", // Female doctor (Dr. Sofia Khan)
+  "https://i.pinimg.com/736x/c9/e0/b5/c9e0b5e45aad1de8e27b25ec6ce3cd27.jpg", // Female doctor (Dr. Iqra Ahmed)
   "https://i.pinimg.com/564x/05/55/ae/0555ae24131211111111111111111111.jpg", // Female doctor
   "https://i.pinimg.com/564x/06/66/bf/0666bf24131211111111111111111111.jpg", // Male doctor
   "https://i.pinimg.com/564x/07/77/cf/0777cf24131211111111111111111111.jpg", // Female doctor
