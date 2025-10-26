@@ -12,7 +12,7 @@ interface DoctorCardProps {
     name: string;
     specialization: string;
     experience: number;
-    consultationFee: number; // Changed from 'fees' to 'consultationFee'
+    consultationFee: number;
     availabilityStatus: string;
     profilePhotoUrl?: string;
     location?: string;
@@ -26,9 +26,9 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="rounded-2xl"
     >
-      <Card className="flex flex-col md:flex-row items-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background dark:bg-card rounded-2xl hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-all duration-300">
+      <Card className="flex flex-col gap-5 items-baseline p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background dark:bg-card rounded-2xl hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-all duration-300">
         {/* Avatar Section */}
-        <div className="relative mb-4 md:mb-0 md:mr-6">
+        <div className="relative"> {/* Removed mb-4 md:mb-0 md:mr-6, relying on parent gap */}
           <div className="h-28 w-28 md:h-32 md:w-32 rounded-full overflow-hidden border-4 border-white dark:border-card shadow-md">
             <Avatar className="h-full w-full">
               <AvatarImage
@@ -44,35 +44,35 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
         </div>
 
         {/* Doctor Info */}
-        <div className="flex-1 text-center md:text-left">
+        <div className="flex-1 text-left"> {/* Changed text-center md:text-left to text-left */}
           <CardHeader className="p-0 mb-2">
             <CardTitle className="text-2xl font-semibold text-heading-dark dark:text-foreground font-michroma">{doctor.name}</CardTitle>
-            <CardDescription className="text-primary-blue flex items-center justify-center md:justify-start font-sans">
+            <CardDescription className="text-primary-blue flex items-center justify-start font-sans"> {/* Changed justify-center md:justify-start to justify-start */}
               <Stethoscope className="h-4 w-4 mr-2 text-secondary-teal" />
               {doctor.specialization}
             </CardDescription>
           </CardHeader>
 
           <CardContent className="p-0 space-y-2 text-muted-text dark:text-muted-foreground font-sans">
-            <p className="flex items-center justify-center md:justify-start">
+            <p className="flex items-center justify-start"> {/* Changed justify-center md:justify-start to justify-start */}
               <Briefcase className="h-4 w-4 mr-2 text-primary-blue" /> {doctor.experience} Years Experience
             </p>
-            <p className="flex items-center justify-center md:justify-start">
+            <p className="flex items-center justify-start"> {/* Changed justify-center md:justify-start to justify-start */}
               <DollarSign className="h-4 w-4 mr-2 text-primary-blue" /> Consultation Fee: ${doctor.consultationFee}
             </p>
             {doctor.location && (
-              <p className="flex items-center justify-center md:justify-start">
+              <p className="flex items-center justify-start"> {/* Changed justify-center md:justify-start to justify-start */}
                 <MapPin className="h-4 w-4 mr-2 text-primary-blue" /> {doctor.location}
               </p>
             )}
-            <p className="flex items-center justify-center md:justify-start text-sm font-medium text-accent-yellow">
+            <p className="flex items-center justify-start text-sm font-medium text-accent-yellow"> {/* Changed justify-center md:justify-start to justify-start */}
               <CalendarDays className="h-4 w-4 mr-2" /> {doctor.availabilityStatus}
             </p>
           </CardContent>
         </div>
 
         {/* CTA Button */}
-        <div className="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
+        <div className="flex-shrink-0"> {/* Removed mt-4 md:mt-0 md:ml-6, relying on parent gap */}
           <Link to={`/doctors/${doctor.id}`}>
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <Button className="bg-gradient-to-r from-primary-blue to-secondary-teal text-white rounded-xl px-6 py-2 font-medium shadow-md hover:shadow-lg transition-all duration-300 font-sans">
