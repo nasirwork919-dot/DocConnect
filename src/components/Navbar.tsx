@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Stethoscope } from "lucide-react";
+import { Menu } from "lucide-react";
 
 
 const Navbar = () => {
@@ -22,7 +22,6 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-primary-blue dark:text-primary/70 font-michroma">
-          <Stethoscope className="h-8 w-8" />
           <span>DocConnect</span>
         </Link>
 
@@ -53,7 +52,6 @@ const Navbar = () => {
             <SheetContent side="right" className="w-[250px] sm:w-[300px] bg-card-background dark:bg-card">
               <div className="flex flex-col space-y-4 p-4">
                 <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-primary-blue dark:text-primary/70 mb-4 font-michroma" onClick={() => setIsOpen(false)}>
-                  <Stethoscope className="h-8 w-8" />
                   <span>DocConnect</span>
                 </Link>
                 {navLinks.map((link) => (
