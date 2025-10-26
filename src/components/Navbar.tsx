@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Stethoscope } from "lucide-react";
-import { MadeWithDyad } from "./made-with-dyad"; // Assuming this is a global component
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

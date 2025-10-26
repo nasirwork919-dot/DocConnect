@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin } from "lucide-react";
-import { MadeWithDyad } from "./made-with-dyad";
+
 
 const Footer = () => {
   return (
@@ -40,7 +40,7 @@ const Footer = () => {
       </div>
       <div className="text-center mt-8 border-t border-gray-700 pt-6">
         <p className="text-sm font-sans">&copy; {new Date().getFullYear()} DocConnect. All rights reserved.</p>
-        <MadeWithDyad />
+        
       </div>
     </footer>
   );
