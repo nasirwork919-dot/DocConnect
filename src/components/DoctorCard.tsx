@@ -1,22 +1,10 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Stethoscope,
-  Briefcase,
-  DollarSign,
-  CalendarDays,
-  MapPin,
-} from "lucide-react";
+import { Stethoscope, Briefcase, DollarSign, CalendarDays, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion"; // Framer Motion
+import { motion } from "framer-motion";
 
 interface DoctorCardProps {
   doctor: {
@@ -25,7 +13,7 @@ interface DoctorCardProps {
     specialization: string;
     experience: number;
     fees: number;
-    availabilityStatus: string; // e.g., "Now Available", "Next Available Slot: Mon, 10 AM"
+    availabilityStatus: string;
     profilePhotoUrl?: string;
     location?: string;
   };
@@ -34,61 +22,60 @@ interface DoctorCardProps {
 const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
   return (
     <motion.div
-      whileHover={{
-        y: -5,
-        boxShadow:
-          "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-      }}
-      transition={{ duration: 0.3 }}
-      className="rounded-xl"
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="rounded-2xl"
     >
-      <Card className="flex items-center p-4 shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-800 rounded-xl">
-        {/* Doctor Avatar */}
-        <Avatar className="h-24 w-24 mr-4 flex-shrink-0">
-          <AvatarImage
-            src={doctor.profilePhotoUrl || "/placeholder.svg"}
-            alt={doctor.name}
-          />
-          <AvatarFallback>
-            {doctor.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </AvatarFallback>
-        </Avatar>
+      <Card className="flex flex-col md:flex-row items-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-white dark:bg-card rounded-2xl hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-all duration-300">
+        {/* Avatar Section */}
+        <div className="relative mb-4 md:mb-0 md:mr-6">
+          <div className="h-28 w-28 md:h-32 md:w-32 rounded-full overflow-hidden border-4 border-white dark:border-card shadow-md">
+            <Avatar className="h-full w-full">
+              <AvatarImage
+                src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"}
+                alt={doctor.name}
+              />
+              <AvatarFallback className="bg-muted-foreground/20 text-foreground">
+                {doctor.name.split(" ").map(n => n[0]).join("")}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          <div className="absolute bottom-2 right-2 bg-secondary w-4 h-4 rounded-full border-2 border-white dark:border-card"></div>
+        </div>
 
         {/* Doctor Info */}
-        <div className="flex-1 text-left mr-4 min-w-[150px]"> {/* Added min-width to ensure text has space */}
+        <div className="flex-1 text-center md:text-left">
           <CardHeader className="p-0 mb-2">
-            <CardTitle className="text-xl font-heading">{doctor.name}</CardTitle>
-            <CardDescription className="text-sky-500 flex items-center">
-              <Stethoscope className="h-4 w-4 mr-2" /> {doctor.specialization}
+            <CardTitle className="text-2xl font-semibold text-foreground font-heading">{doctor.name}</CardTitle>
+            <CardDescription className="text-primary flex items-center justify-center md:justify-start font-sans">
+              <Stethoscope className="h-4 w-4 mr-2 text-secondary" />
+              {doctor.specialization}
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="p-0 space-y-1 text-gray-600 dark:text-gray-300 text-sm">
-            <p className="flex items-center">
-              <Briefcase className="h-4 w-4 mr-2" /> {doctor.experience} Years Exp.
+          <CardContent className="p-0 space-y-2 text-muted-foreground font-sans">
+            <p className="flex items-center justify-center md:justify-start">
+              <Briefcase className="h-4 w-4 mr-2 text-primary" /> {doctor.experience} Years Experience
             </p>
-            <p className="flex items-center">
-              <DollarSign className="h-4 w-4 mr-2" /> Fee: ${doctor.fees}
+            <p className="flex items-center justify-center md:justify-start">
+              <DollarSign className="h-4 w-4 mr-2 text-primary" /> Consultation Fee: ${doctor.fees}
             </p>
             {doctor.location && (
-              <p className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2" /> {doctor.location}
+              <p className="flex items-center justify-center md:justify-start">
+                <MapPin className="h-4 w-4 mr-2 text-primary" /> {doctor.location}
               </p>
             )}
-            <p className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+            <p className="flex items-center justify-center md:justify-start text-sm font-medium text-secondary">
               <CalendarDays className="h-4 w-4 mr-2" /> {doctor.availabilityStatus}
             </p>
           </CardContent>
         </div>
 
-        {/* View Profile Button */}
-        <div className="flex-shrink-0">
+        {/* CTA Button */}
+        <div className="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
           <Link to={`/doctors/${doctor.id}`}>
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-              <Button className="w-full md:w-auto bg-sky-500 hover:bg-blue-700 text-white rounded-xl whitespace-nowrap">
+              <Button className="bg-gradient-to-r from-primary to-secondary text-white rounded-xl px-6 py-2 font-medium shadow-md hover:shadow-lg transition-all duration-300 font-sans">
                 View Profile
               </Button>
             </motion.div>

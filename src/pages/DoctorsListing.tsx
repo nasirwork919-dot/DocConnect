@@ -139,31 +139,31 @@ const DoctorsListing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-card p-6 rounded-xl shadow-md mb-8"
+          className="bg-card p-6 rounded-2xl shadow-md mb-8"
         >
           <h2 className="text-2xl font-bold text-center mb-6 font-heading">Find a Doctor</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select onValueChange={setSpecialization} value={specialization}>
-              <SelectTrigger className="w-full rounded-xl">
+              <SelectTrigger className="w-full rounded-xl font-sans">
                 <SelectValue placeholder="Select Specialization" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Specializations</SelectItem>
-                <SelectItem value="cardiology">Cardiology</SelectItem>
-                <SelectItem value="neurology">Neurology</SelectItem>
-                <SelectItem value="pediatrics">Pediatrics</SelectItem>
-                <SelectItem value="dermatology">Dermatology</SelectItem>
-                <SelectItem value="orthopedics">Orthopedics</SelectItem>
+                <SelectItem value="all" className="font-sans">All Specializations</SelectItem>
+                <SelectItem value="cardiology" className="font-sans">Cardiology</SelectItem>
+                <SelectItem value="neurology" className="font-sans">Neurology</SelectItem>
+                <SelectItem value="pediatrics" className="font-sans">Pediatrics</SelectItem>
+                <SelectItem value="dermatology" className="font-sans">Dermatology</SelectItem>
+                <SelectItem value="orthopedics" className="font-sans">Orthopedics</SelectItem>
               </SelectContent>
             </Select>
             <Input
               type="text"
               placeholder="Doctor Name or Specialization"
-              className="w-full rounded-xl"
+              className="w-full rounded-xl font-sans"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <MotionButton className="w-full bg-sky-blue hover:bg-blue-700 text-white rounded-xl" whileHover={{ scale: 1.05 }}>
+            <MotionButton className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               <Search className="mr-2 h-4 w-4" /> Search
             </MotionButton>
           </div>
@@ -174,54 +174,54 @@ const DoctorsListing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-card p-6 rounded-xl shadow-md mb-8"
+          className="bg-card p-6 rounded-2xl shadow-md mb-8"
         >
           <h2 className="text-2xl font-semibold mb-4 flex items-center font-heading">
-            <SlidersHorizontal className="h-6 w-6 mr-2 text-sky-blue" /> Advanced Filters
+            <SlidersHorizontal className="h-6 w-6 mr-2 text-primary" /> Advanced Filters
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Select onValueChange={setLocation} value={location}>
-              <SelectTrigger className="w-full rounded-xl">
+              <SelectTrigger className="w-full rounded-xl font-sans">
                 <SelectValue placeholder="Location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                <SelectItem value="main branch">Main Branch</SelectItem>
-                <SelectItem value="downtown clinic">Downtown Clinic</SelectItem>
-                <SelectItem value="uptown medical center">Uptown Medical Center</SelectItem>
+                <SelectItem value="all" className="font-sans">All Locations</SelectItem>
+                <SelectItem value="main branch" className="font-sans">Main Branch</SelectItem>
+                <SelectItem value="downtown clinic" className="font-sans">Downtown Clinic</SelectItem>
+                <SelectItem value="uptown medical center" className="font-sans">Uptown Medical Center</SelectItem>
               </SelectContent>
             </Select>
 
             <Select onValueChange={setGender} value={gender}>
-              <SelectTrigger className="w-full rounded-xl">
+              <SelectTrigger className="w-full rounded-xl font-sans">
                 <SelectValue placeholder="Gender (Optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="any">Any</SelectItem>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="any" className="font-sans">Any</SelectItem>
+                <SelectItem value="male" className="font-sans">Male</SelectItem>
+                <SelectItem value="female" className="font-sans">Female</SelectItem>
+                <SelectItem value="other" className="font-sans">Other</SelectItem>
               </SelectContent>
             </Select>
 
             <Select onValueChange={setAvailability} value={availability}>
-              <SelectTrigger className="w-full rounded-xl">
+              <SelectTrigger className="w-full rounded-xl font-sans">
                 <SelectValue placeholder="Availability" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="any">Any Time</SelectItem>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="tomorrow">Tomorrow</SelectItem>
+                <SelectItem value="any" className="font-sans">Any Time</SelectItem>
+                <SelectItem value="today" className="font-sans">Today</SelectItem>
+                <SelectItem value="tomorrow" className="font-sans">Tomorrow</SelectItem>
               </SelectContent>
             </Select>
 
             <div className="flex items-center space-x-2">
-              <Label htmlFor="fee-range-min" className="font-sans text-muted-gray-blue">Fee Range:</Label>
+              <Label htmlFor="fee-range-min" className="font-sans text-muted-foreground">Fee Range:</Label>
               <Input
                 id="fee-range-min"
                 type="number"
                 placeholder="Min $"
-                className="w-1/2 rounded-xl"
+                className="w-1/2 rounded-xl font-sans"
                 value={minFee}
                 onChange={(e) => setMinFee(e.target.value)}
               />
@@ -229,7 +229,7 @@ const DoctorsListing = () => {
                 id="fee-range-max"
                 type="number"
                 placeholder="Max $"
-                className="w-1/2 rounded-xl"
+                className="w-1/2 rounded-xl font-sans"
                 value={maxFee}
                 onChange={(e) => setMaxFee(e.target.value)}
               />
@@ -242,11 +242,11 @@ const DoctorsListing = () => {
                 onCheckedChange={(checked) => setShowAvailableNow(!!checked)}
                 className="rounded"
               />
-              <Label htmlFor="available-now" className="font-sans text-muted-gray-blue">Show Available Now</Label>
+              <Label htmlFor="available-now" className="font-sans text-muted-foreground">Show Available Now</Label>
             </div>
           </div>
           <div className="mt-6 text-center">
-            <MotionButton className="bg-sky-blue hover:bg-blue-700 text-white px-8 py-2 rounded-xl" whileHover={{ scale: 1.05 }}>
+            <MotionButton className="bg-primary hover:bg-primary/90 text-white px-8 py-2 rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               <SlidersHorizontal className="h-4 w-4 mr-2" /> Apply Filters
             </MotionButton>
           </div>
@@ -267,7 +267,7 @@ const DoctorsListing = () => {
               </motion.div>
             ))
           ) : (
-            <p className="text-center text-lg text-muted-gray-blue dark:text-gray-400 font-sans">No doctors found matching your criteria.</p>
+            <p className="text-center text-lg text-muted-foreground dark:text-gray-400 font-sans">No doctors found matching your criteria.</p>
           )}
         </div>
       </div>

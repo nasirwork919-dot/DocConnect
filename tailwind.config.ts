@@ -62,16 +62,9 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // New custom colors based on the palette
-        'sky-blue': '#2D9CDB',
-        'emerald-green': '#27AE60',
-        'slate-black': '#1E293B',
-        'muted-gray-blue': '#64748B',
-        'soft-violet': '#6C63FF',
-        'error-red': '#EF4444',
       },
       borderRadius: {
-        lg: "1rem", // Changed from 0.5rem to 1rem for rounded-xl feel
+        lg: "1rem", // This corresponds to rounded-2xl
         md: "calc(1rem - 2px)",
         sm: "calc(1rem - 4px)",
       },

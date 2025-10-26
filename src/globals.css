@@ -7,76 +7,69 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%; /* #F8FAFC (Almost white) */
-    --foreground: 222.2 84% 4.9%; /* #1E293B (Slate black) */
+    --background: 210 17% 98%; /* #F9FAFB (Off-white) */
+    --foreground: 215 30% 17%; /* #1E293B (Charcoal) */
 
     --card: 0 0% 100%; /* #FFFFFF */
-    --card-foreground: 222.2 84% 4.9%; /* #1E293B (Slate black) */
+    --card-foreground: 215 30% 17%; /* #1E293B (Charcoal) */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 30% 17%;
 
-    --primary: 200 70% 52%; /* #2D9CDB (Sky Blue) */
-    --primary-foreground: 210 40% 98%;
+    --primary: 215 100% 34%; /* #004AAD (Deep Blue) */
+    --primary-foreground: 210 40% 98%; /* Near white */
 
-    --secondary: 145 50% 42%; /* #27AE60 (Emerald Green) */
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 170 100% 39%; /* #00C6A7 (Soft Teal) */
+    --secondary-foreground: 215 30% 17%; /* Charcoal */
 
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%; /* #64748B (Muted gray-blue) */
+    --muted-foreground: 216 17% 47%; /* #64748B (Muted Gray) */
 
     --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent-foreground: 215 30% 17%;
 
-    --destructive: 0 84.2% 60.2%; /* #EF4444 */
+    --destructive: 0 89% 71%; /* #F87171 (Coral Red) */
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 215 30% 17%; /* Charcoal */
 
-    --radius: 1rem; /* Changed to 1rem */
+    --radius: 1rem; /* Changed to 1rem for rounded-2xl */
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 215 30% 17%; /* #1E293B (Charcoal) */
+    --foreground: 210 40% 98%; /* Near white */
 
-    --card: 222.2 84% 4.9%;
+    --card: 215 30% 17%; /* #1E293B (Charcoal) */
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 215 30% 17%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 215 100% 34%; /* #004AAD (Deep Blue) */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 170 100% 39%; /* #00C6A7 (Soft Teal) */
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 216 17% 47%; /* #64748B (Muted Gray) */
 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 89% 71%; /* #F87171 (Coral Red) */
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;

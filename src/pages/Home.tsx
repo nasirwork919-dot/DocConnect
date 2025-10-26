@@ -52,7 +52,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Banner */}
-      <section className="relative bg-gradient-to-r from-sky-blue to-soft-violet text-white py-20 md:py-32">
+      <section className="relative bg-gradient-to-r from-secondary to-primary text-white py-20 md:py-32">
         <div className="container mx-auto px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -76,10 +76,10 @@ const Home = () => {
             transition={{ duration: 0.5, delay: 0.6 }}
             className="flex justify-center gap-4"
           >
-            <MotionButton asChild size="lg" className="bg-white text-sky-blue hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg" whileHover={{ scale: 1.05 }}>
+            <MotionButton asChild size="lg" className="bg-white text-primary hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">Book Appointment</Link>
             </MotionButton>
-            <MotionButton asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-sky-blue text-lg px-8 py-6 rounded-full shadow-lg" whileHover={{ scale: 1.05 }}>
+            <MotionButton asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/chatbot">Chat with AI</Link>
             </MotionButton>
           </motion.div>
@@ -87,24 +87,24 @@ const Home = () => {
       </section>
 
       {/* Quick Doctor Search */}
-      <section className="py-12 bg-card shadow-md -mt-16 relative z-10 mx-4 md:mx-auto max-w-4xl rounded-xl p-6">
+      <section className="py-12 bg-card shadow-md -mt-16 relative z-10 mx-4 md:mx-auto max-w-4xl rounded-2xl p-6">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-6 font-heading">Find a Doctor</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select>
-              <SelectTrigger className="w-full rounded-xl">
+              <SelectTrigger className="w-full rounded-xl font-sans">
                 <SelectValue placeholder="Select Specialization" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="cardiology">Cardiology</SelectItem>
-                <SelectItem value="neurology">Neurology</SelectItem>
-                <SelectItem value="pediatrics">Pediatrics</SelectItem>
-                <SelectItem value="dermatology">Dermatology</SelectItem>
-                <SelectItem value="orthopedics">Orthopedics</SelectItem>
+                <SelectItem value="cardiology" className="font-sans">Cardiology</SelectItem>
+                <SelectItem value="neurology" className="font-sans">Neurology</SelectItem>
+                <SelectItem value="pediatrics" className="font-sans">Pediatrics</SelectItem>
+                <SelectItem value="dermatology" className="font-sans">Dermatology</SelectItem>
+                <SelectItem value="orthopedics" className="font-sans">Orthopedics</SelectItem>
               </SelectContent>
             </Select>
-            <Input type="text" placeholder="Doctor Name (optional)" className="w-full rounded-xl" />
-            <MotionButton className="w-full bg-sky-blue hover:bg-blue-700 text-white rounded-xl" whileHover={{ scale: 1.05 }}>
+            <Input type="text" placeholder="Doctor Name (optional)" className="w-full rounded-xl font-sans" />
+            <MotionButton className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               <Stethoscope className="mr-2 h-4 w-4" /> Search Doctors
             </MotionButton>
           </div>
@@ -122,9 +122,9 @@ const Home = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-xl h-full">
+              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl h-full">
                 <CardHeader>
-                  <Search className="mx-auto h-12 w-12 text-sky-blue mb-4" />
+                  <Search className="mx-auto h-12 w-12 text-primary mb-4" />
                   <CardTitle className="text-xl font-semibold font-heading">1. Find Your Doctor</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -138,9 +138,9 @@ const Home = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-xl h-full">
+              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl h-full">
                 <CardHeader>
-                  <CalendarIcon className="mx-auto h-12 w-12 text-sky-blue mb-4" />
+                  <CalendarIcon className="mx-auto h-12 w-12 text-primary mb-4" />
                   <CardTitle className="text-xl font-semibold font-heading">2. Book Appointment</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -154,9 +154,9 @@ const Home = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
-              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-xl h-full">
+              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl h-full">
                 <CardHeader>
-                  <MessageSquare className="mx-auto h-12 w-12 text-sky-blue mb-4" />
+                  <MessageSquare className="mx-auto h-12 w-12 text-primary mb-4" />
                   <CardTitle className="text-xl font-semibold font-heading">3. Get AI Assistance</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -169,10 +169,10 @@ const Home = () => {
       </section>
 
       {/* Top Doctors */}
-      <section className="py-16 bg-blue-50 dark:bg-blue-950">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900"> {/* Adjusted background */}
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-sky-blue dark:text-blue-200 font-heading">Meet Our Top Doctors</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> {/* Changed to responsive grid */}
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-primary dark:text-primary/70 font-heading">Meet Our Top Doctors</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {TOP_DOCTORS.map((doctor) => (
               <motion.div
                 key={doctor.id}
@@ -186,7 +186,7 @@ const Home = () => {
             ))}
           </div>
           <div className="text-center mt-10">
-            <MotionButton asChild size="lg" className="bg-sky-blue hover:bg-blue-700 text-white rounded-full px-8 py-6 shadow-lg" whileHover={{ scale: 1.05 }}>
+            <MotionButton asChild size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">View All Doctors</Link>
             </MotionButton>
           </div>
@@ -198,27 +198,27 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-heading">Our Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-xl">
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl">
               <CardHeader>
-                <Heart className="mx-auto h-12 w-12 text-sky-blue mb-4" />
+                <Heart className="mx-auto h-12 w-12 text-primary mb-4" />
                 <CardTitle className="text-xl font-semibold font-heading">Cardiology</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="font-sans">Expert care for heart conditions, diagnostics, and preventive treatments.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-xl">
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl">
               <CardHeader>
-                <Brain className="mx-auto h-12 w-12 text-sky-blue mb-4" />
+                <Brain className="mx-auto h-12 w-12 text-primary mb-4" />
                 <CardTitle className="text-xl font-semibold font-heading">Neurology</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="font-sans">Specialized treatment for brain, spinal cord, and nervous system disorders.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-xl">
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl">
               <CardHeader>
-                <Syringe className="mx-auto h-12 w-12 text-sky-blue mb-4" />
+                <Syringe className="mx-auto h-12 w-12 text-primary mb-4" />
                 <CardTitle className="text-xl font-semibold font-heading">Pediatrics</CardTitle>
               </CardHeader>
               <CardContent>
@@ -230,40 +230,40 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us (USP points) */}
-      <section className="py-16 bg-blue-50 dark:bg-blue-950">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900"> {/* Adjusted background */}
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-sky-blue dark:text-blue-200 font-heading">Why Choose Us?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-primary dark:text-primary/70 font-heading">Why Choose Us?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center p-6 shadow-lg bg-card rounded-xl">
+            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
               <CardHeader>
-                <CalendarIcon className="mx-auto h-10 w-10 text-sky-blue mb-3" />
+                <CalendarIcon className="mx-auto h-10 w-10 text-primary mb-3" />
                 <CardTitle className="text-lg font-semibold font-heading">Instant Booking</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="font-sans">Book appointments with ease, anytime, anywhere.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg bg-card rounded-xl">
+            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
               <CardHeader>
-                <Stethoscope className="mx-auto h-10 w-10 text-sky-blue mb-3" />
+                <Stethoscope className="mx-auto h-10 w-10 text-primary mb-3" />
                 <CardTitle className="text-lg font-semibold font-heading">Expert Doctors</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="font-sans">Access to a wide network of highly qualified specialists.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg bg-card rounded-xl">
+            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
               <CardHeader>
-                <Phone className="mx-auto h-10 w-10 text-sky-blue mb-3" />
+                <Phone className="mx-auto h-10 w-10 text-primary mb-3" />
                 <CardTitle className="text-lg font-semibold font-heading">24/7 Support</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="font-sans">Our AI chatbot is always ready to assist you.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg bg-card rounded-xl">
+            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
               <CardHeader>
-                <Heart className="mx-auto h-10 w-10 text-sky-blue mb-3" />
+                <Heart className="mx-auto h-10 w-10 text-primary mb-3" />
                 <CardTitle className="text-lg font-semibold font-heading">Patient-Centric Care</CardTitle>
               </CardHeader>
               <CardContent>
@@ -278,33 +278,33 @@ const Home = () => {
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 font-heading">What Our Patients Say</h2>
-          <p className="text-lg text-muted-gray-blue font-sans">
+          <p className="text-lg text-muted-foreground font-sans">
             (Placeholder for a testimonials slider component)
           </p>
         </div>
       </section>
 
       {/* AI Chatbot Section (Placeholder) */}
-      <section className="py-16 bg-blue-50 dark:bg-blue-950">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900"> {/* Adjusted background */}
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading text-sky-blue dark:text-blue-200">Talk to Our AI Assistant</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-muted-gray-blue dark:text-gray-300">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading text-primary dark:text-primary/70">Talk to Our AI Assistant</h2>
+          <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-muted-foreground dark:text-gray-300">
             Get instant answers to your health questions and assistance with bookings.
           </p>
-          <MotionButton asChild size="lg" className="bg-soft-violet hover:bg-soft-violet/90 text-white rounded-full px-8 py-6 shadow-lg" whileHover={{ scale: 1.05 }}>
+          <MotionButton asChild size="lg" className="bg-gradient-to-r from-secondary to-primary hover:from-secondary/90 hover:to-primary/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
             <Link to="/chatbot">Launch Chatbot</Link>
           </MotionButton>
         </div>
       </section>
 
       {/* Contact/CTA Banner */}
-      <section className="bg-sky-blue dark:bg-blue-800 text-white py-16">
+      <section className="bg-primary dark:bg-primary/90 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading">Need Help? Contact Us!</h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto font-sans">
             Our team is ready to assist you with any queries or support you might need.
           </p>
-          <MotionButton asChild size="lg" variant="secondary" className="text-sky-blue hover:bg-blue-100 text-lg px-8 py-6 rounded-full shadow-lg" whileHover={{ scale: 1.05 }}>
+          <MotionButton asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
             <Link to="/contact">Get in Touch</Link>
           </MotionButton>
         </div>
