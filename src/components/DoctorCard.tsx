@@ -2,7 +2,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Stethoscope, Briefcase, DollarSign, CalendarDays, MapPin } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface DoctorCardProps {
@@ -23,68 +22,58 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -6, scale: 1.02 }}
-      transition={{ duration: 0.4 }}
-      className="rounded-2xl overflow-hidden"
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      className="bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 border border-gray-100"
     >
-      <Card className="relative flex flex-col md:flex-row items-center p-4 shadow-md hover:shadow-xl bg-white rounded-2xl transition duration-300">
-
-        {/* Background Image with Overlay */}
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{
-            backgroundImage: `url('/images/hospital-bg.jpg')`
-          }}
-        ></div>
-
-        {/* Profile Image */}
-        <div className="z-10 flex flex-col items-center md:items-start md:w-1/3">
+      <div className="flex flex-col sm:flex-row">
+        {/* Doctor Image */}
+        <div className="relative w-full sm:w-1/3">
           <img
             src={doctor.profilePhotoUrl || "/images/default-doctor.jpg"}
             alt={doctor.name}
-            className="h-32 w-32 rounded-full object-cover border-4 border-[#2A5DFF] shadow-lg"
+            className="object-cover w-full h-60 sm:h-full"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
         </div>
 
         {/* Doctor Info */}
-        <div className="z-10 flex-1 text-center md:text-left mt-4 md:mt-0 md:ml-6 space-y-2">
-          <CardHeader className="p-0">
-            <CardTitle className="text-2xl font-semibold text-[#1E293B]">
-              {doctor.name}
-            </CardTitle>
-            <p className="text-[#00C6A9] flex items-center justify-center md:justify-start">
+        <div className="flex flex-col justify-between p-5 sm:p-6 flex-1">
+          <div>
+            <h3 className="text-2xl font-semibold text-gray-800">{doctor.name}</h3>
+            <p className="text-[#2A5DFF] flex items-center mt-1 text-sm font-medium">
               <Stethoscope className="h-4 w-4 mr-2" /> {doctor.specialization}
             </p>
-          </CardHeader>
 
-          <CardContent className="p-0 text-[#475569] space-y-1">
-            <p className="flex items-center justify-center md:justify-start">
-              <Briefcase className="h-4 w-4 mr-2 text-[#2A5DFF]" /> {doctor.experience} Years Experience
-            </p>
-            <p className="flex items-center justify-center md:justify-start">
-              <DollarSign className="h-4 w-4 mr-2 text-[#2A5DFF]" /> ${doctor.fees} Consultation Fee
-            </p>
-            {doctor.location && (
-              <p className="flex items-center justify-center md:justify-start">
-                <MapPin className="h-4 w-4 mr-2 text-[#2A5DFF]" /> {doctor.location}
+            <div className="mt-3 space-y-1 text-gray-600 text-sm">
+              <p className="flex items-center">
+                <Briefcase className="h-4 w-4 mr-2 text-[#00C6A9]" /> {doctor.experience} Years Experience
               </p>
-            )}
-            <p className="flex items-center justify-center md:justify-start text-sm text-[#6B7280]">
-              <CalendarDays className="h-4 w-4 mr-2 text-[#FFD43B]" /> {doctor.availabilityStatus}
-            </p>
-          </CardContent>
-        </div>
+              <p className="flex items-center">
+                <DollarSign className="h-4 w-4 mr-2 text-[#00C6A9]" /> ${doctor.fees} Consultation Fee
+              </p>
+              {doctor.location && (
+                <p className="flex items-center">
+                  <MapPin className="h-4 w-4 mr-2 text-[#00C6A9]" /> {doctor.location}
+                </p>
+              )}
+              <p className="flex items-center">
+                <CalendarDays className="h-4 w-4 mr-2 text-[#FFD43B]" /> {doctor.availabilityStatus}
+              </p>
+            </div>
+          </div>
 
-        {/* Action Button */}
-        <div className="z-10 mt-4 md:mt-0 md:ml-6 flex-shrink-0">
-          <Button
-            asChild
-            className="bg-[#2A5DFF] hover:bg-[#1E3DBF] text-white rounded-xl px-6 py-2 transition"
-          >
-            <Link to={`/doctors/${doctor.id}`}>View Profile</Link>
-          </Button>
+          {/* Button */}
+          <div className="mt-4 sm:mt-6">
+            <Button
+              asChild
+              className="bg-[#2A5DFF] hover:bg-[#1E3DBF] text-white rounded-xl w-full sm:w-auto px-5 py-2 transition"
+            >
+              <Link to={`/doctors/${doctor.id}`}>View Profile</Link>
+            </Button>
+          </div>
         </div>
-      </Card>
+      </div>
     </motion.div>
   );
 };
