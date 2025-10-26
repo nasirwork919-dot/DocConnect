@@ -38,8 +38,8 @@ const FEMALE_NAMES_LIST = [
 ];
 
 const MALE_DOCTOR_IMAGES = [
-  "https://i.pinimg.com/736x/79/f0/6c/79f06c1462a362cb5189edbd9818979f.jpg", // Dr. James Griffith
-  "https://i.pinimg.com/1200x/28/90/51/28905133f922c06fd8a2c8a72ea3266a.jpg", // Dr. David Vaccum
+  "https://i.pinimg.com/736x/79/f0/6c/79f06c1462a362cb5189edbd9818979f.jpg", // Male (Dr. James Griffith)
+  "https://i.pinimg.com/1200x/28/90/51/28905133f922c06fd8a2c8a72ea3266a.jpg", // Male (Dr. David Vaccum)
   "https://i.pinimg.com/736x/b5/e9/d6/b5e9d6a4a3966294793ea168f87195c5.jpg", // Male
   "https://i.pinimg.com/736x/51/54/45/515445832654442910e127dda1259207.jpg", // Male
   "https://i.pinimg.com/736x/b8/35/57/b835576acca81f0fdf069a70b0a69977.jpg", // Male
@@ -53,21 +53,21 @@ const MALE_DOCTOR_IMAGES = [
 ];
 
 const FEMALE_DOCTOR_IMAGES = [
-  "https://i.pinimg.com/736x/87/45/53/874553cbe71582d0e4288dfb1cbf048f.jpg", // Dr. Sofia Khan
-  "https://i.pinimg.com/736x/c9/e0/b5/c9e0b5e45aad1de8e27b25ec6ce3cd27.jpg", // Dr. Iqra Ahmed
-  "https://i.pinimg.com/736x/38/be/96/38be96d04d6aae282eb212337dd734e2.jpg", // Female
-  "https://i.pinimg.com/736x/d7/68/23/d768232056cc54b7b9e9500ef231aadc.jpg", // Female
-  "https://i.pinimg.com/736x/59/8c/80/598c809632f9de89259c069ef1d9bee8.jpg", // Female
-  "https://i.pinimg.com/736x/4c/a6/e2/4ca6e2625541c9901c9d3dff74fac12e.jpg", // Female
-  "https://i.pinimg.com/1200x/6c/0d/88/6c0d884d00a9a3ee52662ca5ab0d719b.jpg", // Female
-  "https://i.pinimg.com/1200x/be/71/07/be71078a6a677f568b50333db8b673c9.jpg", // Female
-  "https://i.pinimg.com/736x/e0/39/12/e039120e975b54c2b93485bd96a1b646.jpg", // Female
-  "https://i.pinimg.com/736x/ea/a6/3e/eaa63e596382c84c3fdb128716e98ed5.jpg", // Female
-  "https://i.pinimg.com/736x/52/a6/3d/52a63dab2ce268aea29aec113e731d0d.jpg", // Female
-  "https://i.pinimg.com/1200x/34/4d/30/344d303af9d066d63bf050bb647f8d7e.jpg", // Female
-  "https://i.pinimg.com/736x/2b/67/ea/2b67eab2f47654a38614999133170c4c.jpg", // Female
-  "https://i.pinimg.com/736x/bf/0c/76/bf0c7651ee5d65b983eed068bbbba1c8.jpg", // Female
-  "https://i.pinimg.com/1200x/14/7a/6f/147a6fcf596fc1893122612389611202.jpg", // Female
+  "https://i.pinimg.com/736x/87/45/53/874553cbe71582d0e4288dfb1cbf048f.jpg", // Female (Dr. Sofia Khan)
+  "https://i.pinimg.com/736x/c9/e0/b5/c9e0b5e45aad1de8e27b25ec6ce3cd27.jpg", // Female (Dr. Iqra Ahmed)
+  "https://i.pinimg.com/736x/38/be/96/38be96d04d6aae282eb212337dd734e2.jpg", // Female (Dr. Emily White)
+  "https://i.pinimg.com/736x/d7/68/23/d768232056cc54b7b9e9500ef231aadc.jpg", // Female (Dr. Sarah Chen)
+  "https://i.pinimg.com/736x/59/8c/80/598c809632f9de89259c069ef1d9bee8.jpg", // Female (Dr. Jessica Lee)
+  "https://i.pinimg.com/736x/4c/a6/e2/4ca6e2625541c9901c9d3dff74fac12e.jpg", // Female (Dr. Maria Garcia)
+  "https://i.pinimg.com/1200x/6c/0d/88/6c0d884d00a9a3ee52662ca5ab0d719b.jpg", // Female (Dr. Linda Rodriguez)
+  "https://i.pinimg.com/1200x/be/71/07/be71078a6a677f568b50333db8b673c9.jpg", // Female (Dr. Susan Hernandez)
+  "https://i.pinimg.com/736x/e0/39/12/e039120e975b54c2b93485bd96a1b646.jpg", // Female (Dr. Nancy Gonzalez)
+  "https://i.pinimg.com/736x/ea/a6/3e/eaa63e596382c84c3fdb128716e98ed5.jpg", // Female (Dr. Karen Anderson)
+  "https://i.pinimg.com/736x/52/a6/3d/52a63dab2ce268aea29aec113e731d0d.jpg", // Female (Dr. Betty Thomas)
+  "https://i.pinimg.com/1200x/34/4d/30/344d303af9d066d63bf050bb647f8d7e.jpg", // Female (Dr. Dorothy White)
+  "https://i.pinimg.com/736x/2b/67/ea/2b67eab2f47654a38614999133170c4c.jpg", // Female (Dr. Sandra Martin)
+  "https://i.pinimg.com/736x/bf/0c/76/bf0c7651ee5d65b983eed068bbbba1c8.jpg", // Female (Dr. Ashley Moore)
+  "https://i.pinimg.com/1200x/14/7a/6f/147a6fcf596fc1893122612389611202.jpg", // Female (Dr. Laura Lewis)
   "https://i.pinimg.com/736x/3b/59/88/3b59880120a5ce3405403916a302a430.jpg", // Female
   "https://i.pinimg.com/1200x/dc/6e/1f/dc6e1f9b8091e33c4ae22b0e4fdb00bf.jpg", // Female
 ];
@@ -99,7 +99,7 @@ const generateDoctor = (id: number): Doctor => {
   if (gender === "male") {
     profilePhotoUrl = MALE_DOCTOR_IMAGES[maleImageIndex % MALE_DOCTOR_IMAGES.length];
     maleImageIndex++;
-  } else {
+  } else { // gender is "female"
     profilePhotoUrl = FEMALE_DOCTOR_IMAGES[femaleImageIndex % FEMALE_DOCTOR_IMAGES.length];
     femaleImageIndex++;
   }
