@@ -35,12 +35,12 @@ const DOCTOR_IMAGES = [
   "https://i.pinimg.com/1200x/28/90/51/28905133f922c06fd8a2c8a72ea3266a.jpg", // Male doctor (Dr. David Vaccum)
   "https://i.pinimg.com/736x/87/45/53/874553cbe71582d0e4288dfb1cbf048f.jpg", // Female doctor (Dr. Sofia Khan)
   "https://i.pinimg.com/736x/c9/e0/b5/c9e0b5e45aad1de8e27b25ec6ce3cd27.jpg", // Female doctor (Dr. Iqra Ahmed)
-  "https://i.pinimg.com/564x/05/55/ae/0555ae24131211111111111111111111.jpg", // Female doctor
-  "https://i.pinimg.com/564x/06/66/bf/0666bf24131211111111111111111111.jpg", // Male doctor
-  "https://i.pinimg.com/564x/07/77/cf/0777cf24131211111111111111111111.jpg", // Female doctor
-  "https://i.pinimg.com/564x/08/88/de/0888de24131211111111111111111111.jpg", // Male doctor
-  "https://i.pinimg.com/564x/09/99/ef/0999ef24131211111111111111111111.jpg", // Female doctor
-  "https://i.pinimg.com/564x/10/00/fa/1000fa24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/736x/38/be/96/38be96d04d6aae282eb212337dd734e2.jpg", // Female doctor (Dr. Emily White)
+  "https://i.pinimg.com/736x/d7/68/23/d768232056cc54b7b9e9500ef231aadc.jpg", // Female doctor (Dr. Sarah Chen)
+  "https://i.pinimg.com/736x/59/8c/80/598c809632f9de89259c069ef1d9bee8.jpg", // Female doctor (Dr. Jessica Lee)
+  "https://i.pinimg.com/736x/4c/a6/e2/4ca6e2625541c9901c9d3dff74fac12e.jpg", // Female doctor (Dr. Maria Garcia)
+  "https://i.pinimg.com/1200x/6c/0d/88/6c0d884d00a9a3ee52662ca5ab0d719b.jpg", // Female doctor (Dr. Linda Rodriguez)
+  "https://i.pinimg.com/1200x/be/71/07/be71078a6a677f568b50333db8b673c9.jpg", // Female doctor (Dr. Susan Hernandez)
   "https://i.pinimg.com/564x/11/11/1b/11111b24131211111111111111111111.jpg", // Female doctor
   "https://i.pinimg.com/564x/12/22/2c/12222c24131211111111111111111111.jpg", // Male doctor
   "https://i.pinimg.com/564x/13/33/3d/13333d24131211111111111111111111.jpg", // Female doctor
