@@ -31,16 +31,36 @@ const DOCTOR_NAMES = [
 ];
 
 const DOCTOR_IMAGES = [
-  "https://images.unsplash.com/photo-1559839734-2b716b17f7ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Female doctor
-  "https://images.unsplash.com/photo-1612349317035-efcd554845ed?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Male doctor
-  "https://images.unsplash.com/photo-1537368910025-7dcd2817d04e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Female doctor
-  "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Male doctor
-  "https://images.unsplash.com/photo-1582759710003-c75390b87992?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Female doctor
-  "https://images.unsplash.com/photo-1579154204601-f159c8f419bc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Male doctor
-  "https://images.unsplash.com/photo-1594824478529-e68776d1517f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Female doctor
-  "https://images.unsplash.com/photo-1576091160550-2173dba99932?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Male doctor
-  "https://images.unsplash.com/photo-1584516150904-a7597251f776?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Female doctor
-  "https://images.unsplash.com/photo-1576091160399-c5050769670f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Male doctor
+  "https://i.pinimg.com/564x/01/11/6e/01116e24131211112111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/02/22/7e/02227e24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/03/33/8f/03338f24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/04/44/9e/04449e24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/05/55/ae/0555ae24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/06/66/bf/0666bf24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/07/77/cf/0777cf24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/08/88/de/0888de24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/09/99/ef/0999ef24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/10/00/fa/1000fa24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/11/11/1b/11111b24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/12/22/2c/12222c24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/13/33/3d/13333d24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/14/44/4e/14444e24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/15/55/5f/15555f24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/16/66/6a/16666a24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/17/77/7b/17777b24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/18/88/8c/18888c24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/19/99/9d/19999d24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/20/00/0e/20000e24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/21/11/1f/21111f24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/22/22/2a/22222a24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/23/33/3b/23333b24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/24/44/4c/24444c24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/25/55/5d/25555d24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/26/66/6e/26666e24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/27/77/7f/27777f24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/28/88/8a/28888a24131211111111111111111111.jpg", // Male doctor
+  "https://i.pinimg.com/564x/29/99/9b/29999b24131211111111111111111111.jpg", // Female doctor
+  "https://i.pinimg.com/564x/30/00/0c/30000c24131211111111111111111111.jpg", // Male doctor
 ];
 
 const SPECIALIZATIONS = [
@@ -58,7 +78,10 @@ const GENDERS = ["male", "female"];
 
 const generateDoctor = (id: number): Doctor => {
   const name = DOCTOR_NAMES[id - 1]; // Use specific names
-  const gender = name.includes("Dr. Sarah") || name.includes("Dr. Emily") || name.includes("Dr. Sofia") || name.includes("Dr. Iqra") || name.includes("Dr. Jessica") || name.includes("Dr. Maria") || name.includes("Dr. Linda") || name.includes("Dr. Nancy") || name.includes("Dr. Karen") || name.includes("Dr. Dorothy") || name.includes("Dr. Sandra") || name.includes("Dr. Ashley") || name.includes("Dr. Laura") ? "female" : "male";
+  // Determine gender based on name for better consistency with images
+  const femaleNames = ["Dr. Sofia Khan", "Dr. Iqra Ahmed", "Dr. Emily White", "Dr. Sarah Chen", "Dr. Jessica Lee", "Dr. Maria Garcia", "Dr. Linda Rodriguez", "Dr. Susan Hernandez", "Dr. Nancy Gonzalez", "Dr. Karen Anderson", "Dr. Betty Thomas", "Dr. Dorothy White", "Dr. Sandra Martin", "Dr. Ashley Moore", "Dr. Laura Lewis"];
+  const gender = femaleNames.includes(name) ? "female" : "male";
+
   const specialization = SPECIALIZATIONS[(id - 1) % SPECIALIZATIONS.length];
   const experience = 5 + ((id - 1) % 15); // 5 to 19 years
   const fees = 80 + ((id - 1) % 10) * 10; // 80 to 170
