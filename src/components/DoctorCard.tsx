@@ -1,10 +1,9 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Stethoscope, Briefcase, DollarSign, CalendarDays, MapPin } from "lucide-react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { Stethoscope, Briefcase, DollarSign, CalendarDays, MapPin } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface DoctorCardProps {
   doctor: {
@@ -22,64 +21,68 @@ interface DoctorCardProps {
 const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
   return (
     <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="rounded-2xl"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{ duration: 0.4 }}
+      className="rounded-2xl overflow-hidden"
     >
-      <Card className="flex flex-col md:flex-row items-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-white dark:bg-card rounded-2xl hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-all duration-300">
-        {/* Avatar Section */}
-        <div className="relative mb-4 md:mb-0 md:mr-6">
-          <div className="h-28 w-28 md:h-32 md:w-32 rounded-full overflow-hidden border-4 border-white dark:border-card shadow-md">
-            <Avatar className="h-full w-full">
-              <AvatarImage
-                src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"}
-                alt={doctor.name}
-              />
-              <AvatarFallback className="bg-muted-foreground/20 text-foreground">
-                {doctor.name.split(" ").map(n => n[0]).join("")}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-          <div className="absolute bottom-2 right-2 bg-secondary w-4 h-4 rounded-full border-2 border-white dark:border-card"></div>
+      <Card className="relative flex flex-col md:flex-row items-center p-4 shadow-md hover:shadow-xl bg-white rounded-2xl transition duration-300">
+
+        {/* Background Image with Overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage: `url('/images/hospital-bg.jpg')`
+          }}
+        ></div>
+
+        {/* Profile Image */}
+        <div className="z-10 flex flex-col items-center md:items-start md:w-1/3">
+          <img
+            src={doctor.profilePhotoUrl || "/images/default-doctor.jpg"}
+            alt={doctor.name}
+            className="h-32 w-32 rounded-full object-cover border-4 border-[#2A5DFF] shadow-lg"
+          />
         </div>
 
         {/* Doctor Info */}
-        <div className="flex-1 text-center md:text-left">
-          <CardHeader className="p-0 mb-2">
-            <CardTitle className="text-2xl font-semibold text-foreground font-heading">{doctor.name}</CardTitle>
-            <CardDescription className="text-primary flex items-center justify-center md:justify-start font-sans">
-              <Stethoscope className="h-4 w-4 mr-2 text-secondary" />
-              {doctor.specialization}
-            </CardDescription>
+        <div className="z-10 flex-1 text-center md:text-left mt-4 md:mt-0 md:ml-6 space-y-2">
+          <CardHeader className="p-0">
+            <CardTitle className="text-2xl font-semibold text-[#1E293B]">
+              {doctor.name}
+            </CardTitle>
+            <p className="text-[#00C6A9] flex items-center justify-center md:justify-start">
+              <Stethoscope className="h-4 w-4 mr-2" /> {doctor.specialization}
+            </p>
           </CardHeader>
 
-          <CardContent className="p-0 space-y-2 text-muted-foreground font-sans">
+          <CardContent className="p-0 text-[#475569] space-y-1">
             <p className="flex items-center justify-center md:justify-start">
-              <Briefcase className="h-4 w-4 mr-2 text-primary" /> {doctor.experience} Years Experience
+              <Briefcase className="h-4 w-4 mr-2 text-[#2A5DFF]" /> {doctor.experience} Years Experience
             </p>
             <p className="flex items-center justify-center md:justify-start">
-              <DollarSign className="h-4 w-4 mr-2 text-primary" /> Consultation Fee: ${doctor.fees}
+              <DollarSign className="h-4 w-4 mr-2 text-[#2A5DFF]" /> ${doctor.fees} Consultation Fee
             </p>
             {doctor.location && (
               <p className="flex items-center justify-center md:justify-start">
-                <MapPin className="h-4 w-4 mr-2 text-primary" /> {doctor.location}
+                <MapPin className="h-4 w-4 mr-2 text-[#2A5DFF]" /> {doctor.location}
               </p>
             )}
-            <p className="flex items-center justify-center md:justify-start text-sm font-medium text-secondary">
-              <CalendarDays className="h-4 w-4 mr-2" /> {doctor.availabilityStatus}
+            <p className="flex items-center justify-center md:justify-start text-sm text-[#6B7280]">
+              <CalendarDays className="h-4 w-4 mr-2 text-[#FFD43B]" /> {doctor.availabilityStatus}
             </p>
           </CardContent>
         </div>
 
-        {/* CTA Button */}
-        <div className="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
-          <Link to={`/doctors/${doctor.id}`}>
-            <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-              <Button className="bg-gradient-to-r from-primary to-secondary text-white rounded-xl px-6 py-2 font-medium shadow-md hover:shadow-lg transition-all duration-300 font-sans">
-                View Profile
-              </Button>
-            </motion.div>
-          </Link>
+        {/* Action Button */}
+        <div className="z-10 mt-4 md:mt-0 md:ml-6 flex-shrink-0">
+          <Button
+            asChild
+            className="bg-[#2A5DFF] hover:bg-[#1E3DBF] text-white rounded-xl px-6 py-2 transition"
+          >
+            <Link to={`/doctors/${doctor.id}`}>View Profile</Link>
+          </Button>
         </div>
       </Card>
     </motion.div>
