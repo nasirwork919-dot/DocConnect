@@ -46,8 +46,7 @@ const Login = () => {
                     },
                     radii: {
                       borderRadiusButton: '1rem', // rounded-2xl
-                      button: '1rem',
-                      input: '1rem',
+                      inputBorderRadius: '1rem', // Fixed: Changed 'input' to 'inputBorderRadius'
                     },
                   },
                 },
