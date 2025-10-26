@@ -29,99 +29,19 @@ const AppContent = () => {
           <Navbar />
           <main className="flex-grow">
             <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-                <Route
-                  path="/"
-                  element={
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Home />
-                    </motion.div>
-                  }
-                />
-                <Route
-                  path="/doctors"
-                  element={
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <DoctorsListing />
-                    </motion.div>
-                  }
-                />
-                <Route
-                  path="/doctors/:id"
-                  element={
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <DoctorProfilePage />
-                    </motion.div>
-                  }
-                />
-                <Route
-                  path="/book"
-                  element={
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <AppointmentBookingPage />
-                    </motion.div>
-                  }
-                />
-                <Route
-                  path="/about"
-                  element={
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <AboutUs />
-                    </motion.div>
-                  }
-                />
-                <Route
-                  path="/contact"
-                  element={
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <ContactUs />
-                    </motion.div>
-                  }
-                />
-                <Route
-                  path="*"
-                  element={
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <NotFound />
-                    </motion.div>
-                  }
-                />
-              </Routes>
+              {/* Wrap Routes in a motion.div with a key for AnimatePresence to animate */}
+              <motion.div key={location.pathname} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
+                <Routes location={location}> {/* Remove key from Routes here */}
+                  <Route path="/" element={<Home />} />
+                  <Route path="/doctors" element={<DoctorsListing />} />
+                  <Route path="/doctors/:id" element={<DoctorProfilePage />} />
+                  <Route path="/book" element={<AppointmentBookingPage />} />
+                  <Route path="/about" element={<AboutUs />} />
+                  <Route path="/contact" element={<ContactUs />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </motion.div>
             </AnimatePresence>
           </main>
           <Footer />
