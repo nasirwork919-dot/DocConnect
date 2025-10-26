@@ -1,8 +1,10 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Stethoscope, Briefcase, DollarSign, CalendarDays, MapPin } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Stethoscope, Briefcase, DollarSign, CalendarDays, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface DoctorCardProps {
   doctor: {
@@ -20,60 +22,66 @@ interface DoctorCardProps {
 const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.3 }}
-      className="bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 border border-gray-100"
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="rounded-2xl"
     >
-      <div className="flex flex-col sm:flex-row">
-        {/* Doctor Image */}
-        <div className="relative w-full sm:w-1/3">
-          <img
-            src={doctor.profilePhotoUrl || "/images/default-doctor.jpg"}
-            alt={doctor.name}
-            className="object-cover w-full h-60 sm:h-full"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+      <Card className="flex flex-col md:flex-row items-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background dark:bg-card rounded-2xl hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-all duration-300">
+        {/* Avatar Section */}
+        <div className="relative mb-4 md:mb-0 md:mr-6">
+          <div className="h-28 w-28 md:h-32 md:w-32 rounded-full overflow-hidden border-4 border-white dark:border-card shadow-md">
+            <Avatar className="h-full w-full">
+              <AvatarImage
+                src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"}
+                alt={doctor.name}
+              />
+              <AvatarFallback className="bg-muted-foreground/20 text-foreground">
+                {doctor.name.split(" ").map(n => n[0]).join("")}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          <div className="absolute bottom-2 right-2 bg-secondary-teal w-4 h-4 rounded-full border-2 border-white dark:border-card"></div>
         </div>
 
         {/* Doctor Info */}
-        <div className="flex flex-col justify-between p-5 sm:p-6 flex-1">
-          <div>
-            <h3 className="text-2xl font-semibold text-gray-800">{doctor.name}</h3>
-            <p className="text-[#2A5DFF] flex items-center mt-1 text-sm font-medium">
-              <Stethoscope className="h-4 w-4 mr-2" /> {doctor.specialization}
+        <div className="flex-1 text-center md:text-left">
+          <CardHeader className="p-0 mb-2">
+            <CardTitle className="text-2xl font-semibold text-heading-dark dark:text-foreground font-michroma">{doctor.name}</CardTitle>
+            <CardDescription className="text-primary-blue flex items-center justify-center md:justify-start font-sans">
+              <Stethoscope className="h-4 w-4 mr-2 text-secondary-teal" />
+              {doctor.specialization}
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="p-0 space-y-2 text-muted-text dark:text-muted-foreground font-sans">
+            <p className="flex items-center justify-center md:justify-start">
+              <Briefcase className="h-4 w-4 mr-2 text-primary-blue" /> {doctor.experience} Years Experience
             </p>
-
-            <div className="mt-3 space-y-1 text-gray-600 text-sm">
-              <p className="flex items-center">
-                <Briefcase className="h-4 w-4 mr-2 text-[#00C6A9]" /> {doctor.experience} Years Experience
+            <p className="flex items-center justify-center md:justify-start">
+              <DollarSign className="h-4 w-4 mr-2 text-primary-blue" /> Consultation Fee: ${doctor.fees}
+            </p>
+            {doctor.location && (
+              <p className="flex items-center justify-center md:justify-start">
+                <MapPin className="h-4 w-4 mr-2 text-primary-blue" /> {doctor.location}
               </p>
-              <p className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2 text-[#00C6A9]" /> ${doctor.fees} Consultation Fee
-              </p>
-              {doctor.location && (
-                <p className="flex items-center">
-                  <MapPin className="h-4 w-4 mr-2 text-[#00C6A9]" /> {doctor.location}
-                </p>
-              )}
-              <p className="flex items-center">
-                <CalendarDays className="h-4 w-4 mr-2 text-[#FFD43B]" /> {doctor.availabilityStatus}
-              </p>
-            </div>
-          </div>
-
-          {/* Button */}
-          <div className="mt-4 sm:mt-6">
-            <Button
-              asChild
-              className="bg-[#2A5DFF] hover:bg-[#1E3DBF] text-white rounded-xl w-full sm:w-auto px-5 py-2 transition"
-            >
-              <Link to={`/doctors/${doctor.id}`}>View Profile</Link>
-            </Button>
-          </div>
+            )}
+            <p className="flex items-center justify-center md:justify-start text-sm font-medium text-accent-yellow">
+              <CalendarDays className="h-4 w-4 mr-2" /> {doctor.availabilityStatus}
+            </p>
+          </CardContent>
         </div>
-      </div>
+
+        {/* CTA Button */}
+        <div className="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
+          <Link to={`/doctors/${doctor.id}`}>
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+              <Button className="bg-gradient-to-r from-primary-blue to-secondary-teal text-white rounded-xl px-6 py-2 font-medium shadow-md hover:shadow-lg transition-all duration-300 font-sans">
+                View Profile
+              </Button>
+            </motion.div>
+          </Link>
+        </div>
+      </Card>
     </motion.div>
   );
 };

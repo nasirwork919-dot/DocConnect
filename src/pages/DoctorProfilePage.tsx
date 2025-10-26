@@ -134,8 +134,8 @@ const DoctorProfilePage = () => {
 
   if (!doctor) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
-        <h1 className="text-3xl font-bold font-heading">Doctor not found.</h1>
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark font-michroma">
+        <h1 className="text-3xl font-bold font-michroma">Doctor not found.</h1>
       </div>
     );
   }
@@ -143,23 +143,23 @@ const DoctorProfilePage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Online":
-        return "bg-secondary"; // Use secondary
+        return "bg-secondary-teal";
       case "In Clinic":
-        return "bg-yellow-500"; // Keep yellow for in clinic
+        return "bg-accent-yellow";
       case "Off":
       default:
-        return "bg-destructive"; // Use destructive
+        return "bg-destructive";
     }
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-8">
+    <div className="min-h-screen bg-background-light text-heading-dark py-8 font-michroma">
       <div className="container mx-auto px-4">
-        <MotionButton variant="link" asChild className="mb-6 pl-0 text-primary dark:text-primary/70 font-sans">
+        <MotionButton variant="link" asChild className="mb-6 pl-0 text-primary-blue dark:text-primary/70 font-sans">
           <Link to="/doctors">← Back to Doctors</Link>
         </MotionButton>
 
-        <Card className="p-6 shadow-lg bg-card rounded-2xl">
+        <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
             <motion.div
               whileHover={{ scale: 1.03 }}
@@ -175,23 +175,23 @@ const DoctorProfilePage = () => {
             </motion.div>
 
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl font-bold mb-2 font-heading">{doctor.name}</h1>
-              <p className="text-xl text-primary flex items-center justify-center md:justify-start mb-2 font-sans">
+              <h1 className="text-4xl font-bold mb-2 font-michroma">{doctor.name}</h1>
+              <p className="text-xl text-primary-blue flex items-center justify-center md:justify-start mb-2 font-sans">
                 <Stethoscope className="h-5 w-5 mr-2" /> {doctor.specialization}
               </p>
               <div className="flex items-center justify-center md:justify-start gap-2 mb-4 font-sans">
-                <Star className="h-5 w-5 text-yellow-500" fill="currentColor" />
+                <Star className="h-5 w-5 text-accent-yellow" fill="currentColor" />
                 <span className="text-lg font-semibold">{doctor.averageRating}</span>
-                <span className="text-muted-foreground">({doctor.reviewsCount} Reviews)</span>
+                <span className="text-muted-text">({doctor.reviewsCount} Reviews)</span>
               </div>
               <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
                 {doctor.qualifications.map((q, index) => (
-                  <Badge key={index} variant="secondary" className="bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary font-sans rounded-md">
+                  <Badge key={index} variant="secondary" className="bg-primary-blue/10 text-primary-blue dark:bg-primary-blue/20 dark:text-primary-blue font-sans rounded-md">
                     {q}
                   </Badge>
                 ))}
               </div>
-              <div className="flex flex-col md:flex-row md:items-center justify-center md:justify-start gap-4 text-muted-foreground font-sans">
+              <div className="flex flex-col md:flex-row md:items-center justify-center md:justify-start gap-4 text-muted-text font-sans">
                 <p className="flex items-center">
                   <Briefcase className="h-4 w-4 mr-2" /> {doctor.experience} Years Experience
                 </p>
@@ -205,10 +205,10 @@ const DoctorProfilePage = () => {
             </div>
 
             <div className="flex flex-col gap-4 w-full md:w-auto md:min-w-[200px]">
-              <MotionButton asChild className="bg-primary hover:bg-primary/90 text-white w-full rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+              <MotionButton asChild className="bg-primary-blue hover:bg-primary-blue/90 text-white w-full rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
                 <Link to={`/book?doctorId=${doctor.id}`}>Book Appointment</Link>
               </MotionButton>
-              <MotionButton variant="outline" className="w-full rounded-xl border-muted-foreground text-muted-foreground hover:bg-muted-foreground/10 font-sans" whileHover={{ scale: 1.05 }}>
+              <MotionButton variant="outline" className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
                 <MessageSquare className="h-4 w-4 mr-2" /> Ask via Chatbot
               </MotionButton>
             </div>
@@ -218,32 +218,32 @@ const DoctorProfilePage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold mb-4 font-heading">About {doctor.name}</h2>
-              <p className="text-muted-foreground leading-relaxed mb-6 font-sans">{doctor.bio}</p>
+              <h2 className="text-2xl font-bold mb-4 font-michroma">About {doctor.name}</h2>
+              <p className="text-muted-text leading-relaxed mb-6 font-sans">{doctor.bio}</p>
 
-              <h3 className="text-xl font-semibold mb-3 flex items-center font-heading">
-                <Languages className="h-5 w-5 mr-2 text-primary" /> Languages Spoken
+              <h3 className="text-xl font-semibold mb-3 flex items-center font-michroma">
+                <Languages className="h-5 w-5 mr-2 text-primary-blue" /> Languages Spoken
               </h3>
               <div className="flex flex-wrap gap-2 mb-6">
                 {doctor.languages.map((lang, index) => (
-                  <Badge key={index} variant="outline" className="text-muted-foreground border-muted-foreground/50 font-sans rounded-md">
+                  <Badge key={index} variant="outline" className="text-muted-text border-muted-text/50 font-sans rounded-md">
                     {lang}
                   </Badge>
                 ))}
               </div>
 
-              <h3 className="text-xl font-semibold mb-3 flex items-center font-heading">
-                <Mail className="h-5 w-5 mr-2 text-primary" /> Contact
+              <h3 className="text-xl font-semibold mb-3 flex items-center font-michroma">
+                <Mail className="h-5 w-5 mr-2 text-primary-blue" /> Contact
               </h3>
-              <p className="text-muted-foreground mb-6 font-sans">{doctor.contactEmail}</p>
+              <p className="text-muted-text mb-6 font-sans">{doctor.contactEmail}</p>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4 font-heading">Availability & Status</h2>
-              <Card className="p-4 mb-6 bg-primary/10 dark:bg-primary/20 rounded-2xl">
+              <h2 className="text-2xl font-bold mb-4 font-michroma">Availability & Status</h2>
+              <Card className="p-4 mb-6 bg-primary-blue/10 dark:bg-primary-blue/20 rounded-2xl">
                 <CardContent className="p-0 font-sans">
-                  <p className="flex items-center text-lg font-semibold text-foreground dark:text-gray-50">
-                    <Clock className="h-5 w-5 mr-2 text-primary" /> Current Status:
+                  <p className="flex items-center text-lg font-semibold text-heading-dark dark:text-gray-50">
+                    <Clock className="h-5 w-5 mr-2 text-primary-blue" /> Current Status:
                     <Badge className={`ml-2 ${getStatusColor(doctor.realtimeStatus)} text-white font-sans rounded-md`}>
                       {doctor.realtimeStatus}
                     </Badge>
@@ -251,8 +251,8 @@ const DoctorProfilePage = () => {
                 </CardContent>
               </Card>
 
-              <h3 className="text-xl font-semibold mb-3 font-heading">Schedule</h3>
-              <div className="space-y-2 text-muted-foreground font-sans mb-6">
+              <h3 className="text-xl font-semibold mb-3 font-michroma">Schedule</h3>
+              <div className="space-y-2 text-muted-text font-sans mb-6">
                 {Object.entries(doctor.availabilitySchedule).map(([day, time]) => (
                   <motion.div
                     key={day}
@@ -265,7 +265,7 @@ const DoctorProfilePage = () => {
                 ))}
               </div>
 
-              <h3 className="text-xl font-semibold mb-3 font-heading">Book a Slot</h3>
+              <h3 className="text-xl font-semibold mb-3 font-michroma">Book a Slot</h3>
               <Card className="p-0 rounded-2xl">
                 <Calendar
                   mode="single"

@@ -164,14 +164,14 @@ const AppointmentBookingPage = () => {
 
   if (appointmentConfirmed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground py-8">
-        <Card className="w-full max-w-md p-6 text-center shadow-lg rounded-2xl bg-card">
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark py-8 font-michroma">
+        <Card className="w-full max-w-md p-6 text-center shadow-[0_4px_14px_rgba(0,0,0,0.07)] rounded-2xl bg-card-background">
           <CardHeader>
-            <CheckCircle2 className="mx-auto h-16 w-16 text-secondary mb-4" />
-            <CardTitle className="text-3xl font-bold font-heading">Appointment Confirmed!</CardTitle>
-            <CardDescription className="text-lg font-sans text-muted-foreground">Your appointment has been successfully booked.</CardDescription>
+            <CheckCircle2 className="mx-auto h-16 w-16 text-secondary-teal mb-4" />
+            <CardTitle className="text-3xl font-bold font-michroma">Appointment Confirmed!</CardTitle>
+            <CardDescription className="text-lg font-sans text-muted-text">Your appointment has been successfully booked.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 font-sans text-foreground dark:text-gray-50">
+          <CardContent className="space-y-4 font-sans text-heading-dark dark:text-gray-50">
             {appointmentDetails && (
               <>
                 <p><strong>Doctor:</strong> {DUMMY_DOCTORS.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
@@ -181,10 +181,10 @@ const AppointmentBookingPage = () => {
                 <p><strong>Reason:</strong> {appointmentDetails.reasonForVisit}</p>
               </>
             )}
-            <MotionButton onClick={() => navigate("/")} className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton onClick={() => navigate("/")} className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               Return to Home
             </MotionButton>
-            <MotionButton variant="outline" onClick={() => navigate("/doctors")} className="w-full rounded-xl border-muted-foreground text-muted-foreground hover:bg-muted-foreground/10 font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton variant="outline" onClick={() => navigate("/doctors")} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
               Browse More Doctors
             </MotionButton>
           </CardContent>
@@ -200,18 +200,18 @@ const AppointmentBookingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-8">
+    <div className="min-h-screen bg-background-light text-heading-dark py-8 font-michroma">
       <div className="container mx-auto px-4 max-w-3xl">
-        <MotionButton variant="link" asChild className="mb-6 pl-0 text-primary dark:text-primary/70 font-sans">
+        <MotionButton variant="link" asChild className="mb-6 pl-0 text-primary-blue dark:text-primary/70 font-sans">
           <Link to={initialDoctorId ? `/doctors/${initialDoctorId}` : "/doctors"}>
             ← Back to {initialDoctorId ? "Doctor Profile" : "Doctors Listing"}
           </Link>
         </MotionButton>
 
-        <Card className="p-6 shadow-lg bg-card rounded-2xl">
+        <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center font-heading">Book Your Appointment</CardTitle>
-            <CardDescription className="text-center font-sans text-muted-foreground">
+            <CardTitle className="text-3xl font-bold text-center font-michroma">Book Your Appointment</CardTitle>
+            <CardDescription className="text-center font-sans text-muted-text">
               Please fill in the details to book your consultation.
             </CardDescription>
           </CardHeader>
@@ -229,7 +229,7 @@ const AppointmentBookingPage = () => {
                       transition={{ duration: 0.3 }}
                       className="space-y-6"
                     >
-                      <h2 className="text-2xl font-semibold mb-4 font-heading">Step 1: Select Doctor & Time</h2>
+                      <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 1: Select Doctor & Time</h2>
                       <FormField
                         control={form.control}
                         name="doctorId"
@@ -270,7 +270,7 @@ const AppointmentBookingPage = () => {
                                         variant={"outline"}
                                         className={cn(
                                           "w-full pl-3 text-left font-normal rounded-xl font-sans",
-                                          !field.value && "text-muted-foreground"
+                                          !field.value && "text-muted-text"
                                         )}
                                         whileHover={{ scale: 1.02 }}
                                       >
@@ -286,7 +286,7 @@ const AppointmentBookingPage = () => {
                                       </MotionButton>
                                     </FormControl>
                                   </PopoverTrigger>
-                                  <PopoverContent className="w-auto p-0 rounded-2xl bg-card" align="start">
+                                  <PopoverContent className="w-auto p-0 rounded-2xl bg-card-background" align="start">
                                     <Calendar
                                       mode="single"
                                       selected={field.value}
@@ -327,7 +327,7 @@ const AppointmentBookingPage = () => {
                                           </FormControl>
                                           <FormLabel
                                             htmlFor={`time-slot-${slot}`}
-                                            className="flex items-center justify-center rounded-xl border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary text-sm cursor-pointer font-sans"
+                                            className="flex items-center justify-center rounded-xl border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary-blue text-sm cursor-pointer font-sans"
                                           >
                                             {slot}
                                           </FormLabel>
@@ -356,7 +356,7 @@ const AppointmentBookingPage = () => {
                             }
                           });
                         }}
-                        className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl font-sans"
+                        className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans"
                         whileHover={{ scale: 1.05 }}
                       >
                         Next: Patient Details
@@ -374,7 +374,7 @@ const AppointmentBookingPage = () => {
                       transition={{ duration: 0.3 }}
                       className="space-y-6"
                     >
-                      <h2 className="text-2xl font-semibold mb-4 font-heading">Step 2: Patient Details</h2>
+                      <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 2: Patient Details</h2>
                       <FormField
                         control={form.control}
                         name="fullName"
@@ -481,7 +481,7 @@ const AppointmentBookingPage = () => {
                         )}
                       />
                       <div className="flex justify-between gap-4">
-                        <MotionButton type="button" variant="outline" onClick={() => setStep(1)} className="w-full rounded-xl border-muted-foreground text-muted-foreground hover:bg-muted-foreground/10 font-sans" whileHover={{ scale: 1.05 }}>
+                        <MotionButton type="button" variant="outline" onClick={() => setStep(1)} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
                           Previous
                         </MotionButton>
                         <MotionButton
@@ -495,7 +495,7 @@ const AppointmentBookingPage = () => {
                               }
                             });
                           }}
-                          className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl font-sans"
+                          className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans"
                           whileHover={{ scale: 1.05 }}
                         >
                           Next: Review & Confirm
@@ -514,12 +514,12 @@ const AppointmentBookingPage = () => {
                       transition={{ duration: 0.3 }}
                       className="space-y-6"
                     >
-                      <h2 className="text-2xl font-semibold mb-4 font-heading">Step 3: Review & Confirm</h2>
-                      <Card className="p-4 bg-primary/10 dark:bg-primary/20 rounded-2xl">
+                      <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 3: Review & Confirm</h2>
+                      <Card className="p-4 bg-primary-blue/10 dark:bg-primary-blue/20 rounded-2xl">
                         <CardHeader className="p-0 mb-4">
-                          <CardTitle className="text-xl font-heading text-foreground dark:text-gray-50">Appointment Summary</CardTitle>
+                          <CardTitle className="text-xl font-michroma text-heading-dark dark:text-gray-50">Appointment Summary</CardTitle>
                         </CardHeader>
-                        <CardContent className="p-0 space-y-2 text-muted-foreground font-sans">
+                        <CardContent className="p-0 space-y-2 text-muted-text font-sans">
                           <p><strong>Doctor:</strong> {doctor?.name} ({doctor?.specialization})</p>
                           <p><strong>Date:</strong> {form.getValues("appointmentDate") ? format(form.getValues("appointmentDate"), "PPP") : "N/A"}</p>
                           <p><strong>Time:</strong> {form.getValues("appointmentTime")}</p>
@@ -533,10 +533,10 @@ const AppointmentBookingPage = () => {
                         </CardContent>
                       </Card>
                       <div className="flex justify-between gap-4">
-                        <MotionButton type="button" variant="outline" onClick={() => setStep(2)} className="w-full rounded-xl border-muted-foreground text-muted-foreground hover:bg-muted-foreground/10 font-sans" whileHover={{ scale: 1.05 }}>
+                        <MotionButton type="button" variant="outline" onClick={() => setStep(2)} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
                           Previous
                         </MotionButton>
-                        <MotionButton type="submit" className="w-full bg-secondary hover:bg-secondary/90 text-white rounded-xl font-sans" disabled={isSubmitting} whileHover={{ scale: 1.05 }}>
+                        <MotionButton type="submit" className="w-full bg-secondary-teal hover:bg-secondary-teal/90 text-white rounded-xl font-sans" disabled={isSubmitting} whileHover={{ scale: 1.05 }}>
                           {isSubmitting ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Confirming...

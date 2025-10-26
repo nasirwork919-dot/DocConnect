@@ -18,10 +18,10 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white dark:bg-card shadow-md sticky top-0 z-50">
+    <nav className="bg-card-background dark:bg-card shadow-[0_4px_14px_rgba(0,0,0,0.07)] sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-primary dark:text-primary/70 font-heading">
+        <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-primary-blue dark:text-primary/70 font-michroma">
           <Stethoscope className="h-8 w-8" />
           <span>DocConnect</span>
         </Link>
@@ -32,12 +32,12 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              className="text-foreground dark:text-gray-200 hover:text-primary dark:hover:text-primary/70 transition-colors text-lg font-medium font-sans"
+              className="text-heading-dark dark:text-gray-200 hover:text-primary-blue dark:hover:text-primary/70 transition-colors text-lg font-medium font-sans"
             >
               {link.name}
             </Link>
           ))}
-          <Button asChild className="bg-primary hover:bg-primary/90 text-white font-sans">
+          <Button asChild className="bg-primary-blue hover:bg-primary-blue/90 text-white font-sans">
             <Link to="/book">Book Appointment</Link>
           </Button>
         </div>
@@ -50,9 +50,9 @@ const Navbar = () => {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[250px] sm:w-[300px] bg-white dark:bg-card">
+            <SheetContent side="right" className="w-[250px] sm:w-[300px] bg-card-background dark:bg-card">
               <div className="flex flex-col space-y-4 p-4">
-                <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-primary dark:text-primary/70 mb-4 font-heading" onClick={() => setIsOpen(false)}>
+                <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-primary-blue dark:text-primary/70 mb-4 font-michroma" onClick={() => setIsOpen(false)}>
                   <Stethoscope className="h-8 w-8" />
                   <span>DocConnect</span>
                 </Link>
@@ -60,13 +60,13 @@ const Navbar = () => {
                   <Link
                     key={link.name}
                     to={link.path}
-                    className="text-foreground dark:text-gray-200 hover:text-primary dark:hover:text-primary/70 transition-colors text-lg font-medium py-2 font-sans"
+                    className="text-heading-dark dark:text-gray-200 hover:text-primary-blue dark:hover:text-primary/70 transition-colors text-lg font-medium py-2 font-sans"
                     onClick={() => setIsOpen(false)}
                   >
                     {link.name}
                   </Link>
                 ))}
-                <Button asChild className="bg-primary hover:bg-primary/90 text-white mt-4 font-sans" onClick={() => setIsOpen(false)}>
+                <Button asChild className="bg-primary-blue hover:bg-primary-blue/90 text-white mt-4 font-sans" onClick={() => setIsOpen(false)}>
                   <Link to="/book">Book Appointment</Link>
                 </Button>
               </div>

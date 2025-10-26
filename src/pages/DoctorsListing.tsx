@@ -130,18 +130,18 @@ const DoctorsListing = () => {
   }, [specialization, location, gender, availability, minFee, maxFee, showAvailableNow, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-8">
+    <div className="min-h-screen bg-background-light text-heading-dark py-8 font-michroma">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-10 font-heading">Our Doctors</h1>
+        <h1 className="text-4xl font-bold text-center mb-10 font-michroma">Our Doctors</h1>
 
         {/* Quick Doctor Search */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-card p-6 rounded-2xl shadow-md mb-8"
+          className="bg-card-background p-6 rounded-2xl shadow-[0_4px_14px_rgba(0,0,0,0.07)] mb-8"
         >
-          <h2 className="text-2xl font-bold text-center mb-6 font-heading">Find a Doctor</h2>
+          <h2 className="text-2xl font-bold text-center mb-6 font-michroma">Find a Doctor</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select onValueChange={setSpecialization} value={specialization}>
               <SelectTrigger className="w-full rounded-xl font-sans">
@@ -163,7 +163,7 @@ const DoctorsListing = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <MotionButton className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               <Search className="mr-2 h-4 w-4" /> Search
             </MotionButton>
           </div>
@@ -174,10 +174,10 @@ const DoctorsListing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-card p-6 rounded-2xl shadow-md mb-8"
+          className="bg-card-background p-6 rounded-2xl shadow-[0_4px_14px_rgba(0,0,0,0.07)] mb-8"
         >
-          <h2 className="text-2xl font-semibold mb-4 flex items-center font-heading">
-            <SlidersHorizontal className="h-6 w-6 mr-2 text-primary" /> Advanced Filters
+          <h2 className="text-2xl font-semibold mb-4 flex items-center font-michroma">
+            <SlidersHorizontal className="h-6 w-6 mr-2 text-primary-blue" /> Advanced Filters
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Select onValueChange={setLocation} value={location}>
@@ -216,7 +216,7 @@ const DoctorsListing = () => {
             </Select>
 
             <div className="flex items-center space-x-2">
-              <Label htmlFor="fee-range-min" className="font-sans text-muted-foreground">Fee Range:</Label>
+              <Label htmlFor="fee-range-min" className="font-sans text-muted-text">Fee Range:</Label>
               <Input
                 id="fee-range-min"
                 type="number"
@@ -242,11 +242,11 @@ const DoctorsListing = () => {
                 onCheckedChange={(checked) => setShowAvailableNow(!!checked)}
                 className="rounded"
               />
-              <Label htmlFor="available-now" className="font-sans text-muted-foreground">Show Available Now</Label>
+              <Label htmlFor="available-now" className="font-sans text-muted-text">Show Available Now</Label>
             </div>
           </div>
           <div className="mt-6 text-center">
-            <MotionButton className="bg-primary hover:bg-primary/90 text-white px-8 py-2 rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton className="bg-primary-blue hover:bg-primary-blue/90 text-white px-8 py-2 rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               <SlidersHorizontal className="h-4 w-4 mr-2" /> Apply Filters
             </MotionButton>
           </div>
@@ -267,7 +267,7 @@ const DoctorsListing = () => {
               </motion.div>
             ))
           ) : (
-            <p className="text-center text-lg text-muted-foreground dark:text-gray-400 font-sans">No doctors found matching your criteria.</p>
+            <p className="text-center text-lg text-muted-text dark:text-gray-400 font-sans">No doctors found matching your criteria.</p>
           )}
         </div>
       </div>

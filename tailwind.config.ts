@@ -62,6 +62,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // New custom colors based on the provided palette
+        "primary-blue": "hsl(226 100% 58%)", // #2A5DFF
+        "secondary-teal": "hsl(170 100% 39%)", // #00C6A9
+        "background-light": "hsl(210 20% 98%)", // #F8FAFC
+        "card-background": "hsl(0 0% 100%)", // #FFFFFF
+        "heading-dark": "hsl(215 30% 17%)", // #1E293B
+        "muted-text": "hsl(216 17% 47%)", // #64748B
+        "accent-yellow": "hsl(45 100% 61%)", // #FFD43B
       },
       borderRadius: {
         lg: "1rem", // This corresponds to rounded-2xl
@@ -91,8 +99,9 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'], // Keep Inter as a fallback or for specific elements
+        heading: ['Poppins', 'sans-serif'], // Keep Poppins as a fallback or for specific elements
+        michroma: ['Michroma', 'sans-serif'], // Add Michroma
       },
     },
   },

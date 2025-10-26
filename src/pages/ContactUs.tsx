@@ -44,9 +44,9 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background dark:bg-gray-900 text-foreground dark:text-gray-50 py-12">
+    <div className="min-h-screen bg-background-light dark:bg-heading-dark text-heading-dark dark:text-gray-50 py-12 font-michroma">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold text-center mb-10 text-primary dark:text-primary/70 font-heading">Contact Us</h1>
+        <h1 className="text-4xl font-bold text-center mb-10 text-primary-blue dark:text-primary/70 font-michroma">Contact Us</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <motion.div
@@ -55,10 +55,10 @@ const ContactUs = () => {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Card className="p-6 shadow-lg bg-card dark:bg-gray-800 rounded-2xl h-full">
+            <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background dark:bg-heading-dark rounded-2xl h-full">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-semibold mb-2 font-heading">Get in Touch</CardTitle>
-                <CardDescription className="font-sans text-muted-foreground">
+                <CardTitle className="text-2xl font-semibold mb-2 font-michroma">Get in Touch</CardTitle>
+                <CardDescription className="font-sans text-muted-text">
                   We'd love to hear from you! Fill out the form below or reach us through other channels.
                 </CardDescription>
               </CardHeader>
@@ -92,7 +92,7 @@ const ContactUs = () => {
                       <p className="text-destructive text-sm mt-1 font-sans">{form.formState.errors.message.message}</p>
                     )}
                   </div>
-                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-sans rounded-xl">
+                  <Button type="submit" className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white font-sans rounded-xl">
                     <Send className="mr-2 h-4 w-4" /> Send Message
                   </Button>
                 </form>
@@ -107,15 +107,15 @@ const ContactUs = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Card className="p-6 shadow-lg bg-card dark:bg-gray-800 rounded-2xl h-full">
+              <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background dark:bg-heading-dark rounded-2xl h-full">
                 <CardHeader>
-                  <CardTitle className="text-xl font-semibold flex items-center font-heading">
-                    <MapPin className="mr-3 h-6 w-6 text-primary" /> Our Location
+                  <CardTitle className="text-xl font-semibold flex items-center font-michroma">
+                    <MapPin className="mr-3 h-6 w-6 text-primary-blue" /> Our Location
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground dark:text-gray-300 font-sans">123 Hospital Road, Health City, HC 12345</p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-400 mt-2 font-sans">
+                  <p className="text-muted-text dark:text-gray-300 font-sans">123 Hospital Road, Health City, HC 12345</p>
+                  <p className="text-sm text-muted-text dark:text-gray-400 mt-2 font-sans">
                     Visit us during business hours for in-person inquiries.
                   </p>
                 </CardContent>
@@ -128,15 +128,15 @@ const ContactUs = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <Card className="p-6 shadow-lg bg-card dark:bg-gray-800 rounded-2xl h-full">
+              <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background dark:bg-heading-dark rounded-2xl h-full">
                 <CardHeader>
-                  <CardTitle className="text-xl font-semibold flex items-center font-heading">
-                    <Phone className="mr-3 h-6 w-6 text-primary" /> Call Us
+                  <CardTitle className="text-xl font-semibold flex items-center font-michroma">
+                    <Phone className="mr-3 h-6 w-6 text-primary-blue" /> Call Us
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground dark:text-gray-300 font-sans">+1 (555) 123-4567</p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-400 mt-2 font-sans">
+                  <p className="text-muted-text dark:text-gray-300 font-sans">+1 (555) 123-4567</p>
+                  <p className="text-sm text-muted-text dark:text-gray-400 mt-2 font-sans">
                     Available 24/7 for emergencies and general inquiries.
                   </p>
                 </CardContent>
@@ -149,15 +149,15 @@ const ContactUs = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <Card className="p-6 shadow-lg bg-card dark:bg-gray-800 rounded-2xl h-full">
+              <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background dark:bg-heading-dark rounded-2xl h-full">
                 <CardHeader>
-                  <CardTitle className="text-xl font-semibold flex items-center font-heading">
-                    <Mail className="mr-3 h-6 w-6 text-primary" /> Email Us
+                  <CardTitle className="text-xl font-semibold flex items-center font-michroma">
+                    <Mail className="mr-3 h-6 w-6 text-primary-blue" /> Email Us
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground dark:text-gray-300 font-sans">info@hospital.com</p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-400 mt-2 font-sans">
+                  <p className="text-muted-text dark:text-gray-300 font-sans">info@hospital.com</p>
+                  <p className="text-sm text-muted-text dark:text-gray-400 mt-2 font-sans">
                     For non-urgent matters, expect a response within 24-48 hours.
                   </p>
                 </CardContent>

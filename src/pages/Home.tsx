@@ -50,15 +50,19 @@ const TOP_DOCTORS = [
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background-light text-heading-dark font-michroma">
       {/* Hero Banner */}
-      <section className="relative bg-gradient-to-r from-secondary to-primary text-white py-20 md:py-32">
-        <div className="container mx-auto px-4 text-center">
+      <section
+        className="relative bg-cover bg-center py-20 md:py-32"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1580281657521-47b2fe8a9e1a?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight font-heading"
+            className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight text-white font-michroma"
           >
             Book Your Doctor Instantly — Smart Healthcare Made Simple.
           </motion.h1>
@@ -66,7 +70,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto font-sans"
+            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white font-sans"
           >
             Real-time doctor availability, instant bookings, and AI support.
           </motion.p>
@@ -76,10 +80,10 @@ const Home = () => {
             transition={{ duration: 0.5, delay: 0.6 }}
             className="flex justify-center gap-4"
           >
-            <MotionButton asChild size="lg" className="bg-white text-primary hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton asChild size="lg" className="bg-white text-primary-blue hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">Book Appointment</Link>
             </MotionButton>
-            <MotionButton asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary-blue text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/chatbot">Chat with AI</Link>
             </MotionButton>
           </motion.div>
@@ -87,9 +91,9 @@ const Home = () => {
       </section>
 
       {/* Quick Doctor Search */}
-      <section className="py-12 bg-card shadow-md -mt-16 relative z-10 mx-4 md:mx-auto max-w-4xl rounded-2xl p-6">
+      <section className="py-12 bg-card-background shadow-[0_4px_14px_rgba(0,0,0,0.07)] -mt-16 relative z-10 mx-4 md:mx-auto max-w-4xl rounded-2xl p-6">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-6 font-heading">Find a Doctor</h2>
+          <h2 className="text-2xl font-bold text-center mb-6 font-michroma">Find a Doctor</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select>
               <SelectTrigger className="w-full rounded-xl font-sans">
@@ -104,7 +108,7 @@ const Home = () => {
               </SelectContent>
             </Select>
             <Input type="text" placeholder="Doctor Name (optional)" className="w-full rounded-xl font-sans" />
-            <MotionButton className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               <Stethoscope className="mr-2 h-4 w-4" /> Search Doctors
             </MotionButton>
           </div>
@@ -112,9 +116,9 @@ const Home = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 bg-background">
+      <section className="py-16 bg-background-light">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-heading">How It Works</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-michroma">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -122,13 +126,13 @@ const Home = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl h-full">
+              <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow duration-300 rounded-2xl h-full bg-card-background">
                 <CardHeader>
-                  <Search className="mx-auto h-12 w-12 text-primary mb-4" />
-                  <CardTitle className="text-xl font-semibold font-heading">1. Find Your Doctor</CardTitle>
+                  <Search className="mx-auto h-12 w-12 text-primary-blue mb-4" />
+                  <CardTitle className="text-xl font-semibold font-michroma">1. Find Your Doctor</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-sans">Browse specialists by expertise, location, and availability.</CardDescription>
+                  <CardDescription className="font-sans text-muted-text">Browse specialists by expertise, location, and availability.</CardDescription>
                 </CardContent>
               </Card>
             </motion.div>
@@ -138,13 +142,13 @@ const Home = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl h-full">
+              <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow duration-300 rounded-2xl h-full bg-card-background">
                 <CardHeader>
-                  <CalendarIcon className="mx-auto h-12 w-12 text-primary mb-4" />
-                  <CardTitle className="text-xl font-semibold font-heading">2. Book Appointment</CardTitle>
+                  <CalendarIcon className="mx-auto h-12 w-12 text-primary-blue mb-4" />
+                  <CardTitle className="text-xl font-semibold font-michroma">2. Book Appointment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-sans">Select a convenient time slot and confirm your booking instantly.</CardDescription>
+                  <CardDescription className="font-sans text-muted-text">Select a convenient time slot and confirm your booking instantly.</CardDescription>
                 </CardContent>
               </Card>
             </motion.div>
@@ -154,13 +158,13 @@ const Home = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
-              <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl h-full">
+              <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow duration-300 rounded-2xl h-full bg-card-background">
                 <CardHeader>
-                  <MessageSquare className="mx-auto h-12 w-12 text-primary mb-4" />
-                  <CardTitle className="text-xl font-semibold font-heading">3. Get AI Assistance</CardTitle>
+                  <MessageSquare className="mx-auto h-12 w-12 text-primary-blue mb-4" />
+                  <CardTitle className="text-xl font-semibold font-michroma">3. Get AI Assistance</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-sans">Our AI chatbot provides quick answers and support 24/7.</CardDescription>
+                  <CardDescription className="font-sans text-muted-text">Our AI chatbot provides quick answers and support 24/7.</CardDescription>
                 </CardContent>
               </Card>
             </motion.div>
@@ -169,9 +173,13 @@ const Home = () => {
       </section>
 
       {/* Top Doctors */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900"> {/* Adjusted background */}
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-primary dark:text-primary/70 font-heading">Meet Our Top Doctors</h2>
+      <section
+        className="py-16 bg-cover bg-center relative"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1606813902741-3b64d41b2b68?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80"></div> {/* Overlay */}
+        <div className="container mx-auto px-4 relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-heading-dark dark:text-white font-michroma">Meet Our Top Doctors</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {TOP_DOCTORS.map((doctor) => (
               <motion.div
@@ -186,7 +194,7 @@ const Home = () => {
             ))}
           </div>
           <div className="text-center mt-10">
-            <MotionButton asChild size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton asChild size="lg" className="bg-primary-blue hover:bg-primary-blue/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">View All Doctors</Link>
             </MotionButton>
           </div>
@@ -194,35 +202,35 @@ const Home = () => {
       </section>
 
       {/* Services Offered */}
-      <section className="py-16 bg-background">
+      <section className="py-16 bg-background-light">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-heading">Our Services</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-michroma">Our Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow duration-300 rounded-2xl bg-card-background">
               <CardHeader>
-                <Heart className="mx-auto h-12 w-12 text-primary mb-4" />
-                <CardTitle className="text-xl font-semibold font-heading">Cardiology</CardTitle>
+                <Heart className="mx-auto h-12 w-12 text-primary-blue mb-4" />
+                <CardTitle className="text-xl font-semibold font-michroma">Cardiology</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="font-sans">Expert care for heart conditions, diagnostics, and preventive treatments.</CardDescription>
+                <CardDescription className="font-sans text-muted-text">Expert care for heart conditions, diagnostics, and preventive treatments.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow duration-300 rounded-2xl bg-card-background">
               <CardHeader>
-                <Brain className="mx-auto h-12 w-12 text-primary mb-4" />
-                <CardTitle className="text-xl font-semibold font-heading">Neurology</CardTitle>
+                <Brain className="mx-auto h-12 w-12 text-primary-blue mb-4" />
+                <CardTitle className="text-xl font-semibold font-michroma">Neurology</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="font-sans">Specialized treatment for brain, spinal cord, and nervous system disorders.</CardDescription>
+                <CardDescription className="font-sans text-muted-text">Specialized treatment for brain, spinal cord, and nervous system disorders.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow duration-300 rounded-2xl bg-card-background">
               <CardHeader>
-                <Syringe className="mx-auto h-12 w-12 text-primary mb-4" />
-                <CardTitle className="text-xl font-semibold font-heading">Pediatrics</CardTitle>
+                <Syringe className="mx-auto h-12 w-12 text-primary-blue mb-4" />
+                <CardTitle className="text-xl font-semibold font-michroma">Pediatrics</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="font-sans">Comprehensive healthcare for infants, children, and adolescents.</CardDescription>
+                <CardDescription className="font-sans text-muted-text">Comprehensive healthcare for infants, children, and adolescents.</CardDescription>
               </CardContent>
             </Card>
           </div>
@@ -230,44 +238,48 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us (USP points) */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900"> {/* Adjusted background */}
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-primary dark:text-primary/70 font-heading">Why Choose Us?</h2>
+      <section
+        className="py-16 bg-cover bg-center relative"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1576765607924-3e83b4eb2b51?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="container mx-auto px-4 relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white font-michroma">Why Choose Us?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
               <CardHeader>
-                <CalendarIcon className="mx-auto h-10 w-10 text-primary mb-3" />
-                <CardTitle className="text-lg font-semibold font-heading">Instant Booking</CardTitle>
+                <CalendarIcon className="mx-auto h-10 w-10 text-primary-blue mb-3" />
+                <CardTitle className="text-lg font-semibold font-michroma">Instant Booking</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="font-sans">Book appointments with ease, anytime, anywhere.</CardDescription>
+                <CardDescription className="font-sans text-muted-text">Book appointments with ease, anytime, anywhere.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
               <CardHeader>
-                <Stethoscope className="mx-auto h-10 w-10 text-primary mb-3" />
-                <CardTitle className="text-lg font-semibold font-heading">Expert Doctors</CardTitle>
+                <Stethoscope className="mx-auto h-10 w-10 text-primary-blue mb-3" />
+                <CardTitle className="text-lg font-semibold font-michroma">Expert Doctors</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="font-sans">Access to a wide network of highly qualified specialists.</CardDescription>
+                <CardDescription className="font-sans text-muted-text">Access to a wide network of highly qualified specialists.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
               <CardHeader>
-                <Phone className="mx-auto h-10 w-10 text-primary mb-3" />
-                <CardTitle className="text-lg font-semibold font-heading">24/7 Support</CardTitle>
+                <Phone className="mx-auto h-10 w-10 text-primary-blue mb-3" />
+                <CardTitle className="text-lg font-semibold font-michroma">24/7 Support</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="font-sans">Our AI chatbot is always ready to assist you.</CardDescription>
+                <CardDescription className="font-sans text-muted-text">Our AI chatbot is always ready to assist you.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-lg bg-card rounded-2xl">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
               <CardHeader>
-                <Heart className="mx-auto h-10 w-10 text-primary mb-3" />
-                <CardTitle className="text-lg font-semibold font-heading">Patient-Centric Care</CardTitle>
+                <Heart className="mx-auto h-10 w-10 text-primary-blue mb-3" />
+                <CardTitle className="text-lg font-semibold font-michroma">Patient-Centric Care</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="font-sans">Your health and comfort are our top priorities.</CardDescription>
+                <CardDescription className="font-sans text-muted-text">Your health and comfort are our top priorities.</CardDescription>
               </CardContent>
             </Card>
           </div>
@@ -275,36 +287,44 @@ const Home = () => {
       </section>
 
       {/* Patient Reviews (Placeholder) */}
-      <section className="py-16 bg-background">
+      <section className="py-16 bg-background-light">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 font-heading">What Our Patients Say</h2>
-          <p className="text-lg text-muted-foreground font-sans">
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 font-michroma">What Our Patients Say</h2>
+          <p className="text-lg text-muted-text font-sans">
             (Placeholder for a testimonials slider component)
           </p>
         </div>
       </section>
 
-      {/* AI Chatbot Section (Placeholder) */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900"> {/* Adjusted background */}
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading text-primary dark:text-primary/70">Talk to Our AI Assistant</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-muted-foreground dark:text-gray-300">
+      {/* AI Chatbot Section */}
+      <section
+        className="py-16 bg-cover bg-center relative"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-michroma text-white">Talk to Our AI Assistant</h2>
+          <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-white/90">
             Get instant answers to your health questions and assistance with bookings.
           </p>
-          <MotionButton asChild size="lg" className="bg-gradient-to-r from-secondary to-primary hover:from-secondary/90 hover:to-primary/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
+          <MotionButton asChild size="lg" className="bg-secondary-teal hover:bg-secondary-teal/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
             <Link to="/chatbot">Launch Chatbot</Link>
           </MotionButton>
         </div>
       </section>
 
       {/* Contact/CTA Banner */}
-      <section className="bg-primary dark:bg-primary/90 text-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading">Need Help? Contact Us!</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto font-sans">
+      <section
+        className="bg-cover bg-center relative py-16"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1587502536263-54e43e9a6d7f?auto=format&fit=crop&w=1920&q=80')` }}
+      >
+        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-michroma text-white">Need Help? Contact Us!</h2>
+          <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-white/90">
             Our team is ready to assist you with any queries or support you might need.
           </p>
-          <MotionButton asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
+          <MotionButton asChild size="lg" variant="secondary" className="bg-white text-primary-blue hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
             <Link to="/contact">Get in Touch</Link>
           </MotionButton>
         </div>
