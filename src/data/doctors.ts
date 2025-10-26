@@ -49,7 +49,7 @@ const MALE_DOCTOR_IMAGES = [
   "https://i.pinimg.com/736x/ad/6c/b0/ad6cb07e44a5e63ffc89d7723b181052.jpg", // Male
   "https://i.pinimg.com/736x/03/aa/35/03aa3596a9d33cd5fb3c63c320f7d6df.jpg", // Male
   "https://i.pinimg.com/1200x/44/ce/39/44ce3959dea347f1e6c59e9066a8031c.jpg", // Male
-  // Need 4 more male images
+  // Need 4 more male images for 15 male doctors
 ];
 
 const FEMALE_DOCTOR_IMAGES = [
@@ -83,6 +83,9 @@ const LOCATIONS = [
   "Community Health Center", "Eastside Clinic", "Westwood Hospital"
 ];
 
+let maleImageIndex = 0;
+let femaleImageIndex = 0;
+
 const generateDoctor = (id: number): Doctor => {
   const name = DOCTOR_NAMES[id - 1];
   const gender: "male" | "female" = FEMALE_NAMES_LIST.includes(name) ? "female" : "male";
@@ -94,9 +97,11 @@ const generateDoctor = (id: number): Doctor => {
 
   let profilePhotoUrl: string;
   if (gender === "male") {
-    profilePhotoUrl = MALE_DOCTOR_IMAGES[(id - 1) % MALE_DOCTOR_IMAGES.length];
+    profilePhotoUrl = MALE_DOCTOR_IMAGES[maleImageIndex % MALE_DOCTOR_IMAGES.length];
+    maleImageIndex++;
   } else {
-    profilePhotoUrl = FEMALE_DOCTOR_IMAGES[(id - 1) % FEMALE_DOCTOR_IMAGES.length];
+    profilePhotoUrl = FEMALE_DOCTOR_IMAGES[femaleImageIndex % FEMALE_DOCTOR_IMAGES.length];
+    femaleImageIndex++;
   }
 
   const averageRating = (3.5 + ((id - 1) % 10) * 0.1).toFixed(1); // 3.5 to 4.4
