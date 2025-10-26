@@ -20,117 +20,14 @@ import {
   Clock,
 } from "lucide-react";
 import { motion } from "framer-motion"; // Import motion
+import { ALL_DOCTORS } from "@/data/doctors"; // Import ALL_DOCTORS from new data file
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
 
-// Dummy data for a single doctor
-const DUMMY_DOCTORS_DETAILS = [
-  {
-    id: "1",
-    name: "Dr. Emily White",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1559839734-2b716b17f7ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    specialization: "Cardiology",
-    qualifications: ["MBBS", "MD Cardiology", "FCPS"],
-    experience: 12,
-    hospital: "Main Branch Hospital",
-    consultationFee: 150,
-    languages: ["English", "Spanish"],
-    contactEmail: "emily.white@hospital.com",
-    bio: "Dr. Emily White is a highly experienced cardiologist with over a decade of practice. She specializes in preventive cardiology, heart failure management, and interventional procedures. Dr. White is committed to providing patient-centered care with a focus on long-term heart health.",
-    availabilitySchedule: {
-      monday: "9:00 AM - 5:00 PM",
-      tuesday: "9:00 AM - 5:00 PM",
-      wednesday: "9:00 AM - 1:00 PM",
-      thursday: "9:00 AM - 5:00 PM",
-      friday: "9:00 AM - 5:00 PM",
-      saturday: "Closed",
-      sunday: "Closed",
-    },
-    realtimeStatus: "Online",
-    averageRating: 4.8,
-    reviewsCount: 120,
-  },
-  {
-    id: "2",
-    name: "Dr. John Smith",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1612349317035-efcd554845ed?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    specialization: "Neurology",
-    qualifications: ["MBBS", "MD Neurology"],
-    experience: 8,
-    hospital: "Downtown Clinic",
-    consultationFee: 120,
-    languages: ["English", "French"],
-    contactEmail: "john.smith@hospital.com",
-    bio: "Dr. John Smith is a dedicated neurologist focusing on neurological disorders such as migraines, epilepsy, and stroke rehabilitation. He believes in a holistic approach to patient care, integrating the latest research with compassionate treatment.",
-    availabilitySchedule: {
-      monday: "10:00 AM - 6:00 PM",
-      tuesday: "10:00 AM - 6:00 PM",
-      wednesday: "Closed",
-      thursday: "10:00 AM - 6:00 PM",
-      friday: "10:00 AM - 6:00 PM",
-      saturday: "9:00 AM - 1:00 PM",
-      sunday: "Closed",
-    },
-    realtimeStatus: "In Clinic",
-    averageRating: 4.5,
-    reviewsCount: 85,
-  },
-  {
-    id: "3",
-    name: "Dr. Sarah Chen",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1537368910025-7dcd2817d04e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    specialization: "Pediatrics",
-    qualifications: ["MBBS", "DCH", "MRCPCH"],
-    experience: 15,
-    hospital: "Main Branch Hospital",
-    consultationFee: 180,
-    languages: ["English", "Mandarin"],
-    contactEmail: "sarah.chen@hospital.com",
-    bio: "Dr. Sarah Chen is a compassionate pediatrician dedicated to the health and well-being of children from infancy through adolescence. She provides comprehensive care, including routine check-ups, vaccinations, and management of childhood illnesses.",
-    availabilitySchedule: {
-      monday: "8:00 AM - 4:00 PM",
-      tuesday: "8:00 AM - 4:00 PM",
-      wednesday: "8:00 AM - 4:00 PM",
-      thursday: "Closed",
-      friday: "8:00 AM - 4:00 PM",
-      saturday: "Closed",
-      sunday: "Closed",
-    },
-    realtimeStatus: "Online",
-    averageRating: 4.9,
-    reviewsCount: 150,
-  },
-  {
-    id: "4",
-    name: "Dr. Michael Brown",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    specialization: "Dermatology",
-    qualifications: ["MBBS", "MD Dermatology"],
-    experience: 10,
-    hospital: "Uptown Medical Center",
-    consultationFee: 130,
-    languages: ["English"],
-    contactEmail: "michael.brown@hospital.com",
-    bio: "Dr. Michael Brown is a leading dermatologist specializing in skin conditions, cosmetic dermatology, and skin cancer screenings. He is dedicated to helping patients achieve healthy and radiant skin through personalized treatment plans.",
-    availabilitySchedule: {
-      monday: "9:00 AM - 5:00 PM",
-      tuesday: "Closed",
-      wednesday: "9:00 AM - 5:00 PM",
-      thursday: "9:00 AM - 5:00 PM",
-      friday: "9:00 AM - 5:00 PM",
-      saturday: "Closed",
-      sunday: "Closed",
-    },
-    realtimeStatus: "Off",
-    averageRating: 4.7,
-    reviewsCount: 90,
-  },
-];
-
 const DoctorProfilePage = () => {
   const { id } = useParams<{ id: string }>();
-  const doctor = DUMMY_DOCTORS_DETAILS.find((d) => d.id === id);
+  const doctor = ALL_DOCTORS.find((d) => d.id === id);
 
   if (!doctor) {
     return (
@@ -253,7 +150,7 @@ const DoctorProfilePage = () => {
 
               <h3 className="text-xl font-semibold mb-3 font-michroma">Schedule</h3>
               <div className="space-y-2 text-muted-text font-sans mb-6">
-                {Object.entries(doctor.availabilitySchedule).map(([day, time]) => (
+                {Object.entries(doctor.availabilitySchedule).map(([day, time]: [string, string]) => (
                   <motion.div
                     key={day}
                     className="flex justify-between p-2 rounded-md hover:bg-muted/50 transition-colors duration-200"

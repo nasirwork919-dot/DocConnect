@@ -33,53 +33,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { showSuccess, showError } from "@/utils/toast";
+import { ALL_DOCTORS } from "@/data/doctors"; // Import ALL_DOCTORS from new data file
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button); // Changed from motion(Button)
-
-// Dummy data for doctors (should ideally come from an API)
-const DUMMY_DOCTORS = [
-  {
-    id: "1",
-    name: "Dr. Emily White",
-    specialization: "Cardiology",
-    fees: 150,
-    availability: {
-      "2024-08-10": ["09:00 AM", "10:00 AM", "11:00 AM"],
-      "2024-08-11": ["02:00 PM", "03:00 PM"],
-    },
-  },
-  {
-    id: "2",
-    name: "Dr. John Smith",
-    specialization: "Neurology",
-    fees: 120,
-    availability: {
-      "2024-08-10": ["01:00 PM", "02:00 PM", "04:00 PM"],
-      "2024-08-12": ["09:00 AM", "10:00 AM"],
-    },
-  },
-  {
-    id: "3",
-    name: "Dr. Sarah Chen",
-    specialization: "Pediatrics",
-    fees: 180,
-    availability: {
-      "2024-08-13": ["08:00 AM", "09:00 AM", "10:00 AM"],
-      "2024-08-14": ["01:00 PM", "02:00 PM"],
-    },
-  },
-  {
-    id: "4",
-    name: "Dr. Michael Brown",
-    specialization: "Dermatology",
-    fees: 130,
-    availability: {
-      "2024-08-15": ["11:00 AM", "12:00 PM", "03:00 PM"],
-      "2024-08-16": ["09:00 AM", "10:00 AM"],
-    },
-  },
-];
 
 const formSchema = z.object({
   doctorId: z.string().min(1, { message: "Please select a doctor." }),
@@ -131,10 +88,28 @@ const AppointmentBookingPage = () => {
 
   React.useEffect(() => {
     if (watchDoctorId && watchAppointmentDate) {
-      const doctor = DUMMY_DOCTORS.find(d => d.id === watchDoctorId);
+      const doctor = ALL_DOCTORS.find(d => d.id === watchDoctorId);
       if (doctor) {
         const formattedDate = format(watchAppointmentDate, "yyyy-MM-dd");
-        const slots = doctor.availability[formattedDate] || [];
+        // This part needs to be dynamic based on the doctor's availabilitySchedule
+        // For now, using a simplified dummy availability for booking form
+        const dummyBookingAvailability: { [key: string]: string[] } = {
+          "2024-08-10": ["09:00 AM", "10:00 AM", "11:00 AM"],
+          "2024-08-11": ["02:00 PM", "03:00 PM"],
+          "2024-08-12": ["09:00 AM", "10:00 AM", "01:00 PM"],
+          "2024-08-13": ["08:00 AM", "09:00 AM", "10:00 AM"],
+          "2024-08-14": ["01:00 PM", "02:00 PM", "04:00 PM"],
+          "2024-08-15": ["11:00 AM", "12:00 PM", "03:00 PM"],
+          "2024-08-16": ["09:00 AM", "10:00 AM", "02:00 PM"],
+          "2024-08-17": ["09:00 AM", "10:00 AM", "11:00 AM"],
+          "2024-08-18": ["02:00 PM", "03:00 PM"],
+          "2024-08-19": ["09:00 AM", "10:00 AM", "01:00 PM"],
+          "2024-08-20": ["08:00 AM", "09:00 AM", "10:00 AM"],
+          "2024-08-21": ["01:00 PM", "02:00 PM", "04:00 PM"],
+          "2024-08-22": ["11:00 AM", "12:00 PM", "03:00 PM"],
+          "2024-08-23": ["09:00 AM", "10:00 AM", "02:00 PM"],
+        };
+        const slots = dummyBookingAvailability[formattedDate] || [];
         setAvailableTimeSlots(slots);
         form.setValue("appointmentTime", ""); // Reset time when date changes
       }
@@ -160,7 +135,7 @@ const AppointmentBookingPage = () => {
     }
   };
 
-  const doctor = DUMMY_DOCTORS.find(d => d.id === form.getValues("doctorId"));
+  const doctor = ALL_DOCTORS.find(d => d.id === form.getValues("doctorId"));
 
   if (appointmentConfirmed) {
     return (
@@ -174,7 +149,7 @@ const AppointmentBookingPage = () => {
           <CardContent className="space-y-4 font-sans text-heading-dark dark:text-gray-50">
             {appointmentDetails && (
               <>
-                <p><strong>Doctor:</strong> {DUMMY_DOCTORS.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
+                <p><strong>Doctor:</strong> {ALL_DOCTORS.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
                 <p><strong>Date:</strong> {format(appointmentDetails.appointmentDate, "PPP")}</p>
                 <p><strong>Time:</strong> {appointmentDetails.appointmentTime}</p>
                 <p><strong>Patient:</strong> {appointmentDetails.fullName}</p>
@@ -243,7 +218,7 @@ const AppointmentBookingPage = () => {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {DUMMY_DOCTORS.map((doc) => (
+                                {ALL_DOCTORS.map((doc) => (
                                   <SelectItem key={doc.id} value={doc.id} className="font-sans">
                                     {doc.name} - {doc.specialization} (${doc.fees})
                                   </SelectItem>
@@ -296,7 +271,7 @@ const AppointmentBookingPage = () => {
                                       }}
                                       disabled={(date) =>
                                         date < new Date() ||
-                                        !Object.keys(DUMMY_DOCTORS.find(d => d.id === watchDoctorId)?.availability || {}).includes(format(date, "yyyy-MM-dd"))
+                                        !Object.keys(ALL_DOCTORS.find(d => d.id === watchDoctorId)?.availabilitySchedule || {}).includes(format(date, "EEEE").toLowerCase()) // Check if day is available
                                       }
                                       initialFocus
                                     />

@@ -4,51 +4,31 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarIcon, Stethoscope, Heart, Brain, Syringe, Phone, Mail, MapPin, Search, MessageSquare } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import DoctorCard from "@/components/DoctorCard"; // Import DoctorCard
+import { TOP_DOCTORS } from "@/data/doctors"; // Import TOP_DOCTORS from new data file
+import React, { useState } from "react"; // Import useState
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
 
-// Dummy data for Top Doctors section
-const TOP_DOCTORS = [
-  {
-    id: "1",
-    name: "Dr. Emily White",
-    specialization: "Cardiology",
-    experience: 12,
-    fees: 150,
-    availabilityStatus: "Now Available",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1559839734-2b716b17f7ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Main Branch",
-    gender: "female",
-  },
-  {
-    id: "2",
-    name: "Dr. John Smith",
-    specialization: "Neurology",
-    experience: 8,
-    fees: 120,
-    availabilityStatus: "Next Available Slot: Tomorrow, 9 AM",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1612349317035-efcd554845ed?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Downtown Clinic",
-    gender: "male",
-  },
-  {
-    id: "3",
-    name: "Dr. Sarah Chen",
-    specialization: "Pediatrics",
-    experience: 15,
-    fees: 180,
-    availabilityStatus: "Now Available",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1537368910025-7dcd2817d04e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Main Branch",
-    gender: "female",
-  },
-];
-
 const Home = () => {
+  const navigate = useNavigate();
+  const [specialization, setSpecialization] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (specialization !== "all") {
+      params.append("specialization", specialization);
+    }
+    if (searchTerm) {
+      params.append("search", searchTerm);
+    }
+    navigate(`/doctors?${params.toString()}`);
+  };
+
   return (
     <div className="min-h-screen bg-background-light text-heading-dark font-michroma">
       {/* Hero Banner */}
@@ -95,20 +75,41 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-6 font-michroma">Find a Doctor</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Select>
+            <Select onValueChange={setSpecialization} value={specialization}>
               <SelectTrigger className="w-full rounded-xl font-sans">
                 <SelectValue placeholder="Select Specialization" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all" className="font-sans">All Specializations</SelectItem>
                 <SelectItem value="cardiology" className="font-sans">Cardiology</SelectItem>
                 <SelectItem value="neurology" className="font-sans">Neurology</SelectItem>
                 <SelectItem value="pediatrics" className="font-sans">Pediatrics</SelectItem>
                 <SelectItem value="dermatology" className="font-sans">Dermatology</SelectItem>
                 <SelectItem value="orthopedics" className="font-sans">Orthopedics</SelectItem>
+                <SelectItem value="oncology" className="font-sans">Oncology</SelectItem>
+                <SelectItem value="gastroenterology" className="font-sans">Gastroenterology</SelectItem>
+                <SelectItem value="endocrinology" className="font-sans">Endocrinology</SelectItem>
+                <SelectItem value="pulmonology" className="font-sans">Pulmonology</SelectItem>
+                <SelectItem value="nephrology" className="font-sans">Nephrology</SelectItem>
+                <SelectItem value="ophthalmology" className="font-sans">Ophthalmology</SelectItem>
+                <SelectItem value="ent" className="font-sans">ENT</SelectItem>
+                <SelectItem value="psychiatry" className="font-sans">Psychiatry</SelectItem>
+                <SelectItem value="general practice" className="font-sans">General Practice</SelectItem>
               </SelectContent>
             </Select>
-            <Input type="text" placeholder="Doctor Name (optional)" className="w-full rounded-xl font-sans" />
-            <MotionButton className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+            <Input
+              type="text"
+              placeholder="Doctor Name or Specialization"
+              className="w-full rounded-xl font-sans"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+            />
+            <MotionButton onClick={handleSearch} className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
               <Stethoscope className="mr-2 h-4 w-4" /> Search Doctors
             </MotionButton>
           </div>

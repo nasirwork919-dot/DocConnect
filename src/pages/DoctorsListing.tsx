@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,80 +8,25 @@ import { Label } from "@/components/ui/label";
 import DoctorCard from "@/components/DoctorCard";
 import { SlidersHorizontal, Search } from "lucide-react";
 import { motion } from "framer-motion"; // Import motion
+import { ALL_DOCTORS, Doctor } from "@/data/doctors"; // Import ALL_DOCTORS from new data file
 
 // Create a motion-compatible Button component
-const MotionButton = motion.create(Button); // Changed from motion(Button)
-
-const DUMMY_DOCTORS = [
-  {
-    id: "1",
-    name: "Dr. Emily White",
-    specialization: "Cardiology",
-    experience: 12,
-    fees: 150,
-    availabilityStatus: "Now Available",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1559839734-2b716b17f7ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Main Branch",
-    gender: "female",
-  },
-  {
-    id: "2",
-    name: "Dr. John Smith",
-    specialization: "Neurology",
-    experience: 8,
-    fees: 120,
-    availabilityStatus: "Next Available Slot: Tomorrow, 9 AM",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1612349317035-efcd554845ed?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Downtown Clinic",
-    gender: "male",
-  },
-  {
-    id: "3",
-    name: "Dr. Sarah Chen",
-    specialization: "Pediatrics",
-    experience: 15,
-    fees: 180,
-    availabilityStatus: "Now Available",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1537368910025-7dcd2817d04e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Main Branch",
-    gender: "female",
-  },
-  {
-    id: "4",
-    name: "Dr. Michael Brown",
-    specialization: "Dermatology",
-    experience: 10,
-    fees: 130,
-    availabilityStatus: "Next Available Slot: Today, 3 PM",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Uptown Medical Center",
-    gender: "male",
-  },
-  {
-    id: "5",
-    name: "Dr. Jessica Lee",
-    specialization: "Orthopedics",
-    experience: 7,
-    fees: 160,
-    availabilityStatus: "Next Available Slot: Tomorrow, 11 AM",
-    profilePhotoUrl: "https://images.unsplash.com/photo-1582759710003-c75390b87992?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "Downtown Clinic",
-    gender: "female",
-  },
-];
+const MotionButton = motion.create(Button);
 
 const DoctorsListing = () => {
-  const [specialization, setSpecialization] = useState("all");
-  const [location, setLocation] = useState("all");
-  const [gender, setGender] = useState("any");
-  const [availability, setAvailability] = useState("any");
-  const [minFee, setMinFee] = useState<string>("");
-  const [maxFee, setMaxFee] = useState<string>("");
-  const [showAvailableNow, setShowAvailableNow] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams] = useSearchParams();
+
+  const [specialization, setSpecialization] = useState(searchParams.get("specialization") || "all");
+  const [location, setLocation] = useState(searchParams.get("location") || "all");
+  const [gender, setGender] = useState(searchParams.get("gender") || "any");
+  const [availability, setAvailability] = useState(searchParams.get("availability") || "any");
+  const [minFee, setMinFee] = useState<string>(searchParams.get("minFee") || "");
+  const [maxFee, setMaxFee] = useState<string>(searchParams.get("maxFee") || "");
+  const [showAvailableNow, setShowAvailableNow] = useState(searchParams.get("availableNow") === "true");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
 
   const filteredDoctors = useMemo(() => {
-    return DUMMY_DOCTORS.filter((doctor) => {
+    return ALL_DOCTORS.filter((doctor: Doctor) => {
       // Search Term Filter
       const matchesSearchTerm = searchTerm
         ? doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -154,6 +99,15 @@ const DoctorsListing = () => {
                 <SelectItem value="pediatrics" className="font-sans">Pediatrics</SelectItem>
                 <SelectItem value="dermatology" className="font-sans">Dermatology</SelectItem>
                 <SelectItem value="orthopedics" className="font-sans">Orthopedics</SelectItem>
+                <SelectItem value="oncology" className="font-sans">Oncology</SelectItem>
+                <SelectItem value="gastroenterology" className="font-sans">Gastroenterology</SelectItem>
+                <SelectItem value="endocrinology" className="font-sans">Endocrinology</SelectItem>
+                <SelectItem value="pulmonology" className="font-sans">Pulmonology</SelectItem>
+                <SelectItem value="nephrology" className="font-sans">Nephrology</SelectItem>
+                <SelectItem value="ophthalmology" className="font-sans">Ophthalmology</SelectItem>
+                <SelectItem value="ent" className="font-sans">ENT</SelectItem>
+                <SelectItem value="psychiatry" className="font-sans">Psychiatry</SelectItem>
+                <SelectItem value="general practice" className="font-sans">General Practice</SelectItem>
               </SelectContent>
             </Select>
             <Input
@@ -186,9 +140,12 @@ const DoctorsListing = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all" className="font-sans">All Locations</SelectItem>
-                <SelectItem value="main branch" className="font-sans">Main Branch</SelectItem>
+                <SelectItem value="main branch" className="font-sans">Main Branch Hospital</SelectItem>
                 <SelectItem value="downtown clinic" className="font-sans">Downtown Clinic</SelectItem>
                 <SelectItem value="uptown medical center" className="font-sans">Uptown Medical Center</SelectItem>
+                <SelectItem value="community health center" className="font-sans">Community Health Center</SelectItem>
+                <SelectItem value="eastside clinic" className="font-sans">Eastside Clinic</SelectItem>
+                <SelectItem value="westwood hospital" className="font-sans">Westwood Hospital</SelectItem>
               </SelectContent>
             </Select>
 
