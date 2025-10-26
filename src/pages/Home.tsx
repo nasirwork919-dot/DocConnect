@@ -118,8 +118,12 @@ const Home = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 bg-background-light">
-        <div className="container mx-auto px-4">
+      <section
+        className="py-16 bg-cover bg-center relative bg-fixed"
+        style={{ backgroundImage: `url('https://i.pinimg.com/736x/52/9d/46/529d4645214be0ddfd96682c36b602d5.jpg')` }}
+      >
+        <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80"></div> {/* Overlay */}
+        <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-michroma">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
