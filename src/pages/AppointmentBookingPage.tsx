@@ -34,8 +34,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { showSuccess, showError } from "@/utils/toast";
 import { ALL_DOCTORS } from "@/data/doctors";
-import { supabase } from "@/integrations/supabase/client"; // Import supabase client
-import { useSession } from "@/components/SessionContextProvider"; // Import useSession
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/components/SessionContextProvider";
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
@@ -61,7 +61,7 @@ const formSchema = z.object({
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user, isLoading: isSessionLoading } = useSession(); // Get user and loading state from session
+  const { user, isLoading: isSessionLoading } = useSession();
   const initialDoctorId = searchParams.get("doctorId");
 
   const [step, setStep] = useState(1);
@@ -122,7 +122,10 @@ const AppointmentBookingPage = () => {
   }, [watchDoctorId, watchAppointmentDate, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("Booking form submitted. Values:", values); // Log submitted values
+
     if (!user) {
+      console.warn("User not logged in. Redirecting to login."); // Log warning
       showError("Please log in to book an appointment.");
       navigate('/login');
       return;
@@ -130,31 +133,35 @@ const AppointmentBookingPage = () => {
 
     setIsSubmitting(true);
     try {
+      const bookingData = {
+        user_id: user.id,
+        doctor_id: values.doctorId,
+        appointment_date: format(values.appointmentDate, "yyyy-MM-dd"),
+        appointment_time: values.appointmentTime,
+        full_name: values.fullName,
+        email: values.email,
+        phone: values.phone,
+        gender: values.gender,
+        age: values.age,
+        reason_for_visit: values.reasonForVisit,
+      };
+      console.log("Attempting to insert booking data into Supabase:", bookingData); // Log data before insert
+
       const { data, error } = await supabase
         .from('bookings')
-        .insert({
-          user_id: user.id,
-          doctor_id: values.doctorId,
-          appointment_date: format(values.appointmentDate, "yyyy-MM-dd"),
-          appointment_time: values.appointmentTime,
-          full_name: values.fullName,
-          email: values.email,
-          phone: values.phone,
-          gender: values.gender,
-          age: values.age,
-          reason_for_visit: values.reasonForVisit,
-        });
+        .insert(bookingData);
 
       if (error) {
+        console.error("Supabase insert error:", error); // Log detailed Supabase error
         throw error;
       }
 
-      console.log("Appointment booked:", values);
+      console.log("Appointment booked successfully. Supabase response data:", data); // Log success data
       setAppointmentDetails(values);
       setAppointmentConfirmed(true);
       showSuccess("Appointment booked successfully!");
     } catch (error: any) {
-      console.error("Booking error:", error.message);
+      console.error("Booking process failed:", error.message); // Log general error message
       showError(`Failed to book appointment: ${error.message || "Please try again."}`);
     } finally {
       setIsSubmitting(false);
@@ -205,7 +212,7 @@ const AppointmentBookingPage = () => {
             {appointmentDetails && (
               <>
                 <p><strong>Doctor:</strong> {ALL_DOCTORS.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
-                <p><strong>Date:</strong> {format(appointmentDetails.appointmentDate, "PPP")}</p>
+                <p><strong>Date:</strong> {appointmentDetails.appointmentDate ? format(appointmentDetails.appointmentDate, "PPP") : "N/A"}</p>
                 <p><strong>Time:</strong> {appointmentDetails.appointmentTime}</p>
                 <p><strong>Patient:</strong> {appointmentDetails.fullName}</p>
                 <p><strong>Reason:</strong> {appointmentDetails.reasonForVisit}</p>
