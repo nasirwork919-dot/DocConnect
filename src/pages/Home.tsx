@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import DoctorCard from "@/components/DoctorCard"; // Import DoctorCard
 
 // Create a motion-compatible Button component
-const MotionButton = motion.create(Button); // Changed from motion(Button)
+const MotionButton = motion.create(Button);
 
 // Dummy data for Top Doctors section
 const TOP_DOCTORS = [
@@ -172,11 +172,17 @@ const Home = () => {
       <section className="py-16 bg-blue-50 dark:bg-blue-950">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-sky-blue dark:text-blue-200 font-heading">Meet Our Top Doctors</h2>
-          <div className="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide"> {/* Horizontal scroll */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> {/* Changed to responsive grid */}
             {TOP_DOCTORS.map((doctor) => (
-              <div key={doctor.id} className="flex-shrink-0 w-80"> {/* Fixed width for scrollable cards */}
+              <motion.div
+                key={doctor.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.5 }}
+              >
                 <DoctorCard doctor={doctor} />
-              </div>
+              </motion.div>
             ))}
           </div>
           <div className="text-center mt-10">
