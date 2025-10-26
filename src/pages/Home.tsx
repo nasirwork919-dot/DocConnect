@@ -37,7 +37,7 @@ const Home = () => {
         className="relative bg-cover bg-center py-20 md:py-32"
         style={{ backgroundImage: `url('https://i.pinimg.com/736x/6c/37/78/6c37789996911b63291ba857a6f16b42.jpg')` }}
       >
-        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -232,7 +232,7 @@ const Home = () => {
         className="py-16 bg-cover bg-center relative"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1576765607924-3e83b4eb2b51?auto=format&fit=crop&w=1920&q=80')` }}
       >
-        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white font-michroma">Why Choose Us?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -291,7 +291,7 @@ const Home = () => {
         className="py-16 bg-cover bg-center relative"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=1920&q=80')` }}
       >
-        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-michroma text-white">Talk to Our AI Assistant</h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-white/90">
@@ -308,7 +308,7 @@ const Home = () => {
         className="bg-cover bg-center relative py-16"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1587502536263-54e43e9a6d7f?auto=format&fit=crop&w=1920&q=80')` }}
       >
-        <div className="absolute inset-0 bg-primary-blue/70 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-michroma text-white">Need Help? Contact Us!</h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-white/90">
