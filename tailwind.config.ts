@@ -62,11 +62,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // New custom colors based on the palette
+        'sky-blue': '#2D9CDB',
+        'emerald-green': '#27AE60',
+        'slate-black': '#1E293B',
+        'muted-gray-blue': '#64748B',
+        'soft-violet': '#6C63FF',
+        'error-red': '#EF4444',
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "1rem", // Changed from 0.5rem to 1rem for rounded-xl feel
+        md: "calc(1rem - 2px)",
+        sm: "calc(1rem - 4px)",
       },
       keyframes: {
         "accordion-down": {
@@ -89,6 +96,10 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        heading: ['Poppins', 'sans-serif'],
       },
     },
   },
