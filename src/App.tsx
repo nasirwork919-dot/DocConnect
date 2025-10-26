@@ -13,6 +13,8 @@ import ContactUs from "./pages/ContactUs";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ScrollToTopButton from "./components/ScrollToTopButton"; // Import new component
+import ChatbotWidget from "./components/ChatbotWidget"; // Import new component
 
 const queryClient = new QueryClient();
 
@@ -45,6 +47,8 @@ const AppContent = () => {
             </AnimatePresence>
           </main>
           <Footer />
+          <ScrollToTopButton /> {/* Add ScrollToTopButton */}
+          <ChatbotWidget /> {/* Add ChatbotWidget */}
         </div>
       </TooltipProvider>
     </QueryClientProvider>
