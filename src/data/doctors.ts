@@ -52,6 +52,7 @@ const MALE_DOCTOR_IMAGES = [
   "https://i.pinimg.com/736x/4f/66/ad/4f66ade6207b56bef1e5612e2393eaa3.jpg", // New Male
   "https://i.pinimg.com/736x/ff/7b/74/ff7b74daebc4da13a51bfa2494c9b062.jpg", // New Male
   "https://i.pinimg.com/736x/58/73/ad/5873ad353092a3325868e99112cd5db6.jpg", // New Male
+  "https://i.pinimg.com/736x/02/25/4e/02254ec7f67e66923c0aac38b87f0fd3.jpg", // New Male
 ];
 
 const FEMALE_DOCTOR_IMAGES = [
