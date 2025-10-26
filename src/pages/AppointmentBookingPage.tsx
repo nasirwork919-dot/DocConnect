@@ -265,23 +265,22 @@ const AppointmentBookingPage = () => {
                                 <FormLabel className="font-sans">Appointment Date</FormLabel>
                                 <Popover>
                                   <PopoverTrigger asChild>
-                                    <FormControl>
-                                      <MotionButton
-                                        variant={"outline"}
-                                        className={cn(
-                                          "w-full pl-3 text-left font-normal rounded-xl",
-                                          !field.value && "text-muted-foreground"
-                                        )}
-                                        whileHover={{ scale: 1.02 }}
-                                      >
-                                        {field.value ? (
-                                          format(field.value, "PPP")
-                                        ) : (
-                                          <span className="font-sans">Pick a date</span>
-                                        )}
-                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                      </MotionButton>
-                                    </FormControl>
+                                    {/* FormControl now wraps the PopoverTrigger's child directly */}
+                                    <MotionButton
+                                      variant={"outline"}
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal rounded-xl",
+                                        !field.value && "text-muted-foreground"
+                                      )}
+                                      whileHover={{ scale: 1.02 }}
+                                    >
+                                      {field.value ? (
+                                        format(field.value, "PPP")
+                                      ) : (
+                                        <span className="font-sans">Pick a date</span>
+                                      )}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </MotionButton>
                                   </PopoverTrigger>
                                   <PopoverContent className="w-auto p-0 rounded-xl bg-card" align="start">
                                     <Calendar
@@ -299,6 +298,7 @@ const AppointmentBookingPage = () => {
                                     />
                                   </PopoverContent>
                                 </Popover>
+                                <FormControl /> {/* Moved FormControl here to wrap the PopoverTrigger's child */}
                                 <FormMessage className="font-sans" />
                               </FormItem>
                             )}
