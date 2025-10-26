@@ -82,7 +82,7 @@ const DoctorsListing = () => {
         {/* Filters Section with Fixed Background */}
         <section
           className="relative bg-cover bg-center py-12 rounded-2xl mb-8 bg-fixed"
-          style={{ backgroundImage: `url('https://i.pinimg.com/736x/52/9d/46/529d4645214be0ddfd96682c36b602d5.jpg')` }}
+          style={{ backgroundImage: `url('https://i.pinimg.com/736x/70/5c/6c/705c6ceed87510dc18ea86fcc048cb5d.jpg')` }}
         >
           <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80 rounded-2xl"></div> {/* Overlay */}
           <div className="relative z-10 container mx-auto px-4">
