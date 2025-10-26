@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
 import { showSuccess, showError } from "@/utils/toast";
 
 // Create a motion-compatible Button component
-const MotionButton = motion(Button);
+const MotionButton = motion.create(Button); // Changed from motion(Button)
 
 // Dummy data for doctors (should ideally come from an API)
 const DUMMY_DOCTORS = [
@@ -265,22 +265,26 @@ const AppointmentBookingPage = () => {
                                 <FormLabel className="font-sans">Appointment Date</FormLabel>
                                 <Popover>
                                   <PopoverTrigger asChild>
-                                    {/* FormControl now wraps the PopoverTrigger's child directly */}
-                                    <MotionButton
-                                      variant={"outline"}
-                                      className={cn(
-                                        "w-full pl-3 text-left font-normal rounded-xl",
-                                        !field.value && "text-muted-foreground"
-                                      )}
-                                      whileHover={{ scale: 1.02 }}
-                                    >
-                                      {field.value ? (
-                                        format(field.value, "PPP")
-                                      ) : (
-                                        <span className="font-sans">Pick a date</span>
-                                      )}
-                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </MotionButton>
+                                    <FormControl> {/* FormControl wraps the element that acts as the trigger */}
+                                      <MotionButton
+                                        variant={"outline"}
+                                        className={cn(
+                                          "w-full pl-3 text-left font-normal rounded-xl",
+                                          !field.value && "text-muted-foreground"
+                                        )}
+                                        whileHover={{ scale: 1.02 }}
+                                      >
+                                        {/* Wrap these two children in a single div */}
+                                        <div className="flex items-center justify-between w-full">
+                                          {field.value ? (
+                                            format(field.value, "PPP")
+                                          ) : (
+                                            <span className="font-sans">Pick a date</span>
+                                          )}
+                                          <CalendarIcon className="h-4 w-4 opacity-50" />
+                                        </div>
+                                      </MotionButton>
+                                    </FormControl>
                                   </PopoverTrigger>
                                   <PopoverContent className="w-auto p-0 rounded-xl bg-card" align="start">
                                     <Calendar
@@ -298,7 +302,6 @@ const AppointmentBookingPage = () => {
                                     />
                                   </PopoverContent>
                                 </Popover>
-                                <FormControl /> {/* Moved FormControl here to wrap the PopoverTrigger's child */}
                                 <FormMessage className="font-sans" />
                               </FormItem>
                             )}

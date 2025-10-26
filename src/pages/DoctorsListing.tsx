@@ -10,7 +10,7 @@ import { SlidersHorizontal, Search } from "lucide-react";
 import { motion } from "framer-motion"; // Import motion
 
 // Create a motion-compatible Button component
-const MotionButton = motion(Button);
+const MotionButton = motion.create(Button); // Changed from motion(Button)
 
 const DUMMY_DOCTORS = [
   {

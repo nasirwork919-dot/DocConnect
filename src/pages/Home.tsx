@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import DoctorCard from "@/components/DoctorCard"; // Import DoctorCard
 
 // Create a motion-compatible Button component
-const MotionButton = motion(Button);
+const MotionButton = motion.create(Button); // Changed from motion(Button)
 
 // Dummy data for Top Doctors section
 const TOP_DOCTORS = [
