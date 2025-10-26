@@ -49,7 +49,9 @@ const MALE_DOCTOR_IMAGES = [
   "https://i.pinimg.com/736x/ad/6c/b0/ad6cb07e44a5e63ffc89d7723b181052.jpg", // Male
   "https://i.pinimg.com/736x/03/aa/35/03aa3596a9d33cd5fb3c63c320f7d6df.jpg", // Male
   "https://i.pinimg.com/1200x/44/ce/39/44ce3959dea347f1e6c59e9066a8031c.jpg", // Male
-  // Need 4 more male images for 15 male doctors
+  "https://i.pinimg.com/736x/4f/66/ad/4f66ade6207b56bef1e5612e2393eaa3.jpg", // New Male
+  "https://i.pinimg.com/736x/ff/7b/74/ff7b74daebc4da13a51bfa2494c9b062.jpg", // New Male
+  "https://i.pinimg.com/736x/58/73/ad/5873ad353092a3325868e99112cd5db6.jpg", // New Male
 ];
 
 const FEMALE_DOCTOR_IMAGES = [
