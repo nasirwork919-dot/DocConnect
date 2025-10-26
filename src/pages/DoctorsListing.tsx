@@ -7,6 +7,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import DoctorCard from "@/components/DoctorCard";
 import { SlidersHorizontal, Search } from "lucide-react";
+import { motion } from "framer-motion"; // Import motion
+
+// Create a motion-compatible Button component
+const MotionButton = motion(Button);
 
 const DUMMY_DOCTORS = [
   {
@@ -126,16 +130,21 @@ const DoctorsListing = () => {
   }, [specialization, location, gender, availability, minFee, maxFee, showAvailableNow, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-50 py-8">
+    <div className="min-h-screen bg-background text-foreground py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-10">Our Doctors</h1>
+        <h1 className="text-4xl font-bold text-center mb-10 font-heading">Our Doctors</h1>
 
-        {/* Quick Doctor Search (from Home page, now integrated here) */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8">
-          <h2 className="text-2xl font-bold text-center mb-6">Find a Doctor</h2>
+        {/* Quick Doctor Search */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-card p-6 rounded-xl shadow-md mb-8"
+        >
+          <h2 className="text-2xl font-bold text-center mb-6 font-heading">Find a Doctor</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select onValueChange={setSpecialization} value={specialization}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full rounded-xl">
                 <SelectValue placeholder="Select Specialization" />
               </SelectTrigger>
               <SelectContent>
@@ -150,24 +159,29 @@ const DoctorsListing = () => {
             <Input
               type="text"
               placeholder="Doctor Name or Specialization"
-              className="w-full"
+              className="w-full rounded-xl"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+            <MotionButton className="w-full bg-sky-blue hover:bg-blue-700 text-white rounded-xl" whileHover={{ scale: 1.05 }}>
               <Search className="mr-2 h-4 w-4" /> Search
-            </Button>
+            </MotionButton>
           </div>
-        </div>
+        </motion.div>
 
         {/* Filters Section */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center">
-            <SlidersHorizontal className="h-6 w-6 mr-2" /> Advanced Filters
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-card p-6 rounded-xl shadow-md mb-8"
+        >
+          <h2 className="text-2xl font-semibold mb-4 flex items-center font-heading">
+            <SlidersHorizontal className="h-6 w-6 mr-2 text-sky-blue" /> Advanced Filters
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Select onValueChange={setLocation} value={location}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full rounded-xl">
                 <SelectValue placeholder="Location" />
               </SelectTrigger>
               <SelectContent>
@@ -179,7 +193,7 @@ const DoctorsListing = () => {
             </Select>
 
             <Select onValueChange={setGender} value={gender}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full rounded-xl">
                 <SelectValue placeholder="Gender (Optional)" />
               </SelectTrigger>
               <SelectContent>
@@ -191,7 +205,7 @@ const DoctorsListing = () => {
             </Select>
 
             <Select onValueChange={setAvailability} value={availability}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full rounded-xl">
                 <SelectValue placeholder="Availability" />
               </SelectTrigger>
               <SelectContent>
@@ -202,12 +216,12 @@ const DoctorsListing = () => {
             </Select>
 
             <div className="flex items-center space-x-2">
-              <Label htmlFor="fee-range-min">Fee Range:</Label>
+              <Label htmlFor="fee-range-min" className="font-sans text-muted-gray-blue">Fee Range:</Label>
               <Input
                 id="fee-range-min"
                 type="number"
                 placeholder="Min $"
-                className="w-1/2"
+                className="w-1/2 rounded-xl"
                 value={minFee}
                 onChange={(e) => setMinFee(e.target.value)}
               />
@@ -215,7 +229,7 @@ const DoctorsListing = () => {
                 id="fee-range-max"
                 type="number"
                 placeholder="Max $"
-                className="w-1/2"
+                className="w-1/2 rounded-xl"
                 value={maxFee}
                 onChange={(e) => setMaxFee(e.target.value)}
               />
@@ -226,27 +240,34 @@ const DoctorsListing = () => {
                 id="available-now"
                 checked={showAvailableNow}
                 onCheckedChange={(checked) => setShowAvailableNow(!!checked)}
+                className="rounded"
               />
-              <Label htmlFor="available-now">Show Available Now</Label>
+              <Label htmlFor="available-now" className="font-sans text-muted-gray-blue">Show Available Now</Label>
             </div>
           </div>
-          {/* The "Apply Filters" button is no longer strictly necessary as filters apply on change,
-              but we can keep it for visual consistency or if more complex "apply" logic is needed later. */}
           <div className="mt-6 text-center">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2">
+            <MotionButton className="bg-sky-blue hover:bg-blue-700 text-white px-8 py-2 rounded-xl" whileHover={{ scale: 1.05 }}>
               <SlidersHorizontal className="h-4 w-4 mr-2" /> Apply Filters
-            </Button>
+            </MotionButton>
           </div>
-        </div>
+        </motion.div>
 
         {/* Doctor List */}
         <div className="grid grid-cols-1 gap-6">
           {filteredDoctors.length > 0 ? (
             filteredDoctors.map((doctor) => (
-              <DoctorCard key={doctor.id} doctor={doctor} />
+              <motion.div
+                key={doctor.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <DoctorCard doctor={doctor} />
+              </motion.div>
             ))
           ) : (
-            <p className="text-center text-lg text-gray-600 dark:text-gray-400">No doctors found matching your criteria.</p>
+            <p className="text-center text-lg text-muted-gray-blue dark:text-gray-400 font-sans">No doctors found matching your criteria.</p>
           )}
         </div>
       </div>

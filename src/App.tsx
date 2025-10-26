@@ -2,8 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"; // Added useLocation
-import { AnimatePresence, motion } from "framer-motion"; // Added motion and AnimatePresence
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import Home from "./pages/Home";
 import DoctorsListing from "./pages/DoctorsListing";
 import DoctorProfilePage from "./pages/DoctorProfilePage";
@@ -16,8 +16,9 @@ import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  const location = useLocation(); // Hook to get current location for AnimatePresence
+// This component will contain the routes and useLocation hook
+const AppContent = () => {
+  const location = useLocation();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -27,8 +28,8 @@ const App = () => {
         <div className="flex flex-col min-h-screen">
           <Navbar />
           <main className="flex-grow">
-            <AnimatePresence mode="wait"> {/* Added AnimatePresence */}
-              <Routes location={location} key={location.pathname}> {/* Pass location and key */}
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
                 <Route
                   path="/"
                   element={
@@ -125,10 +126,16 @@ const App = () => {
           </main>
           <Footer />
         </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
+
+// The main App component that wraps AppContent with BrowserRouter
+const App = () => (
+  <BrowserRouter>
+    <AppContent />
+  </BrowserRouter>
+);
 
 export default App;
