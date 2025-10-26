@@ -1,13 +1,90 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X } from "lucide-react";
+import { MessageSquare, X, Send, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { ALL_DOCTORS } from "@/data/doctors";
+import { useSession } from "@/components/SessionContextProvider";
+
+interface ChatMessage {
+  id: number;
+  text: string;
+  sender: 'user' | 'bot';
+}
 
 const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { id: 1, text: "Hello! I'm your DocConnect AI assistant. How can I help you today?", sender: 'bot' },
+  ]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isBotTyping, setIsBotTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const { user } = useSession();
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [messages]);
+
+  const handleSendMessage = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (inputMessage.trim() === "") return;
+
+    const newUserMessage: ChatMessage = { id: messages.length + 1, text: inputMessage, sender: 'user' };
+    setMessages((prevMessages) => [...prevMessages, newUserMessage]);
+    setInputMessage("");
+    setIsBotTyping(true);
+
+    // Simulate AI response
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+
+    let botResponseText = "I'm sorry, I didn't understand that. Can you please rephrase?";
+    let action: (() => void) | null = null;
+
+    const lowerCaseMessage = newUserMessage.text.toLowerCase();
+
+    if (lowerCaseMessage.includes("book appointment") || lowerCaseMessage.includes("make appointment")) {
+      if (user) {
+        const doctorMatch = ALL_DOCTORS.find(doc => lowerCaseMessage.includes(doc.name.toLowerCase()));
+        if (doctorMatch) {
+          botResponseText = `Okay, I can help you book an appointment with ${doctorMatch.name}. Redirecting you to the booking page now.`;
+          action = () => navigate(`/book?doctorId=${doctorMatch.id}`);
+        } else {
+          botResponseText = "Sure, I can help you book an appointment. Please tell me which doctor you'd like to book with, or I can take you to the general booking page.";
+          action = () => navigate('/book');
+        }
+      } else {
+        botResponseText = "You need to be logged in to book an appointment. Would you like to go to the login page?";
+        action = () => navigate('/login');
+      }
+    } else if (lowerCaseMessage.includes("specialization") || lowerCaseMessage.includes("doctors")) {
+      botResponseText = "We have doctors specializing in Cardiology, Neurology, Pediatrics, Dermatology, Orthopedics, and more! You can browse all doctors on our Doctors page.";
+      action = () => navigate('/doctors');
+    } else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi")) {
+      botResponseText = "Hello there! How can I assist you today?";
+    } else if (lowerCaseMessage.includes("contact")) {
+      botResponseText = "You can reach us via our Contact Us page for more details.";
+      action = () => navigate('/contact');
+    } else if (lowerCaseMessage.includes("about")) {
+      botResponseText = "Learn more about us on our About Us page!";
+      action = () => navigate('/about');
+    }
+
+    const newBotMessage: ChatMessage = { id: messages.length + 2, text: botResponseText, sender: 'bot' };
+    setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+    setIsBotTyping(false);
+
+    if (action) {
+      setTimeout(action, 1500); // Give user a moment to read bot's message
+    }
+  };
 
   return (
     <>
@@ -32,26 +109,45 @@ const ChatbotWidget = () => {
                   <X className="h-5 w-5" />
                 </Button>
               </CardHeader>
-              <CardContent className="p-4 h-64 overflow-y-auto bg-background-light dark:bg-heading-dark rounded-b-2xl">
-                <p className="text-sm text-muted-text font-sans">
-                  Hello! I'm your AI assistant. How can I help you today?
-                </p>
-                {/* Placeholder for chat messages */}
-                <div className="mt-4 p-2 bg-primary-blue/10 dark:bg-primary-blue/20 rounded-lg text-sm font-sans">
-                  <p>Example: "How do I book an appointment?"</p>
-                </div>
-                <div className="mt-2 p-2 bg-primary-blue/10 dark:bg-primary-blue/20 rounded-lg text-sm font-sans">
-                  <p>Example: "What are the symptoms of a cold?"</p>
-                </div>
+              <CardContent className="p-4 h-64 overflow-y-auto bg-background-light dark:bg-heading-dark rounded-b-2xl flex flex-col space-y-3">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[75%] p-2 rounded-lg text-sm font-sans ${
+                        msg.sender === 'user'
+                          ? 'bg-primary-blue text-white rounded-br-none'
+                          : 'bg-muted-foreground/10 text-heading-dark dark:text-gray-50 rounded-bl-none'
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                {isBotTyping && (
+                  <div className="flex justify-start">
+                    <div className="max-w-[75%] p-2 rounded-lg text-sm font-sans bg-muted-foreground/10 text-heading-dark dark:text-gray-50 rounded-bl-none flex items-center">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" /> Typing...
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
               </CardContent>
-              {/* Input area placeholder */}
-              <div className="p-4 border-t bg-card-background dark:bg-card rounded-b-2xl">
-                <input
+              <form onSubmit={handleSendMessage} className="p-4 border-t bg-card-background dark:bg-card rounded-b-2xl flex">
+                <Input
                   type="text"
                   placeholder="Type your message..."
-                  className="w-full p-2 border rounded-xl text-sm font-sans bg-background-light dark:bg-heading-dark dark:text-gray-50"
+                  className="flex-1 p-2 border rounded-xl text-sm font-sans bg-background-light dark:bg-heading-dark dark:text-gray-50 mr-2"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  disabled={isBotTyping}
                 />
-              </div>
+                <Button type="submit" size="icon" className="bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl" disabled={isBotTyping}>
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
             </Card>
           </motion.div>
         )}

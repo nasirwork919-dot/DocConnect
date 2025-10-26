@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { CalendarIcon, CheckCircle2, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion"; // Import motion and AnimatePresence
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,10 +33,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { showSuccess, showError } from "@/utils/toast";
-import { ALL_DOCTORS } from "@/data/doctors"; // Import ALL_DOCTORS from new data file
+import { ALL_DOCTORS } from "@/data/doctors";
+import { supabase } from "@/integrations/supabase/client"; // Import supabase client
+import { useSession } from "@/components/SessionContextProvider"; // Import useSession
 
 // Create a motion-compatible Button component
-const MotionButton = motion.create(Button); // Changed from motion(Button)
+const MotionButton = motion.create(Button);
 
 const formSchema = z.object({
   doctorId: z.string().min(1, { message: "Please select a doctor." }),
@@ -59,6 +61,7 @@ const formSchema = z.object({
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user, isLoading: isSessionLoading } = useSession(); // Get user and loading state from session
   const initialDoctorId = searchParams.get("doctorId");
 
   const [step, setStep] = useState(1);
@@ -119,23 +122,75 @@ const AppointmentBookingPage = () => {
   }, [watchDoctorId, watchAppointmentDate, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!user) {
+      showError("Please log in to book an appointment.");
+      navigate('/login');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert({
+          user_id: user.id,
+          doctor_id: values.doctorId,
+          appointment_date: format(values.appointmentDate, "yyyy-MM-dd"),
+          appointment_time: values.appointmentTime,
+          full_name: values.fullName,
+          email: values.email,
+          phone: values.phone,
+          gender: values.gender,
+          age: values.age,
+          reason_for_visit: values.reasonForVisit,
+        });
+
+      if (error) {
+        throw error;
+      }
+
       console.log("Appointment booked:", values);
       setAppointmentDetails(values);
       setAppointmentConfirmed(true);
       showSuccess("Appointment booked successfully!");
-    } catch (error) {
-      console.error("Booking error:", error);
-      showError("Failed to book appointment. Please try again.");
+    } catch (error: any) {
+      console.error("Booking error:", error.message);
+      showError(`Failed to book appointment: ${error.message || "Please try again."}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const doctor = ALL_DOCTORS.find(d => d.id === form.getValues("doctorId"));
+
+  if (isSessionLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark py-8 font-michroma">
+        <Loader2 className="h-10 w-10 animate-spin text-primary-blue" />
+        <p className="ml-3 text-lg font-sans">Loading user session...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background-light text-heading-dark py-8 font-michroma">
+        <Card className="w-full max-w-md p-6 text-center shadow-[0_4px_14px_rgba(0,0,0,0.07)] rounded-2xl bg-card-background">
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold font-michroma">Authentication Required</CardTitle>
+            <CardDescription className="text-lg font-sans text-muted-text">
+              Please log in or sign up to book an appointment.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MotionButton onClick={() => navigate('/login')} className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+              Go to Login
+            </MotionButton>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (appointmentConfirmed) {
     return (
@@ -240,7 +295,7 @@ const AppointmentBookingPage = () => {
                                 <FormLabel className="font-sans">Appointment Date</FormLabel>
                                 <Popover>
                                   <PopoverTrigger asChild>
-                                    <FormControl> {/* FormControl wraps the element that acts as the trigger */}
+                                    <FormControl>
                                       <MotionButton
                                         variant={"outline"}
                                         className={cn(
@@ -249,7 +304,6 @@ const AppointmentBookingPage = () => {
                                         )}
                                         whileHover={{ scale: 1.02 }}
                                       >
-                                        {/* Wrap these two children in a single div */}
                                         <div className="flex items-center justify-between w-full">
                                           {field.value ? (
                                             format(field.value, "PPP")
@@ -271,7 +325,7 @@ const AppointmentBookingPage = () => {
                                       }}
                                       disabled={(date) =>
                                         date < new Date() ||
-                                        !Object.keys(ALL_DOCTORS.find(d => d.id === watchDoctorId)?.availabilitySchedule || {}).includes(format(date, "EEEE").toLowerCase()) // Check if day is available
+                                        !Object.keys(ALL_DOCTORS.find(d => d.id === watchDoctorId)?.availabilitySchedule || {}).includes(format(date, "EEEE").toLowerCase())
                                       }
                                       initialFocus
                                     />

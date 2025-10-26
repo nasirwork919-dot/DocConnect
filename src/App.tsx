@@ -13,8 +13,10 @@ import ContactUs from "./pages/ContactUs";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import ScrollToTopButton from "./components/ScrollToTopButton"; // Import new component
-import ChatbotWidget from "./components/ChatbotWidget"; // Import new component
+import ScrollToTopButton from "./components/ScrollToTopButton";
+import ChatbotWidget from "./components/ChatbotWidget";
+import Login from "./pages/Login"; // Import Login page
+import { SessionContextProvider } from "./components/SessionContextProvider"; // Import SessionContextProvider
 
 const queryClient = new QueryClient();
 
@@ -33,13 +35,14 @@ const AppContent = () => {
             <AnimatePresence mode="wait">
               {/* Wrap Routes in a motion.div with a key for AnimatePresence to animate */}
               <motion.div key={location.pathname} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                <Routes location={location}> {/* Remove key from Routes here */}
+                <Routes location={location}>
                   <Route path="/" element={<Home />} />
                   <Route path="/doctors" element={<DoctorsListing />} />
                   <Route path="/doctors/:id" element={<DoctorProfilePage />} />
                   <Route path="/book" element={<AppointmentBookingPage />} />
                   <Route path="/about" element={<AboutUs />} />
                   <Route path="/contact" element={<ContactUs />} />
+                  <Route path="/login" element={<Login />} /> {/* Add Login route */}
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
@@ -47,8 +50,8 @@ const AppContent = () => {
             </AnimatePresence>
           </main>
           <Footer />
-          <ScrollToTopButton /> {/* Add ScrollToTopButton */}
-          <ChatbotWidget /> {/* Add ChatbotWidget */}
+          <ScrollToTopButton />
+          <ChatbotWidget />
         </div>
       </TooltipProvider>
     </QueryClientProvider>
@@ -58,7 +61,9 @@ const AppContent = () => {
 // The main App component that wraps AppContent with BrowserRouter
 const App = () => (
   <BrowserRouter>
-    <AppContent />
+    <SessionContextProvider> {/* Wrap AppContent with SessionContextProvider */}
+      <AppContent />
+    </SessionContextProvider>
   </BrowserRouter>
 );
 
