@@ -4,11 +4,18 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Stethoscope } from "lucide-react";
-
+import { Menu, Stethoscope, LogOut, CalendarCheck } from "lucide-react";
+import { useSession } from "@/components/SessionContextProvider"; // Import useSession
+import { supabase } from "@/integrations/supabase/client"; // Import supabase client
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useSession(); // Get user from session context
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsOpen(false); // Close mobile menu on logout
+  };
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -37,9 +44,25 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
+          {user && (
+            <Button asChild variant="ghost" className="text-heading-dark dark:text-gray-200 hover:text-primary-blue dark:hover:text-primary/70 font-sans">
+              <Link to="/my-appointments">
+                <CalendarCheck className="mr-2 h-4 w-4" /> My Appointments
+              </Link>
+            </Button>
+          )}
           <Button asChild className="bg-primary-blue hover:bg-primary-blue/90 text-white font-sans">
             <Link to="/book">Book Appointment</Link>
           </Button>
+          {user ? (
+            <Button onClick={handleLogout} variant="outline" className="border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white font-sans">
+              <LogOut className="mr-2 h-4 w-4" /> Logout
+            </Button>
+          ) : (
+            <Button asChild variant="outline" className="border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white font-sans">
+              <Link to="/login">Login</Link>
+            </Button>
+          )}
         </div>
 
         {/* Mobile Navigation */}
@@ -66,9 +89,25 @@ const Navbar = () => {
                     {link.name}
                   </Link>
                 ))}
+                {user && (
+                  <Button asChild variant="ghost" className="text-heading-dark dark:text-gray-200 hover:text-primary-blue dark:hover:text-primary/70 font-sans w-full justify-start" onClick={() => setIsOpen(false)}>
+                    <Link to="/my-appointments">
+                      <CalendarCheck className="mr-2 h-4 w-4" /> My Appointments
+                    </Link>
+                  </Button>
+                )}
                 <Button asChild className="bg-primary-blue hover:bg-primary-blue/90 text-white mt-4 font-sans" onClick={() => setIsOpen(false)}>
                   <Link to="/book">Book Appointment</Link>
                 </Button>
+                {user ? (
+                  <Button onClick={handleLogout} variant="outline" className="border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white font-sans w-full">
+                    <LogOut className="mr-2 h-4 w-4" /> Logout
+                  </Button>
+                ) : (
+                  <Button asChild variant="outline" className="border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white font-sans w-full">
+                    <Link to="/login">Login</Link>
+                  </Button>
+                )}
               </div>
             </SheetContent>
           </Sheet>

@@ -16,6 +16,7 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ChatbotWidget from "./components/ChatbotWidget";
 import Login from "./pages/Login"; // Import Login page
+import MyAppointments from "./pages/MyAppointments"; // Import MyAppointments page
 import { SessionContextProvider } from "./components/SessionContextProvider"; // Import SessionContextProvider
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const AppContent = () => {
                   <Route path="/about" element={<AboutUs />} />
                   <Route path="/contact" element={<ContactUs />} />
                   <Route path="/login" element={<Login />} /> {/* Add Login route */}
+                  <Route path="/my-appointments" element={<MyAppointments />} /> {/* Add My Appointments route */}
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
