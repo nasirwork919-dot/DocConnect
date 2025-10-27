@@ -24,6 +24,10 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
       setSession(session);
       setUser(session?.user || null);
       setIsLoading(false);
+      // Initial check: if on login page and already authenticated, redirect to home
+      if (session && window.location.pathname === '/login') {
+        navigate('/');
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -33,8 +37,7 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
 
       if (_event === 'SIGNED_OUT') {
         navigate('/login');
-      } else if (_event === 'SIGNED_IN' || _event === 'INITIAL_SESSION') {
-        // Optionally redirect authenticated users from login page
+      } else if (_event === 'SIGNED_IN') { // Only redirect on SIGNED_IN, not INITIAL_SESSION
         if (window.location.pathname === '/login') {
           navigate('/');
         }
