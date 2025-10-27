@@ -21,7 +21,7 @@ const Login = () => {
             <CardTitle className="text-3xl font-bold text-primary-blue dark:text-primary/70 font-michroma">Welcome Back!</CardTitle>
             <p className="text-muted-text dark:text-gray-300 font-sans">Sign in or create an account to continue.</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[400px]"> {/* Added min-h to ensure space */}
             <Auth
               supabaseClient={supabase}
               providers={[]} // Only email/password for now
@@ -46,7 +46,7 @@ const Login = () => {
                     },
                     radii: {
                       borderRadiusButton: '1rem', // rounded-2xl
-                      inputBorderRadius: '1rem', // Fixed: Changed 'input' to 'inputBorderRadius'
+                      inputBorderRadius: '1rem',
                     },
                   },
                 },
