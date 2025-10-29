@@ -105,9 +105,7 @@ const DoctorProfilePage = () => {
               <MotionButton asChild className="bg-primary-blue hover:bg-primary-blue/90 text-white w-full rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
                 <Link to={`/book?doctorId=${doctor.id}`}>Book Appointment</Link>
               </MotionButton>
-              <MotionButton variant="outline" className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
-                <MessageSquare className="h-4 w-4 mr-2" /> Ask via Chatbot
-              </MotionButton>
+              {/* Removed "Ask via Chatbot" button */}
             </div>
           </div>
 

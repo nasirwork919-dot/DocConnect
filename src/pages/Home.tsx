@@ -64,9 +64,7 @@ const Home = () => {
             <MotionButton asChild size="lg" className="bg-white text-primary-blue hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">Book Appointment</Link>
             </MotionButton>
-            <MotionButton asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary-blue text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
-              <Link to="/chatbot">Chat with AI</Link>
-            </MotionButton>
+            {/* Removed "Chat with AI" button */}
           </motion.div>
         </div>
       </section>
@@ -218,7 +216,7 @@ const Home = () => {
                 <CardDescription className="font-sans text-muted-text">Specialized treatment for brain, spinal cord, and nervous system disorders.</CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow duration-300 rounded-2xl bg-card-background">
+            <Card className="text-center p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
               <CardHeader>
                 <Syringe className="mx-auto h-12 w-12 text-primary-blue mb-4" />
                 <CardTitle className="text-xl font-semibold font-michroma">Pediatrics</CardTitle>
@@ -290,22 +288,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* AI Chatbot Section */}
-      <section
-        className="py-16 bg-cover bg-center relative"
-        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=1920&q=80')` }}
-      >
-        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-michroma text-white">Talk to Our AI Assistant</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-white/90">
-            Get instant answers to your health questions and assistance with bookings.
-          </p>
-          <MotionButton asChild size="lg" className="bg-secondary-teal hover:bg-secondary-teal/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
-            <Link to="/chatbot">Launch Chatbot</Link>
-          </MotionButton>
-        </div>
-      </section>
+      {/* Removed AI Chatbot Section */}
 
       {/* Contact/CTA Banner */}
       <section
