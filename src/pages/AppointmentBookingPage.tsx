@@ -58,6 +58,35 @@ const formSchema = z.object({
   reasonForVisit: z.string().min(10, { message: "Please describe your reason for visit (at least 10 characters)." }),
 });
 
+// Helper function to generate time slots from a schedule string (e.g., "9:00 AM - 5:00 PM")
+const generateTimeSlotsForDay = (schedule: string): string[] => {
+  if (!schedule || schedule.toLowerCase() === "closed") return [];
+
+  const [startTimeStr, endTimeStr] = schedule.split(" - ");
+  if (!startTimeStr || !endTimeStr) return [];
+
+  const parseTime = (timeStr: string): Date => {
+    const [time, ampm] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    if (ampm === "PM" && hours !== 12) hours += 12;
+    if (ampm === "AM" && hours === 12) hours = 0; // Midnight
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
+
+  let currentTime = parseTime(startTimeStr);
+  const endTime = parseTime(endTimeStr);
+  const slots: string[] = [];
+
+  while (currentTime.getTime() < endTime.getTime()) {
+    slots.push(format(currentTime, "hh:mm a"));
+    currentTime.setHours(currentTime.getHours() + 1); // Add 1 hour for next slot
+  }
+  return slots;
+};
+
+
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -95,27 +124,15 @@ const AppointmentBookingPage = () => {
     if (watchDoctorId && watchAppointmentDate) {
       const doctor = ALL_DOCTORS.find(d => d.id === watchDoctorId);
       if (doctor) {
-        const formattedDate = format(watchAppointmentDate, "yyyy-MM-dd");
-        // This part needs to be dynamic based on the doctor's availabilitySchedule
-        // For now, using a simplified dummy availability for booking form
-        const dummyBookingAvailability: { [key: string]: string[] } = {
-          "2024-08-10": ["09:00 AM", "10:00 AM", "11:00 AM"],
-          "2024-08-11": ["02:00 PM", "03:00 PM"],
-          "2024-08-12": ["09:00 AM", "10:00 AM", "01:00 PM"],
-          "2024-08-13": ["08:00 AM", "09:00 AM", "10:00 AM"],
-          "2024-08-14": ["01:00 PM", "02:00 PM", "04:00 PM"],
-          "2024-08-15": ["11:00 AM", "12:00 PM", "03:00 PM"],
-          "2024-08-16": ["09:00 AM", "10:00 AM", "02:00 PM"],
-          "2024-08-17": ["09:00 AM", "10:00 AM", "11:00 AM"],
-          "2024-08-18": ["02:00 PM", "03:00 PM"],
-          "2024-08-19": ["09:00 AM", "10:00 AM", "01:00 PM"],
-          "2024-08-20": ["08:00 AM", "09:00 AM", "10:00 AM"],
-          "2024-08-21": ["01:00 PM", "02:00 PM", "04:00 PM"],
-          "2024-08-22": ["11:00 AM", "12:00 PM", "03:00 PM"],
-          "2024-08-23": ["09:00 AM", "10:00 AM", "02:00 PM"],
-        };
-        const slots = dummyBookingAvailability[formattedDate] || [];
-        setAvailableTimeSlots(slots);
+        const dayOfWeek = format(watchAppointmentDate, "EEEE").toLowerCase(); // e.g., "monday"
+        const scheduleForDay = doctor.availabilitySchedule[dayOfWeek];
+
+        if (scheduleForDay && scheduleForDay.toLowerCase() !== "closed") {
+          const slots = generateTimeSlotsForDay(scheduleForDay);
+          setAvailableTimeSlots(slots);
+        } else {
+          setAvailableTimeSlots([]);
+        }
         form.setValue("appointmentTime", ""); // Reset time when date changes
       }
     } else {
@@ -180,7 +197,9 @@ const AppointmentBookingPage = () => {
             {appointmentDetails && (
               <>
                 <p><strong>Doctor:</strong> {ALL_DOCTORS.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
-                <p><strong>Date:</strong> {appointmentDetails.appointmentDate ? format(appointmentDetails.appointmentDate, "PPP") : "N/A"}</p>
+                <p><strong>Date:</strong> (
+                  {appointmentDetails.appointmentDate ? format(appointmentDetails.appointmentDate, "PPP") : "N/A"}
+                )</p>
                 <p><strong>Time:</strong> {appointmentDetails.appointmentTime}</p>
                 <p><strong>Patient:</strong> {appointmentDetails.fullName}</p>
                 <p><strong>Reason:</strong> {appointmentDetails.reasonForVisit}</p>
@@ -298,10 +317,14 @@ const AppointmentBookingPage = () => {
                                         field.onChange(date);
                                         setSelectedDate(date);
                                       }}
-                                      disabled={(date) =>
-                                        date < new Date() ||
-                                        !Object.keys(ALL_DOCTORS.find(d => d.id === watchDoctorId)?.availabilitySchedule || {}).includes(format(date, "EEEE").toLowerCase())
-                                      }
+                                      disabled={(date) => {
+                                        const today = new Date();
+                                        today.setHours(0, 0, 0, 0); // Normalize today to start of day
+                                        const selectedDayOfWeek = format(date, "EEEE").toLowerCase();
+                                        const doctor = ALL_DOCTORS.find(d => d.id === watchDoctorId);
+                                        const isClosed = doctor?.availabilitySchedule[selectedDayOfWeek]?.toLowerCase() === "closed";
+                                        return date < today || isClosed;
+                                      }}
                                       initialFocus
                                     />
                                   </PopoverContent>
