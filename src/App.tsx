@@ -15,9 +15,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ChatbotWidget from "./components/ChatbotWidget";
-import Login from "./pages/Login"; // Import Login page
-import MyAppointments from "./pages/MyAppointments"; // Import MyAppointments page
-import { SessionContextProvider } from "./components/SessionContextProvider"; // Import SessionContextProvider
 
 const queryClient = new QueryClient();
 
@@ -43,8 +40,7 @@ const AppContent = () => {
                   <Route path="/book" element={<AppointmentBookingPage />} />
                   <Route path="/about" element={<AboutUs />} />
                   <Route path="/contact" element={<ContactUs />} />
-                  <Route path="/login" element={<Login />} /> {/* Add Login route */}
-                  <Route path="/my-appointments" element={<MyAppointments />} /> {/* Add My Appointments route */}
+                  {/* Removed Login and My Appointments routes */}
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
@@ -63,9 +59,8 @@ const AppContent = () => {
 // The main App component that wraps AppContent with BrowserRouter
 const App = () => (
   <BrowserRouter>
-    <SessionContextProvider> {/* Wrap AppContent with SessionContextProvider */}
-      <AppContent />
-    </SessionContextProvider>
+    {/* Removed SessionContextProvider wrapper */}
+    <AppContent />
   </BrowserRouter>
 );
 

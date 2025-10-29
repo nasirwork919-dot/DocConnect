@@ -278,17 +278,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Patient Reviews (Placeholder) */}
-      <section className="py-16 bg-background-light">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 font-michroma">What Our Patients Say</h2>
-          <p className="text-lg text-muted-text font-sans">
-            (Placeholder for a testimonials slider component)
-          </p>
-        </div>
-      </section>
-
-      {/* Removed AI Chatbot Section */}
+      {/* Removed Patient Reviews Section */}
 
       {/* Contact/CTA Banner */}
       <section

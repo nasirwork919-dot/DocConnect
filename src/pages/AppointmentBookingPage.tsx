@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
 import { showSuccess, showError } from "@/utils/toast";
 import { ALL_DOCTORS } from "@/data/doctors";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/components/SessionContextProvider";
+// Removed useSession import
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
@@ -61,8 +61,9 @@ const formSchema = z.object({
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user, isLoading: isSessionLoading } = useSession();
-  const initialDoctorId = searchParams.get("doctorId");
+  // Removed user and isLoading from useSession
+
+  const initialDoctorId = searchParams.get("doctorId"); // Moved declaration here
 
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -88,6 +89,7 @@ const AppointmentBookingPage = () => {
 
   const watchDoctorId = form.watch("doctorId");
   const watchAppointmentDate = form.watch("appointmentDate");
+
 
   React.useEffect(() => {
     if (watchDoctorId && watchAppointmentDate) {
@@ -124,17 +126,10 @@ const AppointmentBookingPage = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Booking form submitted. Values:", values); // Log submitted values
 
-    if (!user) {
-      console.warn("User not logged in. Redirecting to login."); // Log warning
-      showError("Please log in to book an appointment.");
-      navigate('/login');
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const bookingData = {
-        user_id: user.id,
+        // Removed user_id as authentication is no longer required
         doctor_id: values.doctorId,
         appointment_date: format(values.appointmentDate, "yyyy-MM-dd"),
         appointment_time: values.appointmentTime,
@@ -170,34 +165,7 @@ const AppointmentBookingPage = () => {
 
   const doctor = ALL_DOCTORS.find(d => d.id === form.getValues("doctorId"));
 
-  if (isSessionLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark py-8 font-michroma">
-        <Loader2 className="h-10 w-10 animate-spin text-primary-blue" />
-        <p className="ml-3 text-lg font-sans">Loading user session...</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background-light text-heading-dark py-8 font-michroma">
-        <Card className="w-full max-w-md p-6 text-center shadow-[0_4px_14px_rgba(0,0,0,0.07)] rounded-2xl bg-card-background">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold font-michroma">Authentication Required</CardTitle>
-            <CardDescription className="text-lg font-sans text-muted-text">
-              Please log in or sign up to book an appointment.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <MotionButton onClick={() => navigate('/login')} className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
-              Go to Login
-            </MotionButton>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Removed loading session and authentication required checks
 
   if (appointmentConfirmed) {
     return (

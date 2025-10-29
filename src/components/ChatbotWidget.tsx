@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { ALL_DOCTORS } from "@/data/doctors";
-import { useSession } from "@/components/SessionContextProvider";
+// Removed useSession import
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 interface ChatMessage {
@@ -26,7 +26,7 @@ const ChatbotWidget = () => {
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { user } = useSession();
+  // Removed user from useSession
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,18 +52,14 @@ const ChatbotWidget = () => {
     const lowerCaseMessage = newUserMessage.text.toLowerCase();
 
     if (lowerCaseMessage.includes("book appointment") || lowerCaseMessage.includes("make appointment")) {
-      if (user) {
-        const doctorMatch = ALL_DOCTORS.find(doc => lowerCaseMessage.includes(doc.name.toLowerCase()));
-        if (doctorMatch) {
-          botResponseText = `Okay, I can help you book an appointment with ${doctorMatch.name}. Redirecting you to the booking page now.`;
-          action = () => navigate(`/book?doctorId=${doctorMatch.id}`);
-        } else {
-          botResponseText = "Sure, I can help you book an appointment. Please tell me which doctor you'd like to book with, or I can take you to the general booking page.";
-          action = () => navigate('/book');
-        }
+      // Removed user check for booking
+      const doctorMatch = ALL_DOCTORS.find(doc => lowerCaseMessage.includes(doc.name.toLowerCase()));
+      if (doctorMatch) {
+        botResponseText = `Okay, I can help you book an appointment with ${doctorMatch.name}. Redirecting you to the booking page now.`;
+        action = () => navigate(`/book?doctorId=${doctorMatch.id}`);
       } else {
-        botResponseText = "You need to be logged in to book an appointment. Would you like to go to the login page?";
-        action = () => navigate('/login');
+        botResponseText = "Sure, I can help you book an appointment. I can take you to the general booking page.";
+        action = () => navigate('/book');
       }
     } else if (lowerCaseMessage.includes("specialization") || lowerCaseMessage.includes("doctors")) {
       botResponseText = "We have doctors specializing in Cardiology, Neurology, Pediatrics, Dermatology, Orthopedics, and more! You can browse all doctors on our Doctors page.";
