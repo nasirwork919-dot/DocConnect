@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { format } from "date-fns";
+import *s z from "zod";
+import { format, addHours, startOfDay } from "date-fns";
 import { CalendarIcon, CheckCircle2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -35,7 +35,6 @@ import { cn } from "@/lib/utils";
 import { showSuccess, showError } from "@/utils/toast";
 import { ALL_DOCTORS } from "@/data/doctors";
 import { supabase } from "@/integrations/supabase/client";
-// Removed useSession import
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
@@ -58,30 +57,14 @@ const formSchema = z.object({
   reasonForVisit: z.string().min(10, { message: "Please describe your reason for visit (at least 10 characters)." }),
 });
 
-// Helper function to generate time slots from a schedule string (e.g., "9:00 AM - 5:00 PM")
-const generateTimeSlotsForDay = (schedule: string): string[] => {
-  if (!schedule || schedule.toLowerCase() === "closed") return [];
-
-  const [startTimeStr, endTimeStr] = schedule.split(" - ");
-  if (!startTimeStr || !endTimeStr) return [];
-
-  const parseTime = (timeStr: string): Date => {
-    const [time, ampm] = timeStr.split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
-    if (ampm === "PM" && hours !== 12) hours += 12;
-    if (ampm === "AM" && hours === 12) hours = 0; // Midnight
-    const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return date;
-  };
-
-  let currentTime = parseTime(startTimeStr);
-  const endTime = parseTime(endTimeStr);
+// Helper function to generate 24-hour time slots
+const generate24HourTimeSlots = (): string[] => {
   const slots: string[] = [];
+  let currentTime = startOfDay(new Date()); // Start at 12:00 AM
 
-  while (currentTime.getTime() < endTime.getTime()) {
+  for (let i = 0; i < 24; i++) {
     slots.push(format(currentTime, "hh:mm a"));
-    currentTime.setHours(currentTime.getHours() + 1); // Add 1 hour for next slot
+    currentTime = addHours(currentTime, 1); // Add 1 hour for next slot
   }
   return slots;
 };
@@ -90,9 +73,8 @@ const generateTimeSlotsForDay = (schedule: string): string[] => {
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  // Removed user and isLoading from useSession
 
-  const initialDoctorId = searchParams.get("doctorId"); // Moved declaration here
+  const initialDoctorId = searchParams.get("doctorId");
 
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -121,32 +103,21 @@ const AppointmentBookingPage = () => {
 
 
   React.useEffect(() => {
+    // With 24-hour availability, we just generate all slots if a doctor and date are selected
     if (watchDoctorId && watchAppointmentDate) {
-      const doctor = ALL_DOCTORS.find(d => d.id === watchDoctorId);
-      if (doctor) {
-        const dayOfWeek = format(watchAppointmentDate, "EEEE").toLowerCase(); // e.g., "monday"
-        const scheduleForDay = doctor.availabilitySchedule[dayOfWeek];
-
-        if (scheduleForDay && scheduleForDay.toLowerCase() !== "closed") {
-          const slots = generateTimeSlotsForDay(scheduleForDay);
-          setAvailableTimeSlots(slots);
-        } else {
-          setAvailableTimeSlots([]);
-        }
-        form.setValue("appointmentTime", ""); // Reset time when date changes
-      }
+      setAvailableTimeSlots(generate24HourTimeSlots());
+      form.setValue("appointmentTime", ""); // Reset time when date changes
     } else {
       setAvailableTimeSlots([]);
     }
   }, [watchDoctorId, watchAppointmentDate, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Booking form submitted. Values:", values); // Log submitted values
+    console.log("Booking form submitted. Values:", values);
 
     setIsSubmitting(true);
     try {
       const bookingData = {
-        // Removed user_id as authentication is no longer required
         doctor_id: values.doctorId,
         appointment_date: format(values.appointmentDate, "yyyy-MM-dd"),
         appointment_time: values.appointmentTime,
@@ -157,23 +128,65 @@ const AppointmentBookingPage = () => {
         age: values.age,
         reason_for_visit: values.reasonForVisit,
       };
-      console.log("Attempting to insert booking data into Supabase:", bookingData); // Log data before insert
+      console.log("Attempting to insert booking data into Supabase:", bookingData);
 
       const { data, error } = await supabase
         .from('bookings')
         .insert(bookingData);
 
       if (error) {
-        console.error("Supabase insert error:", error); // Log detailed Supabase error
+        console.error("Supabase insert error:", error);
         throw error;
       }
 
-      console.log("Appointment booked successfully. Supabase response data:", data); // Log success data
+      console.log("Appointment booked successfully. Supabase response data:", data);
       setAppointmentDetails(values);
       setAppointmentConfirmed(true);
       showSuccess("Appointment booked successfully!");
+
+      // --- Send Confirmation Email via Edge Function ---
+      const doctor = ALL_DOCTORS.find(d => d.id === values.doctorId);
+      if (doctor) {
+        const emailDetails = {
+          to: values.email,
+          subject: "DocConnect: Appointment Confirmation",
+          body: `
+            Dear ${values.fullName},
+
+            Your appointment with Dr. ${doctor.name} (${doctor.specialization}) has been successfully booked!
+
+            Appointment Details:
+            Doctor: Dr. ${doctor.name}
+            Specialization: ${doctor.specialization}
+            Date: ${format(values.appointmentDate, "PPP")}
+            Time: ${values.appointmentTime}
+            Consultation Fee: $${doctor.consultationFee}
+            Reason for Visit: ${values.reasonForVisit || "Not specified"}
+
+            We look forward to seeing you.
+
+            Best regards,
+            DocConnect Team
+          `,
+        };
+
+        const { data: emailData, error: emailError } = await supabase.functions.invoke('send-booking-confirmation', {
+          body: emailDetails,
+        });
+
+        if (emailError) {
+          console.error("Error invoking email function:", emailError);
+          showError("Booking confirmed, but failed to send confirmation email.");
+        } else {
+          console.log("Email function invoked successfully:", emailData);
+        }
+      } else {
+        console.warn("Doctor not found for email confirmation.");
+      }
+      // --- End Email Logic ---
+
     } catch (error: any) {
-      console.error("Booking process failed:", error.message); // Log general error message
+      console.error("Booking process failed:", error.message);
       showError(`Failed to book appointment: ${error.message || "Please try again."}`);
     } finally {
       setIsSubmitting(false);
@@ -181,8 +194,6 @@ const AppointmentBookingPage = () => {
   };
 
   const doctor = ALL_DOCTORS.find(d => d.id === form.getValues("doctorId"));
-
-  // Removed loading session and authentication required checks
 
   if (appointmentConfirmed) {
     return (
@@ -197,9 +208,7 @@ const AppointmentBookingPage = () => {
             {appointmentDetails && (
               <>
                 <p><strong>Doctor:</strong> {ALL_DOCTORS.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
-                <p><strong>Date:</strong> (
-                  {appointmentDetails.appointmentDate ? format(appointmentDetails.appointmentDate, "PPP") : "N/A"}
-                )</p>
+                <p><strong>Date:</strong> {appointmentDetails.appointmentDate ? format(appointmentDetails.appointmentDate, "PPP") : "N/A"}</p>
                 <p><strong>Time:</strong> {appointmentDetails.appointmentTime}</p>
                 <p><strong>Patient:</strong> {appointmentDetails.fullName}</p>
                 <p><strong>Reason:</strong> {appointmentDetails.reasonForVisit}</p>
@@ -320,10 +329,7 @@ const AppointmentBookingPage = () => {
                                       disabled={(date) => {
                                         const today = new Date();
                                         today.setHours(0, 0, 0, 0); // Normalize today to start of day
-                                        const selectedDayOfWeek = format(date, "EEEE").toLowerCase();
-                                        const doctor = ALL_DOCTORS.find(d => d.id === watchDoctorId);
-                                        const isClosed = doctor?.availabilitySchedule[selectedDayOfWeek]?.toLowerCase() === "closed";
-                                        return date < today || isClosed;
+                                        return date < today; // Only disable past dates
                                       }}
                                       initialFocus
                                     />
