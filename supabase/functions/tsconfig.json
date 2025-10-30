@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "lib": ["esnext", "deno.ns"],
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler"
+  },
+  "include": ["./**/*.ts"]
+}

@@ -14,37 +14,33 @@ serve(async (req) => {
   try {
     const { to, subject, body } = await req.json();
 
-    // IMPORTANT: Replace this with your actual email sending logic.
-    // You'll need to use an email service like SendGrid, Resend, Mailgun, etc.
-    // For example, using Resend:
-    // const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-    // if (!RESEND_API_KEY) {
-    //   throw new Error('RESEND_API_KEY not set in Supabase secrets.');
-    // }
-    //
-    // const resendResponse = await fetch('https://api.resend.com/emails', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${RESEND_API_KEY}`,
-    //   },
-    //   body: JSON.stringify({
-    //     from: 'nasir.work516@gmail.com', // Ensure this email is verified in your Resend account
-    //     to: to,
-    //     subject: subject,
-    //     html: body.replace(/\n/g, '<br>'), // Convert newlines to <br> for HTML email
-    //   }),
-    // });
-    //
-    // if (!resendResponse.ok) {
-    //   const errorData = await resendResponse.json();
-    //   throw new Error(`Failed to send email: ${JSON.stringify(errorData)}`);
-    // }
+    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+    if (!RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY not set in Supabase secrets.');
+    }
+    
+    const resendResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'nasir.work516@gmail.com', // Ensure this email is verified in your Resend account
+        to: to,
+        subject: subject,
+        html: body.replace(/\n/g, '<br>'), // Convert newlines to <br> for HTML email
+      }),
+    });
+    
+    if (!resendResponse.ok) {
+      const errorData = await resendResponse.json();
+      throw new Error(`Failed to send email: ${JSON.stringify(errorData)}`);
+    }
 
-    console.log(`Simulating email sent to ${to} with subject: ${subject}`);
-    // In a real scenario, you'd check resendResponse.ok and return success/failure
+    console.log(`Email sent to ${to} with subject: ${subject}`);
 
-    return new Response(JSON.stringify({ message: 'Email function invoked (simulated).' }), {
+    return new Response(JSON.stringify({ message: 'Email sent successfully.' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });

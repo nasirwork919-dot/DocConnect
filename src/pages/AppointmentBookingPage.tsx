@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import *s z from "zod";
+import * as z from "zod"; // Corrected import
 import { format, addHours, startOfDay } from "date-fns";
 import { CalendarIcon, CheckCircle2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
