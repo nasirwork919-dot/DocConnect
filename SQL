@@ -1,0 +1,1 @@
+doctor_id TEXT NOT NULL REFERENCES public.doctors(id) ON DELETE CASCADE,
