@@ -10,6 +10,7 @@ import DoctorProfilePage from "./pages/DoctorProfilePage";
 import AppointmentBookingPage from "./pages/AppointmentBookingPage";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
+import AdminPanel from "./pages/AdminPanel"; // Import AdminPanel
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -40,6 +41,7 @@ const AppContent = () => {
                   <Route path="/book" element={<AppointmentBookingPage />} />
                   <Route path="/about" element={<AboutUs />} />
                   <Route path="/contact" element={<ContactUs />} />
+                  <Route path="/admin" element={<AdminPanel />} /> {/* New Admin Panel Route */}
                   {/* Removed Login and My Appointments routes */}
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

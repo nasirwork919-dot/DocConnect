@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { showSuccess, showError } from "@/utils/toast";
 import { motion } from "framer-motion"; // Import motion
+import { supabase } from "@/integrations/supabase/client"; // Import supabase client
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -32,14 +33,26 @@ const ContactUs = () => {
 
   const onSubmit = async (values: z.infer<typeof contactFormSchema>) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const { error } = await supabase
+        .from('patient_inquiries')
+        .insert({
+          name: values.name,
+          email: values.email,
+          subject: values.subject,
+          message: values.message,
+        });
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        throw new Error(error.message);
+      }
+
       console.log("Contact form submitted:", values);
       showSuccess("Your message has been sent successfully!");
       form.reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Contact form submission error:", error);
-      showError("Failed to send your message. Please try again.");
+      showError(`Failed to send your message: ${error.message || "Please try again."}`);
     }
   };
 
