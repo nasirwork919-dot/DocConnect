@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "lib": ["deno.ns", "deno.window"],
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node"
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["**/*.ts", "supabase-deps.d.ts"]
 }
