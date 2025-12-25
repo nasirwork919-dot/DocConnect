@@ -129,7 +129,7 @@ const DoctorsListing = () => {
                   placeholder="Doctor Name or Specialization"
                   className="w-full rounded-xl font-sans"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                 />
                 <MotionButton className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
                   <Search className="mr-2 h-4 w-4" /> Search
@@ -194,7 +194,7 @@ const DoctorsListing = () => {
                     placeholder="Min $"
                     className="w-1/2 rounded-xl font-sans"
                     value={minFee}
-                    onChange={(e) => setMinFee(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinFee(e.target.value)}
                   />
                   <Input
                     id="fee-range-max"
@@ -202,7 +202,7 @@ const DoctorsListing = () => {
                     placeholder="Max $"
                     className="w-1/2 rounded-xl font-sans"
                     value={maxFee}
-                    onChange={(e) => setMaxFee(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMaxFee(e.target.value)}
                   />
                 </div>
 

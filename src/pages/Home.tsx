@@ -101,7 +101,7 @@ const Home = () => {
               placeholder="Doctor Name or Specialization"
               className="w-full rounded-xl font-sans"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleSearch();

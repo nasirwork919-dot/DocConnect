@@ -136,7 +136,7 @@ const ChatbotWidget = () => {
             placeholder="Type your message..."
             className="flex-1 p-2 border rounded-xl text-sm font-sans bg-background-light dark:bg-heading-dark dark:text-gray-50 mr-2"
             value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputMessage(e.target.value)}
             disabled={isBotTyping}
           />
           <Button type="submit" size="icon" className="bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl" disabled={isBotTyping}>
