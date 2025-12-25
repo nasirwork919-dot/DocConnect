@@ -110,8 +110,8 @@ export {
   TableHeader,
   TableBody,
   TableFooter,
-  TableRow,
   TableHead,
+  TableRow,
   TableCell,
   TableCaption,
 };

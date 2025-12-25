@@ -129,7 +129,7 @@ const DoctorsListing = () => {
                   placeholder="Doctor Name or Specialization"
                   className="w-full rounded-xl font-sans"
                   value={searchTerm}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.currentTarget.value)}
                 />
                 <MotionButton className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
                   <Search className="mr-2 h-4 w-4" /> Search
@@ -194,7 +194,7 @@ const DoctorsListing = () => {
                     placeholder="Min $"
                     className="w-1/2 rounded-xl font-sans"
                     value={minFee}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinFee(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinFee(e.currentTarget.value)}
                   />
                   <Input
                     id="fee-range-max"
@@ -202,7 +202,7 @@ const DoctorsListing = () => {
                     placeholder="Max $"
                     className="w-1/2 rounded-xl font-sans"
                     value={maxFee}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMaxFee(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMaxFee(e.currentTarget.value)}
                   />
                 </div>
 
@@ -217,7 +217,7 @@ const DoctorsListing = () => {
                 </div>
               </div>
               <div className="mt-6 text-center">
-                <MotionButton className="bg-primary-blue hover:bg-primary-blue/90 text-white px-8 py-2 rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+                <MotionButton className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white px-8 py-2 rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
                   <SlidersHorizontal className="h-4 w-4 mr-2" /> Apply Filters
                 </MotionButton>
               </div>
