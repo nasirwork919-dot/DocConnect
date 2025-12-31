@@ -24,7 +24,7 @@ const DoctorCardColumn: React.FC<DoctorCardColumnProps> = ({ doctor }) => {
           <div className="h-28 w-28 md:h-32 md:w-32 rounded-full overflow-hidden border-4 border-white dark:border-card shadow-md">
             <Avatar className="h-full w-full">
               <AvatarImage
-                src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"}
+                src={doctor.profile_photo_url || "/images/doctor-placeholder.jpg"}
                 alt={doctor.name}
                 className="object-cover object-top"
               />
@@ -51,7 +51,7 @@ const DoctorCardColumn: React.FC<DoctorCardColumnProps> = ({ doctor }) => {
               <Briefcase className="h-4 w-4 mr-2 text-primary-blue" /> {doctor.experience} Years Experience
             </p>
             <p className="flex items-center justify-start">
-              <DollarSign className="h-4 w-4 mr-2 text-primary-blue" /> Consultation Fee: ${doctor.consultationFee}
+              <DollarSign className="h-4 w-4 mr-2 text-primary-blue" /> Consultation Fee: ${doctor.consultation_fee}
             </p>
             {doctor.location && (
               <p className="flex items-center justify-start">
@@ -59,7 +59,7 @@ const DoctorCardColumn: React.FC<DoctorCardColumnProps> = ({ doctor }) => {
               </p>
             )}
             <p className="flex items-center justify-start text-sm font-medium text-accent-yellow">
-              <CalendarDays className="h-4 w-4 mr-2" /> {doctor.availabilityStatus}
+              <CalendarDays className="h-4 w-4 mr-2" /> {doctor.availability_status}
             </p>
           </CardContent>
         </div>

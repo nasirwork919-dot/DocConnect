@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Import useEffect
 import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"; // Corrected import path
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod"; // Corrected import
+import * as z from "zod";
 import { format, addHours, startOfDay } from "date-fns";
 import { CalendarIcon, CheckCircle2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,10 +33,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { showSuccess, showError } from "@/utils/toast";
-import { ALL_DOCTORS } from "@/data/doctors";
+import { fetchAllDoctors, Doctor } from "@/data/doctors"; // Import fetchAllDoctors
 import { supabase } from "@/integrations/supabase/client";
 
-// Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
 
 const formSchema = z.object({
@@ -57,18 +56,16 @@ const formSchema = z.object({
   reasonForVisit: z.string().min(10, { message: "Please describe your reason for visit (at least 10 characters)." }),
 });
 
-// Helper function to generate 24-hour time slots
 const generate24HourTimeSlots = (): string[] => {
   const slots: string[] = [];
-  let currentTime = startOfDay(new Date()); // Start at 12:00 AM
+  let currentTime = startOfDay(new Date());
 
   for (let i = 0; i < 24; i++) {
     slots.push(format(currentTime, "hh:mm a"));
-    currentTime = addHours(currentTime, 1); // Add 1 hour for next slot
+    currentTime = addHours(currentTime, 1);
   }
   return slots;
 };
-
 
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams();
@@ -82,6 +79,18 @@ const AppointmentBookingPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [appointmentConfirmed, setAppointmentConfirmed] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState<z.infer<typeof formSchema> | null>(null);
+  const [allDoctors, setAllDoctors] = useState<Doctor[]>([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(true);
+
+  useEffect(() => {
+    const getDoctors = async () => {
+      setLoadingDoctors(true);
+      const fetchedDoctors = await fetchAllDoctors();
+      setAllDoctors(fetchedDoctors);
+      setLoadingDoctors(false);
+    };
+    getDoctors();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,20 +110,16 @@ const AppointmentBookingPage = () => {
   const watchDoctorId = form.watch("doctorId");
   const watchAppointmentDate = form.watch("appointmentDate");
 
-
-  React.useEffect(() => {
-    // With 24-hour availability, we just generate all slots if a doctor and date are selected
+  useEffect(() => {
     if (watchDoctorId && watchAppointmentDate) {
       setAvailableTimeSlots(generate24HourTimeSlots());
-      form.setValue("appointmentTime", ""); // Reset time when date changes
+      form.setValue("appointmentTime", "");
     } else {
       setAvailableTimeSlots([]);
     }
   }, [watchDoctorId, watchAppointmentDate, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Booking form submitted. Values:", values);
-
     setIsSubmitting(true);
     try {
       const bookingData = {
@@ -128,7 +133,6 @@ const AppointmentBookingPage = () => {
         age: values.age,
         reason_for_visit: values.reasonForVisit,
       };
-      console.log("Attempting to insert booking data into Supabase:", bookingData);
 
       const { data, error } = await supabase
         .from('bookings')
@@ -139,13 +143,9 @@ const AppointmentBookingPage = () => {
         throw error;
       }
 
-      console.log("Appointment booked successfully. Supabase response data:", data);
       setAppointmentDetails(values);
       setAppointmentConfirmed(true);
       showSuccess("Appointment booked successfully!");
-
-      // Removed email confirmation via Edge Function
-      // The user requested to remove email functionality and rely on the pop-up.
 
     } catch (error: any) {
       console.error("Booking process failed:", error.message);
@@ -155,7 +155,7 @@ const AppointmentBookingPage = () => {
     }
   };
 
-  const doctor = ALL_DOCTORS.find(d => d.id === form.getValues("doctorId"));
+  const doctor = allDoctors.find(d => d.id === form.getValues("doctorId"));
 
   if (appointmentConfirmed) {
     return (
@@ -169,7 +169,7 @@ const AppointmentBookingPage = () => {
           <CardContent className="space-y-4 font-sans text-heading-dark dark:text-gray-50">
             {appointmentDetails && (
               <>
-                <p><strong>Doctor:</strong> {ALL_DOCTORS.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
+                <p><strong>Doctor:</strong> {allDoctors.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
                 <p><strong>Date:</strong> {appointmentDetails.appointmentDate ? format(appointmentDetails.appointmentDate, "PPP") : "N/A"}</p>
                 <p><strong>Time:</strong> {appointmentDetails.appointmentTime}</p>
                 <p><strong>Patient:</strong> {appointmentDetails.fullName}</p>
@@ -184,6 +184,14 @@ const AppointmentBookingPage = () => {
             </MotionButton>
           </CardContent>
         </Card>
+      </div>
+    );
+  }
+
+  if (loadingDoctors) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark font-michroma">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-blue" />
       </div>
     );
   }
@@ -238,9 +246,9 @@ const AppointmentBookingPage = () => {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {ALL_DOCTORS.map((doc) => (
+                                {allDoctors.map((doc) => (
                                   <SelectItem key={doc.id} value={doc.id} className="font-sans">
-                                    {doc.name} - {doc.specialization} (${doc.consultationFee})
+                                    {doc.name} - {doc.specialization} (${doc.consultation_fee})
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -290,8 +298,8 @@ const AppointmentBookingPage = () => {
                                       }}
                                       disabled={(date) => {
                                         const today = new Date();
-                                        today.setHours(0, 0, 0, 0); // Normalize today to start of day
-                                        return date < today; // Only disable past dates
+                                        today.setHours(0, 0, 0, 0);
+                                        return date < today;
                                       }}
                                       initialFocus
                                     />
@@ -518,7 +526,7 @@ const AppointmentBookingPage = () => {
                           <p><strong>Doctor:</strong> {doctor?.name} ({doctor?.specialization})</p>
                           <p><strong>Date:</strong> {form.getValues("appointmentDate") ? format(form.getValues("appointmentDate"), "PPP") : "N/A"}</p>
                           <p><strong>Time:</strong> {form.getValues("appointmentTime")}</p>
-                          <p><strong>Consultation Fee:</strong> ${doctor?.consultationFee}</p>
+                          <p><strong>Consultation Fee:</strong> ${doctor?.consultation_fee}</p>
                           <p><strong>Patient Name:</strong> {form.getValues("fullName")}</p>
                           <p><strong>Email:</strong> {form.getValues("email")}</p>
                           <p><strong>Phone:</strong> {form.getValues("phone")}</p>

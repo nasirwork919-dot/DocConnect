@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { showError } from "@/utils/toast";
-import { ALL_DOCTORS } from "@/data/doctors"; // Import ALL_DOCTORS
+import { fetchAllDoctors, Doctor } from "@/data/doctors"; // Import fetchAllDoctors and Doctor
 
 interface DoctorAttendance {
   id: string;
@@ -19,11 +19,16 @@ interface DoctorAttendance {
 
 const AttendanceTab = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<DoctorAttendance[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAttendance = async () => {
+    const fetchData = async () => {
       setLoading(true);
+      // Fetch doctors first to map doctor_id to name
+      const fetchedDoctors = await fetchAllDoctors();
+      setDoctors(fetchedDoctors);
+
       const { data, error } = await supabase
         .from('doctor_attendance')
         .select('*')
@@ -38,11 +43,11 @@ const AttendanceTab = () => {
       setLoading(false);
     };
 
-    fetchAttendance();
+    fetchData();
   }, []);
 
   const getDoctorName = (doctorId: string) => {
-    const doctor = ALL_DOCTORS.find(d => d.id === doctorId);
+    const doctor = doctors.find(d => d.id === doctorId);
     return doctor ? doctor.name : "Unknown Doctor";
   };
 

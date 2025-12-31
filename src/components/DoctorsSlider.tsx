@@ -1,19 +1,30 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import DoctorCardColumn from "./DoctorCardColumn"; // Changed to DoctorCardColumn
-import { Doctor } from "@/data/doctors";
+import DoctorCardColumn from "./DoctorCardColumn";
+import { Doctor, fetchAllDoctors } from "@/data/doctors"; // Import fetchAllDoctors
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react"; // Import Loader2 for loading state
 
-interface DoctorsSliderProps {
-  doctors: Doctor[];
-}
+const DoctorsSlider: React.FC = () => {
+  const [doctors, setDoctors] = React.useState<Doctor[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
-const DoctorsSlider: React.FC<DoctorsSliderProps> = ({ doctors }) => {
+  useEffect(() => {
+    const getDoctors = async () => {
+      setLoading(true);
+      const fetchedDoctors = await fetchAllDoctors();
+      // For the slider, we might still want a curated list, e.g., top 6
+      setDoctors(fetchedDoctors.slice(0, 6));
+      setLoading(false);
+    };
+    getDoctors();
+  }, []);
+
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, align: "start" },
     [Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })]
@@ -57,13 +68,25 @@ const DoctorsSlider: React.FC<DoctorsSliderProps> = ({ doctors }) => {
     emblaApi.on("select", onSelect);
   }, [emblaApi, onInit, onSelect]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-blue" />
+      </div>
+    );
+  }
+
+  if (doctors.length === 0) {
+    return <p className="text-center text-muted-text font-sans">No doctors available for the slider.</p>;
+  }
+
   return (
     <div className="relative">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex -ml-4">
           {doctors.map((doctor) => (
             <div key={doctor.id} className="flex-none w-full sm:w-1/2 lg:w-1/3 pl-4">
-              <DoctorCardColumn doctor={doctor} /> {/* Using DoctorCardColumn here */}
+              <DoctorCardColumn doctor={doctor} />
             </div>
           ))}
         </div>

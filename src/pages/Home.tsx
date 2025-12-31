@@ -6,10 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CalendarIcon, Stethoscope, Heart, Brain, Syringe, Phone, Mail, MapPin, Search, MessageSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import DoctorCard from "@/components/DoctorCard"; // Import DoctorCard
-import { TOP_DOCTORS } from "@/data/doctors"; // Import TOP_DOCTORS from new data file
-import React, { useState } from "react"; // Import useState
+import DoctorCard from "@/components/DoctorCard";
+import { fetchAllDoctors, Doctor } from "@/data/doctors"; // Import fetchAllDoctors and Doctor interface
+import React, { useState, useEffect } from "react"; // Import useState, useEffect
 import DoctorsSlider from "@/components/DoctorsSlider"; // Import the new DoctorsSlider component
+import { Loader2 } from "lucide-react"; // Import Loader2 for loading state
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
@@ -18,6 +19,19 @@ const Home = () => {
   const navigate = useNavigate();
   const [specialization, setSpecialization] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [topDoctors, setTopDoctors] = useState<Doctor[]>([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(true);
+
+  useEffect(() => {
+    const getTopDoctors = async () => {
+      setLoadingDoctors(true);
+      const allDoctors = await fetchAllDoctors();
+      // For the Home page, we might want a smaller, curated list
+      setTopDoctors(allDoctors.slice(0, 6));
+      setLoadingDoctors(false);
+    };
+    getTopDoctors();
+  }, []);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -34,10 +48,10 @@ const Home = () => {
     <div className="min-h-screen bg-background-light text-heading-dark font-michroma">
       {/* Hero Banner */}
       <section
-        className="relative bg-cover bg-center py-20 md:py-32 bg-fixed" // Added bg-fixed here
+        className="relative bg-cover bg-center py-20 md:py-32 bg-fixed"
         style={{ backgroundImage: `url('https://i.pinimg.com/736x/6c/37/78/6c37789996911b63291ba857a6f16b42.jpg')` }}
       >
-        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -64,7 +78,6 @@ const Home = () => {
             <MotionButton asChild size="lg" className="bg-white text-primary-blue hover:bg-gray-100 text-lg px-8 py-6 rounded-full shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">Book Appointment</Link>
             </MotionButton>
-            {/* Removed "Chat with AI" button */}
           </motion.div>
         </div>
       </section>
@@ -120,7 +133,7 @@ const Home = () => {
         className="py-16 bg-cover bg-center relative bg-fixed"
         style={{ backgroundImage: `url('https://i.pinimg.com/736x/52/9d/46/529d4645214be0ddfd96682c36b602d5.jpg')` }}
       >
-        <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80"></div>
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 font-michroma">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -181,10 +194,16 @@ const Home = () => {
         className="py-16 bg-cover bg-center relative"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1606813902741-3b64d41b2b68?auto=format&fit=crop&w=1920&q=80')` }}
       >
-        <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80"></div>
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-heading-dark dark:text-white font-michroma">Meet Our Top Doctors</h2>
-          <DoctorsSlider doctors={TOP_DOCTORS} />
+          {loadingDoctors ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="h-8 w-8 animate-spin text-primary-blue" />
+            </div>
+          ) : (
+            <DoctorsSlider />
+          )}
           <div className="text-center mt-10">
             <MotionButton asChild size="lg" className="bg-primary-blue hover:bg-primary-blue/90 text-white rounded-full px-8 py-6 shadow-lg font-sans" whileHover={{ scale: 1.05 }}>
               <Link to="/doctors">View All Doctors</Link>
@@ -234,7 +253,7 @@ const Home = () => {
         className="py-16 bg-cover bg-center relative"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1576765607924-3e83b4eb2b51?auto=format&fit=crop&w=1920&q=80')` }}
       >
-        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div>
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white font-michroma">Why Choose Us?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -278,14 +297,12 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Removed Patient Reviews Section */}
-
       {/* Contact/CTA Banner */}
       <section
         className="bg-cover bg-center relative py-16"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1587502536263-54e43e9a6d7f?auto=format&fit=crop&w=1920&q=80')` }}
       >
-        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div> {/* Overlay */}
+        <div className="absolute inset-0 bg-primary-blue/40 dark:bg-primary-blue/80"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-michroma text-white">Need Help? Contact Us!</h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto font-sans text-white/90">

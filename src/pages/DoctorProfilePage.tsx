@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,21 +13,41 @@ import {
   CalendarDays,
   MapPin,
   Mail,
-  MessageSquare,
   Star,
   Languages,
   Hospital,
   Clock,
+  Loader2,
 } from "lucide-react";
-import { motion } from "framer-motion"; // Import motion
-import { ALL_DOCTORS } from "@/data/doctors"; // Import ALL_DOCTORS from new data file
+import { motion } from "framer-motion";
+import { Doctor, fetchDoctorById } from "@/data/doctors"; // Import fetchDoctorById
 
-// Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
 
 const DoctorProfilePage = () => {
   const { id } = useParams<{ id: string }>();
-  const doctor = ALL_DOCTORS.find((d) => d.id === id);
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getDoctor = async () => {
+      if (id) {
+        setLoading(true);
+        const fetchedDoctor = await fetchDoctorById(id);
+        setDoctor(fetchedDoctor);
+        setLoading(false);
+      }
+    };
+    getDoctor();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark font-michroma">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-blue" />
+      </div>
+    );
+  }
 
   if (!doctor) {
     return (
@@ -64,7 +84,7 @@ const DoctorProfilePage = () => {
               className="flex-shrink-0"
             >
               <Avatar className="h-32 w-32 md:h-48 md:w-48">
-                <AvatarImage src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"} alt={doctor.name} className="object-cover object-top" />
+                <AvatarImage src={doctor.profile_photo_url || "/images/doctor-placeholder.jpg"} alt={doctor.name} className="object-cover object-top" />
                 <AvatarFallback className="text-5xl bg-muted-foreground/20 text-foreground">
                   {doctor.name.split(" ").map(n => n[0]).join("")}
                 </AvatarFallback>
@@ -78,8 +98,8 @@ const DoctorProfilePage = () => {
               </p>
               <div className="flex items-center justify-center md:justify-start gap-2 mb-4 font-sans">
                 <Star className="h-5 w-5 text-accent-yellow" fill="currentColor" />
-                <span className="text-lg font-semibold">{doctor.averageRating}</span>
-                <span className="text-muted-text">({doctor.reviewsCount} Reviews)</span>
+                <span className="text-lg font-semibold">{doctor.average_rating}</span>
+                <span className="text-muted-text">({doctor.reviews_count} Reviews)</span>
               </div>
               <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
                 {doctor.qualifications.map((q, index) => (
@@ -96,7 +116,7 @@ const DoctorProfilePage = () => {
                   <Hospital className="h-4 w-4 mr-2" /> {doctor.hospital}
                 </p>
                 <p className="flex items-center">
-                  <DollarSign className="h-4 w-4 mr-2" /> Fee: ${doctor.consultationFee}
+                  <DollarSign className="h-4 w-4 mr-2" /> Fee: ${doctor.consultation_fee}
                 </p>
               </div>
             </div>
@@ -105,7 +125,6 @@ const DoctorProfilePage = () => {
               <MotionButton asChild className="bg-primary-blue hover:bg-primary-blue/90 text-white w-full rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
                 <Link to={`/book?doctorId=${doctor.id}`}>Book Appointment</Link>
               </MotionButton>
-              {/* Removed "Ask via Chatbot" button */}
             </div>
           </div>
 
@@ -130,7 +149,7 @@ const DoctorProfilePage = () => {
               <h3 className="text-xl font-semibold mb-3 flex items-center font-michroma">
                 <Mail className="h-5 w-5 mr-2 text-primary-blue" /> Contact
               </h3>
-              <p className="text-muted-text mb-6 font-sans">{doctor.contactEmail}</p>
+              <p className="text-muted-text mb-6 font-sans">{doctor.contact_email}</p>
             </div>
 
             <div>
@@ -139,8 +158,8 @@ const DoctorProfilePage = () => {
                 <CardContent className="p-0 font-sans">
                   <p className="flex items-center text-lg font-semibold text-heading-dark dark:text-gray-50">
                     <Clock className="h-5 w-5 mr-2 text-primary-blue" /> Current Status:
-                    <Badge className={`ml-2 ${getStatusColor(doctor.realtimeStatus)} text-white font-sans rounded-md`}>
-                      {doctor.realtimeStatus}
+                    <Badge className={`ml-2 ${getStatusColor(doctor.realtime_status)} text-white font-sans rounded-md`}>
+                      {doctor.realtime_status}
                     </Badge>
                   </p>
                 </CardContent>
@@ -148,11 +167,11 @@ const DoctorProfilePage = () => {
 
               <h3 className="text-xl font-semibold mb-3 font-michroma">Schedule</h3>
               <div className="space-y-2 text-muted-text font-sans mb-6">
-                {Object.entries(doctor.availabilitySchedule).map(([day, time]: [string, string]) => (
+                {Object.entries(doctor.availability_schedule).map(([day, time]: [string, string]) => (
                   <motion.div
                     key={day}
                     className="flex justify-between p-2 rounded-md hover:bg-muted/50 transition-colors duration-200"
-                    whileHover={{ x: 5 }} // Simple hover animation for schedule items
+                    whileHover={{ x: 5 }}
                   >
                     <span className="font-medium capitalize">{day}:</span>
                     <span>{time}</span>
@@ -164,8 +183,8 @@ const DoctorProfilePage = () => {
               <Card className="p-0 rounded-2xl">
                 <Calendar
                   mode="single"
-                  selected={new Date()} // Placeholder for selected date
-                  onSelect={() => {}} // Placeholder for date selection
+                  selected={new Date()}
+                  onSelect={() => {}}
                   className="rounded-2xl border w-full"
                 />
               </Card>

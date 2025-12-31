@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,15 +6,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import DoctorCard from "@/components/DoctorCard";
-import { SlidersHorizontal, Search } from "lucide-react";
-import { motion, useInView } from "framer-motion"; // Import useInView
-import { ALL_DOCTORS, Doctor } from "@/data/doctors"; // Import ALL_DOCTORS from new data file
+import { SlidersHorizontal, Search, Loader2 } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { fetchAllDoctors, Doctor } from "@/data/doctors"; // Import fetchAllDoctors
 
-// Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
 
 const DoctorsListing = () => {
   const [searchParams] = useSearchParams();
+
+  const [allDoctors, setAllDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [specialization, setSpecialization] = useState(searchParams.get("specialization") || "all");
   const [location, setLocation] = useState(searchParams.get("location") || "all");
@@ -25,7 +27,16 @@ const DoctorsListing = () => {
   const [showAvailableNow, setShowAvailableNow] = useState(searchParams.get("availableNow") === "true");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
 
-  // Refs for filter sections
+  useEffect(() => {
+    const getDoctors = async () => {
+      setLoading(true);
+      const fetchedDoctors = await fetchAllDoctors();
+      setAllDoctors(fetchedDoctors);
+      setLoading(false);
+    };
+    getDoctors();
+  }, []);
+
   const quickSearchRef = useRef(null);
   const quickSearchInView = useInView(quickSearchRef, { amount: 0.1 });
 
@@ -33,39 +44,32 @@ const DoctorsListing = () => {
   const advancedFiltersInView = useInView(advancedFiltersRef, { amount: 0.1 });
 
   const filteredDoctors = useMemo(() => {
-    return ALL_DOCTORS.filter((doctor: Doctor) => {
-      // Search Term Filter
+    return allDoctors.filter((doctor: Doctor) => {
       const matchesSearchTerm = searchTerm
         ? doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase())
         : true;
 
-      // Specialization Filter
       const matchesSpecialization =
         specialization === "all" || doctor.specialization.toLowerCase() === specialization;
 
-      // Location Filter
       const matchesLocation =
         location === "all" || doctor.location.toLowerCase() === location;
 
-      // Gender Filter
-  const matchesGender =
-    gender === "any" || doctor.gender.toLowerCase() === gender;
+      const matchesGender =
+        gender === "any" || doctor.gender.toLowerCase() === gender;
 
-      // Availability Filter
       const matchesAvailability =
         availability === "any" ||
-        (availability === "today" && doctor.availabilityStatus.includes("Today")) ||
-        (availability === "tomorrow" && doctor.availabilityStatus.includes("Tomorrow"));
+        (availability === "today" && doctor.availability_status.includes("Today")) ||
+        (availability === "tomorrow" && doctor.availability_status.includes("Tomorrow"));
 
-      // Fee Range Filter
-      const fee = doctor.consultationFee; // Use consultationFee from Doctor interface
+      const fee = doctor.consultation_fee;
       const matchesMinFee = minFee === "" || fee >= parseFloat(minFee);
       const matchesMaxFee = maxFee === "" || fee <= parseFloat(maxFee);
 
-      // Show Available Now Filter
       const matchesAvailableNow = showAvailableNow
-        ? doctor.availabilityStatus === "Now Available"
+        ? doctor.availability_status === "Now Available"
         : true;
 
       return (
@@ -79,21 +83,27 @@ const DoctorsListing = () => {
         matchesAvailableNow
       );
     });
-  }, [specialization, location, gender, availability, minFee, maxFee, showAvailableNow, searchTerm]);
+  }, [allDoctors, specialization, location, gender, availability, minFee, maxFee, showAvailableNow, searchTerm]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark font-michroma">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-blue" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background-light text-heading-dark py-8 font-michroma">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-10 font-michroma">Our Doctors</h1>
 
-        {/* Filters Section with Fixed Background */}
         <section
           className="relative bg-cover bg-center py-12 rounded-2xl mb-8 bg-fixed"
           style={{ backgroundImage: `url('https://i.pinimg.com/736x/70/5c/6c/705c6ceed87510dc18ea86fcc048cb5d.jpg')` }}
         >
-          <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80 rounded-2xl"></div> {/* Overlay */}
+          <div className="absolute inset-0 bg-background-light/80 dark:bg-heading-dark/80 rounded-2xl"></div>
           <div className="relative z-10 container mx-auto px-4">
-            {/* Quick Doctor Search */}
             <motion.div
               ref={quickSearchRef}
               animate={{ opacity: quickSearchInView ? 1 : 0, y: quickSearchInView ? 0 : 20 }}
@@ -137,7 +147,6 @@ const DoctorsListing = () => {
               </div>
             </motion.div>
 
-            {/* Advanced Filters Section */}
             <motion.div
               ref={advancedFiltersRef}
               animate={{ opacity: advancedFiltersInView ? 1 : 0, y: advancedFiltersInView ? 0 : 20 }}
@@ -225,7 +234,6 @@ const DoctorsListing = () => {
           </div>
         </section>
 
-        {/* Doctor List */}
         <h2 className="text-2xl font-bold mb-6 font-michroma">
           {filteredDoctors.length} Doctor{filteredDoctors.length !== 1 ? "s" : ""} Found
         </h2>
@@ -236,7 +244,7 @@ const DoctorsListing = () => {
                 key={doctor.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.1 }} // Changed once to false for continuous animation
+                viewport={{ once: false, amount: 0.1 }}
                 transition={{ duration: 0.5 }}
               >
                 <DoctorCard doctor={doctor} />
