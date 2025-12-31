@@ -4,12 +4,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, X, Send, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { ALL_DOCTORS } from "@/data/doctors";
-// Removed useSession import
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { supabase } from "@/integrations/supabase/client"; // Import supabase client
 
 interface ChatMessage {
   id: number;
@@ -19,14 +18,47 @@ interface ChatMessage {
 
 const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: 1, text: "Hello! I'm your DocConnect AI assistant. How can I help you today?", sender: 'bot' },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  // Removed user from useSession
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  // Generate a session ID on component mount if not already present
+  useEffect(() => {
+    let currentSessionId = localStorage.getItem('chatbotSessionId');
+    if (!currentSessionId) {
+      currentSessionId = crypto.randomUUID();
+      localStorage.setItem('chatbotSessionId', currentSessionId);
+    }
+    setSessionId(currentSessionId);
+
+    // Load initial messages from history if available
+    const loadChatHistory = async () => {
+      if (currentSessionId) {
+        const { data, error } = await supabase
+          .from('chatbot_messages')
+          .select('sender, message_content, id')
+          .eq('session_id', currentSessionId)
+          .order('timestamp', { ascending: true });
+
+        if (error) {
+          console.error("Error loading chat history:", error);
+          setMessages([{ id: 1, text: "Hello! I'm your DocConnect AI assistant. How can I help you today?", sender: 'bot' }]);
+        } else if (data && data.length > 0) {
+          setMessages(data.map((msg, index) => ({
+            id: msg.id || index + 1, // Use DB ID if available, fallback to index
+            text: msg.message_content,
+            sender: msg.sender as 'user' | 'bot',
+          })));
+        } else {
+          setMessages([{ id: 1, text: "Hello! I'm your DocConnect AI assistant. How can I help you today?", sender: 'bot' }]);
+        }
+      }
+    };
+    loadChatHistory();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,50 +68,49 @@ const ChatbotWidget = () => {
 
   const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (inputMessage.trim() === "") return;
+    if (inputMessage.trim() === "" || !sessionId) return;
 
     const newUserMessage: ChatMessage = { id: messages.length + 1, text: inputMessage, sender: 'user' };
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
     setInputMessage("");
     setIsBotTyping(true);
 
-    // Simulate AI response
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+    try {
+      // Save user message to Supabase history
+      const { error: userMessageError } = await supabase.from('chatbot_messages').insert({
+        session_id: sessionId,
+        sender: 'user',
+        message_content: newUserMessage.text,
+      });
+      if (userMessageError) console.error("Error saving user message to history:", userMessageError);
 
-    let botResponseText = "I'm sorry, I didn't understand that. Can you please rephrase?";
-    let action: (() => void) | null = null;
+      // Call the AI Edge Function
+      const response = await supabase.functions.invoke('chatbot-ai', {
+        body: {
+          messages: [{ role: 'user', content: newUserMessage.text }], // Only send the latest message for the AI to process
+          sessionId: sessionId,
+        },
+      });
 
-    const lowerCaseMessage = newUserMessage.text.toLowerCase();
-
-    if (lowerCaseMessage.includes("book appointment") || lowerCaseMessage.includes("make appointment")) {
-      // Removed user check for booking
-      const doctorMatch = ALL_DOCTORS.find(doc => lowerCaseMessage.includes(doc.name.toLowerCase()));
-      if (doctorMatch) {
-        botResponseText = `Okay, I can help you book an appointment with ${doctorMatch.name}. Redirecting you to the booking page now.`;
-        action = () => navigate(`/book?doctorId=${doctorMatch.id}`);
-      } else {
-        botResponseText = "Sure, I can help you book an appointment. I can take you to the general booking page.";
-        action = () => navigate('/book');
+      if (response.error) {
+        console.error("Edge Function error:", response.error);
+        throw new Error(response.error.message);
       }
-    } else if (lowerCaseMessage.includes("specialization") || lowerCaseMessage.includes("doctors")) {
-      botResponseText = "We have doctors specializing in Cardiology, Neurology, Pediatrics, Dermatology, Orthopedics, and more! You can browse all doctors on our Doctors page.";
-      action = () => navigate('/doctors');
-    } else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi")) {
-      botResponseText = "Hello there! How can I assist you today?";
-    } else if (lowerCaseMessage.includes("contact")) {
-      botResponseText = "You can reach us via our Contact Us page for more details.";
-      action = () => navigate('/contact');
-    } else if (lowerCaseMessage.includes("about")) {
-      botResponseText = "Learn more about us on our About Us page!";
-      action = () => navigate('/about');
-    }
 
-    const newBotMessage: ChatMessage = { id: messages.length + 2, text: botResponseText, sender: 'bot' };
-    setMessages((prevMessages) => [...prevMessages, newBotMessage]);
-    setIsBotTyping(false);
+      const botResponseText = (response.data as { response: string }).response;
 
-    if (action) {
-      setTimeout(action, 1500); // Give user a moment to read bot's message
+      const newBotMessage: ChatMessage = { id: messages.length + 2, text: botResponseText, sender: 'bot' };
+      setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+
+      // The Edge Function already saves the bot's response to history
+      // No need to save it again here.
+
+    } catch (error) {
+      console.error("Chatbot API call failed:", error);
+      const errorMessage: ChatMessage = { id: messages.length + 2, text: "Oops! Something went wrong. Please try again.", sender: 'bot' };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    } finally {
+      setIsBotTyping(false);
     }
   };
 

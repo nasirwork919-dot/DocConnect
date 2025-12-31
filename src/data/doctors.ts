@@ -7,18 +7,18 @@ export interface Doctor {
   qualifications: string[];
   experience: number;
   hospital: string;
-  consultation_fee: number; // Changed to match DB column name
+  consultationFee: number; // Changed to camelCase
   languages: string[];
-  contact_email: string; // Changed to match DB column name
+  contactEmail: string; // Changed to camelCase
   bio: string;
-  availability_schedule: { [key: string]: string }; // JSONB in DB
-  realtime_status: "Online" | "In Clinic" | "Off"; // Changed to match DB column name
-  average_rating: number;
-  reviews_count: number; // Changed to match DB column name
-  profile_photo_url: string; // Changed to match DB column name
+  availabilitySchedule: { [key: string]: string }; // Changed to camelCase
+  realtimeStatus: "Online" | "In Clinic" | "Off"; // Changed to camelCase
+  averageRating: number; // Changed to camelCase
+  reviewsCount: number; // Changed to camelCase
+  profilePhotoUrl: string; // Changed to camelCase
   location: string;
   gender: "male" | "female" | "other";
-  availability_status: string; // Simplified status for listing page
+  availabilityStatus: string; // Changed to camelCase
 }
 
 export async function fetchAllDoctors(): Promise<Doctor[]> {
@@ -31,7 +31,6 @@ export async function fetchAllDoctors(): Promise<Doctor[]> {
     return [];
   }
 
-  // Map DB column names to frontend interface names if necessary
   return data.map(doc => ({
     id: doc.id,
     name: doc.name,
@@ -39,18 +38,18 @@ export async function fetchAllDoctors(): Promise<Doctor[]> {
     qualifications: doc.qualifications,
     experience: doc.experience,
     hospital: doc.hospital,
-    consultation_fee: doc.consultation_fee, // Corrected to snake_case
+    consultationFee: doc.consultation_fee, // Map from snake_case DB to camelCase interface
     languages: doc.languages,
-    contact_email: doc.contact_email, // Corrected to snake_case
+    contactEmail: doc.contact_email, // Map from snake_case DB to camelCase interface
     bio: doc.bio,
-    availability_schedule: doc.availability_schedule,
-    realtime_status: doc.realtime_status,
-    average_rating: doc.average_rating,
-    reviews_count: doc.reviews_count,
-    profile_photo_url: doc.profile_photo_url,
+    availabilitySchedule: doc.availability_schedule, // Map from snake_case DB to camelCase interface
+    realtimeStatus: doc.realtime_status, // Map from snake_case DB to camelCase interface
+    averageRating: doc.average_rating, // Map from snake_case DB to camelCase interface
+    reviewsCount: doc.reviews_count, // Map from snake_case DB to camelCase interface
+    profilePhotoUrl: doc.profile_photo_url, // Map from snake_case DB to camelCase interface
     location: doc.location,
     gender: doc.gender,
-    availability_status: doc.availability_status,
+    availabilityStatus: doc.availability_status, // Map from snake_case DB to camelCase interface
   }));
 }
 
@@ -75,18 +74,18 @@ export async function fetchDoctorById(id: string): Promise<Doctor | null> {
     qualifications: data.qualifications,
     experience: data.experience,
     hospital: data.hospital,
-    consultation_fee: data.consultation_fee, // Corrected to snake_case
+    consultationFee: data.consultation_fee, // Map from snake_case DB to camelCase interface
     languages: data.languages,
-    contact_email: data.contact_email, // Corrected to snake_case
+    contactEmail: data.contact_email, // Map from snake_case DB to camelCase interface
     bio: data.bio,
-    availability_schedule: data.availability_schedule,
-    realtime_status: data.realtime_status,
-    average_rating: data.average_rating,
-    reviews_count: data.reviews_count,
-    profile_photo_url: data.profile_photo_url,
+    availabilitySchedule: data.availability_schedule, // Map from snake_case DB to camelCase interface
+    realtimeStatus: data.realtime_status, // Map from snake_case DB to camelCase interface
+    averageRating: data.average_rating, // Map from snake_case DB to camelCase interface
+    reviewsCount: data.reviews_count, // Map from snake_case DB to camelCase interface
+    profilePhotoUrl: data.profile_photo_url, // Map from snake_case DB to camelCase interface
     location: data.location,
     gender: data.gender,
-    availability_status: data.availability_status,
+    availabilityStatus: data.availability_status, // Map from snake_case DB to camelCase interface
   };
 }
 
