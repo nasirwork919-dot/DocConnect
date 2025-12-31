@@ -8,25 +8,11 @@ import * as z from "zod";
 import { format, addHours, startOfDay } from "date-fns";
 import { CalendarIcon, CheckCircle2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
@@ -40,18 +26,14 @@ const MotionButton = motion.create(Button);
 
 const formSchema = z.object({
   doctorId: z.string().min(1, { message: "Please select a doctor." }),
-  appointmentDate: z.date({
-    required_error: "A date for your appointment is required.",
-  }),
+  appointmentDate: z.date({ required_error: "A date for your appointment is required." }),
   appointmentTime: z.string().min(1, { message: "Please select a time slot." }),
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone: z.string().regex(/^\+?[1-9]\d{9,14}$/, { message: "Please enter a valid phone number." }),
-  gender: z.enum(["male", "female", "other"], {
-    required_error: "Please select your gender.",
-  }),
+  gender: z.enum(["male", "female", "other"], { required_error: "Please select your gender." }),
   age: z.string().min(1, { message: "Age is required." }).transform(Number).refine(age => age > 0 && age < 120, {
-    message: "Age must be between 1 and 119.",
+    message: "Age must be between 1 and 119."
   }),
   reasonForVisit: z.string().min(10, { message: "Please describe your reason for visit (at least 10 characters)." }),
 });
@@ -59,7 +41,6 @@ const formSchema = z.object({
 const generate24HourTimeSlots = (): string[] => {
   const slots: string[] = [];
   let currentTime = startOfDay(new Date());
-
   for (let i = 0; i < 24; i++) {
     slots.push(format(currentTime, "hh:mm a"));
     currentTime = addHours(currentTime, 1);
@@ -70,9 +51,8 @@ const generate24HourTimeSlots = (): string[] => {
 const AppointmentBookingPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
   const initialDoctorId = searchParams.get("doctorId");
-
+  
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
@@ -146,7 +126,6 @@ const AppointmentBookingPage = () => {
       setAppointmentDetails(values);
       setAppointmentConfirmed(true);
       showSuccess("Appointment booked successfully!");
-
     } catch (error: any) {
       console.error("Booking process failed:", error.message);
       showError(`Failed to book appointment: ${error.message || "Please try again."}`);
@@ -164,7 +143,9 @@ const AppointmentBookingPage = () => {
           <CardHeader>
             <CheckCircle2 className="mx-auto h-16 w-16 text-secondary-teal mb-4" />
             <CardTitle className="text-3xl font-bold font-michroma">Appointment Confirmed!</CardTitle>
-            <CardDescription className="text-lg font-sans text-muted-text">Your appointment has been successfully booked.</CardDescription>
+            <CardDescription className="text-lg font-sans text-muted-text">
+              Your appointment has been successfully booked.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 font-sans text-heading-dark dark:text-gray-50">
             {appointmentDetails && (
@@ -176,10 +157,19 @@ const AppointmentBookingPage = () => {
                 <p><strong>Reason:</strong> {appointmentDetails.reasonForVisit}</p>
               </>
             )}
-            <MotionButton onClick={() => navigate("/")} className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton 
+              onClick={() => navigate("/")} 
+              className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans"
+              whileHover={{ scale: 1.05 }}
+            >
               Return to Home
             </MotionButton>
-            <MotionButton variant="outline" onClick={() => navigate("/doctors")} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
+            <MotionButton 
+              variant="outline" 
+              onClick={() => navigate("/doctors")} 
+              className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans"
+              whileHover={{ scale: 1.05 }}
+            >
               Browse More Doctors
             </MotionButton>
           </CardContent>
@@ -205,12 +195,16 @@ const AppointmentBookingPage = () => {
   return (
     <div className="min-h-screen bg-background-light text-heading-dark py-8 font-michroma">
       <div className="container mx-auto px-4 max-w-3xl">
-        <MotionButton variant="link" asChild className="mb-6 pl-0 text-primary-blue dark:text-primary/70 font-sans">
+        <MotionButton 
+          variant="link" 
+          asChild 
+          className="mb-6 pl-0 text-primary-blue dark:text-primary/70 font-sans"
+        >
           <Link to={initialDoctorId ? `/doctors/${initialDoctorId}` : "/doctors"}>
             ← Back to {initialDoctorId ? "Doctor Profile" : "Doctors Listing"}
           </Link>
         </MotionButton>
-
+        
         <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-center font-michroma">Book Your Appointment</CardTitle>
@@ -223,16 +217,17 @@ const AppointmentBookingPage = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <AnimatePresence mode="wait">
                   {step === 1 && (
-                    <motion.div
-                      key="step1"
-                      variants={stepVariants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{ duration: 0.3 }}
+                    <motion.div 
+                      key="step1" 
+                      variants={stepVariants} 
+                      initial="enter" 
+                      animate="center" 
+                      exit="exit" 
+                      transition={{ duration: 0.3 }} 
                       className="space-y-6"
                     >
                       <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 1: Select Doctor & Time</h2>
+                      
                       <FormField
                         control={form.control}
                         name="doctorId"
@@ -257,7 +252,7 @@ const AppointmentBookingPage = () => {
                           </FormItem>
                         )}
                       />
-
+                      
                       {watchDoctorId && (
                         <>
                           <FormField
@@ -309,7 +304,7 @@ const AppointmentBookingPage = () => {
                               </FormItem>
                             )}
                           />
-
+                          
                           {watchAppointmentDate && availableTimeSlots.length > 0 && (
                             <FormField
                               control={form.control}
@@ -328,8 +323,8 @@ const AppointmentBookingPage = () => {
                                           <FormControl>
                                             <RadioGroupItem value={slot} id={`time-slot-${slot}`} className="sr-only" />
                                           </FormControl>
-                                          <FormLabel
-                                            htmlFor={`time-slot-${slot}`}
+                                          <FormLabel 
+                                            htmlFor={`time-slot-${slot}`} 
                                             className="flex items-center justify-center rounded-xl border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary-blue text-sm cursor-pointer font-sans"
                                           >
                                             {slot}
@@ -343,12 +338,14 @@ const AppointmentBookingPage = () => {
                               )}
                             />
                           )}
+                          
                           {watchAppointmentDate && availableTimeSlots.length === 0 && (
                             <p className="text-destructive text-sm font-sans">No slots available for this date.</p>
                           )}
                         </>
                       )}
-                      <MotionButton
+                      
+                      <MotionButton 
                         type="button"
                         onClick={() => {
                           form.trigger(["doctorId", "appointmentDate", "appointmentTime"]).then((isValid) => {
@@ -366,18 +363,19 @@ const AppointmentBookingPage = () => {
                       </MotionButton>
                     </motion.div>
                   )}
-
+                  
                   {step === 2 && (
-                    <motion.div
-                      key="step2"
-                      variants={stepVariants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{ duration: 0.3 }}
+                    <motion.div 
+                      key="step2" 
+                      variants={stepVariants} 
+                      initial="enter" 
+                      animate="center" 
+                      exit="exit" 
+                      transition={{ duration: 0.3 }} 
                       className="space-y-6"
                     >
                       <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 2: Patient Details</h2>
+                      
                       <FormField
                         control={form.control}
                         name="fullName"
@@ -391,6 +389,7 @@ const AppointmentBookingPage = () => {
                           </FormItem>
                         )}
                       />
+                      
                       <FormField
                         control={form.control}
                         name="email"
@@ -404,6 +403,7 @@ const AppointmentBookingPage = () => {
                           </FormItem>
                         )}
                       />
+                      
                       <FormField
                         control={form.control}
                         name="phone"
@@ -417,6 +417,7 @@ const AppointmentBookingPage = () => {
                           </FormItem>
                         )}
                       />
+                      
                       <FormField
                         control={form.control}
                         name="gender"
@@ -453,6 +454,7 @@ const AppointmentBookingPage = () => {
                           </FormItem>
                         )}
                       />
+                      
                       <FormField
                         control={form.control}
                         name="age"
@@ -466,6 +468,7 @@ const AppointmentBookingPage = () => {
                           </FormItem>
                         )}
                       />
+                      
                       <FormField
                         control={form.control}
                         name="reasonForVisit"
@@ -473,21 +476,28 @@ const AppointmentBookingPage = () => {
                           <FormItem>
                             <FormLabel className="font-sans">Reason for Visit</FormLabel>
                             <FormControl>
-                              <Textarea
-                                placeholder="Briefly describe your symptoms or reason for visit."
-                                className="resize-y rounded-xl font-sans"
-                                {...field}
+                              <Textarea 
+                                placeholder="Briefly describe your symptoms or reason for visit." 
+                                className="resize-y rounded-xl font-sans" 
+                                {...field} 
                               />
                             </FormControl>
                             <FormMessage className="font-sans" />
                           </FormItem>
                         )}
                       />
+                      
                       <div className="flex justify-between gap-4">
-                        <MotionButton type="button" variant="outline" onClick={() => setStep(1)} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
+                        <MotionButton 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => setStep(1)}
+                          className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans"
+                          whileHover={{ scale: 1.05 }}
+                        >
                           Previous
                         </MotionButton>
-                        <MotionButton
+                        <MotionButton 
                           type="button"
                           onClick={() => {
                             form.trigger(["fullName", "email", "phone", "gender", "age", "reasonForVisit"]).then((isValid) => {
@@ -506,21 +516,24 @@ const AppointmentBookingPage = () => {
                       </div>
                     </motion.div>
                   )}
-
+                  
                   {step === 3 && (
-                    <motion.div
-                      key="step3"
-                      variants={stepVariants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{ duration: 0.3 }}
+                    <motion.div 
+                      key="step3" 
+                      variants={stepVariants} 
+                      initial="enter" 
+                      animate="center" 
+                      exit="exit" 
+                      transition={{ duration: 0.3 }} 
                       className="space-y-6"
                     >
                       <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 3: Review & Confirm</h2>
+                      
                       <Card className="p-4 bg-primary-blue/10 dark:bg-primary-blue/20 rounded-2xl">
                         <CardHeader className="p-0 mb-4">
-                          <CardTitle className="text-xl font-michroma text-heading-dark dark:text-gray-50">Appointment Summary</CardTitle>
+                          <CardTitle className="text-xl font-michroma text-heading-dark dark:text-gray-50">
+                            Appointment Summary
+                          </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 space-y-2 text-muted-text font-sans">
                           <p><strong>Doctor:</strong> {doctor?.name} ({doctor?.specialization})</p>
@@ -535,14 +548,27 @@ const AppointmentBookingPage = () => {
                           <p><strong>Reason:</strong> {form.getValues("reasonForVisit")}</p>
                         </CardContent>
                       </Card>
+                      
                       <div className="flex justify-between gap-4">
-                        <MotionButton type="button" variant="outline" onClick={() => setStep(2)} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
+                        <MotionButton 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => setStep(2)}
+                          className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans"
+                          whileHover={{ scale: 1.05 }}
+                        >
                           Previous
                         </MotionButton>
-                        <MotionButton type="submit" className="w-full bg-secondary-teal hover:bg-secondary-teal/90 text-white rounded-xl font-sans" disabled={isSubmitting} whileHover={{ scale: 1.05 }}>
+                        <MotionButton 
+                          type="submit" 
+                          className="w-full bg-secondary-teal hover:bg-secondary-teal/90 text-white rounded-xl font-sans"
+                          disabled={isSubmitting}
+                          whileHover={{ scale: 1.05 }}
+                        >
                           {isSubmitting ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Confirming...
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Confirming...
                             </>
                           ) : (
                             "Confirm Appointment"
