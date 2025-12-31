@@ -339,8 +339,8 @@ serve(async (req) => {
       Here are your core capabilities and guidelines:
 
       1.  **Doctor Information:**
-          *   Use the \`get_doctors_info\` tool to find doctors by specialization or name.
-          *   When providing doctor information, include their name, specialization, years of experience, hospital, consultation fee, and availability status.
+          *   When a user asks about doctors, their specializations, or specific doctor names, use the \`get_doctors_info\` tool.
+          *   After retrieving doctor information, summarize it clearly, including name, specialization, years of experience, hospital, consultation fee, and availability status. If no doctors are found, inform the user.
 
       2.  **Treatment Information:**
           *   Use the \`get_treatments_info\` tool to find details about medical treatments.
@@ -390,14 +390,16 @@ serve(async (req) => {
 
     if (!openRouterResponse.ok) {
       const errorData = await openRouterResponse.json();
-      console.error("OpenRouter API error:", errorData);
+      console.error("OpenRouter API error:", openRouterResponse.status, openRouterResponse.statusText, errorData); // Added more logging
       throw new Error(`OpenRouter API error: ${JSON.stringify(errorData)}`);
     }
 
-    const openRouterData: OpenRouterCompletionResponse = await openRouterResponse.json();
+    const openRouterData = await openRouterResponse.json() as OpenRouterCompletionResponse; // Explicit type assertion
+    console.log("OpenRouter Raw Response:", JSON.stringify(openRouterData, null, 2)); // Added logging
     const responseMessage = openRouterData.choices[0].message;
+    console.log("OpenRouter Chosen Message:", JSON.stringify(responseMessage, null, 2)); // Added logging
 
-    let botResponseContent = responseMessage.content || "I'm sorry, I couldn't process that request.";
+    let botResponseContent = responseMessage.content || "I'm sorry, I couldn't process that request. Please try rephrasing your question."; // Improved fallback
     let toolCallResult = null;
 
     // Handle tool calls
@@ -436,12 +438,13 @@ serve(async (req) => {
 
         if (!toolResponse.ok) {
           const errorData = await toolResponse.json();
-          console.error("OpenRouter API error after tool call:", errorData);
+          console.error("OpenRouter API error after tool call:", openRouterResponse.status, openRouterResponse.statusText, errorData); // Added more logging
           throw new Error(`OpenRouter API error after tool call: ${JSON.stringify(errorData)}`);
         }
 
-        const toolResponseData: OpenRouterCompletionResponse = await toolResponse.json();
-        botResponseContent = toolResponseData.choices[0].message.content || "I processed your request.";
+        const toolResponseData = await toolResponse.json() as OpenRouterCompletionResponse; // Explicit type assertion
+        console.log("OpenRouter Tool Response Raw:", JSON.stringify(toolResponseData, null, 2)); // Added logging
+        botResponseContent = toolResponseData.choices[0].message.content || "I processed your request, but couldn't generate a clear response. Please try again."; // Improved fallback
       } else {
         botResponseContent = `I tried to use a tool called "${functionName}" but it's not recognized.`;
       }
