@@ -144,46 +144,8 @@ const AppointmentBookingPage = () => {
       setAppointmentConfirmed(true);
       showSuccess("Appointment booked successfully!");
 
-      // --- Send Confirmation Email via Edge Function ---
-      const doctor = ALL_DOCTORS.find(d => d.id === values.doctorId);
-      if (doctor) {
-        const emailDetails = {
-          to: values.email,
-          subject: "DocConnect: Appointment Confirmation",
-          body: `
-            Dear ${values.fullName},
-
-            Your appointment with Dr. ${doctor.name} (${doctor.specialization}) has been successfully booked!
-
-            Appointment Details:
-            Doctor: Dr. ${doctor.name}
-            Specialization: ${doctor.specialization}
-            Date: ${format(values.appointmentDate, "PPP")}
-            Time: ${values.appointmentTime}
-            Consultation Fee: $${doctor.consultationFee}
-            Reason for Visit: ${values.reasonForVisit || "Not specified"}
-
-            We look forward to seeing you.
-
-            Best regards,
-            DocConnect Team
-          `,
-        };
-
-        const { data: emailData, error: emailError } = await supabase.functions.invoke('send-booking-confirmation', {
-          body: emailDetails,
-        });
-
-        if (emailError) {
-          console.error("Error invoking email function:", emailError);
-          showError("Booking confirmed, but failed to send confirmation email.");
-        } else {
-          console.log("Email function invoked successfully:", emailData);
-        }
-      } else {
-        console.warn("Doctor not found for email confirmation.");
-      }
-      // --- End Email Logic ---
+      // Removed email confirmation via Edge Function
+      // The user requested to remove email functionality and rely on the pop-up.
 
     } catch (error: any) {
       console.error("Booking process failed:", error.message);
