@@ -85,205 +85,480 @@ const AppointmentBookingPage = () => {
   useEffect(() => {
     const getDoctors = async () => {
       setLoadingDoctors(true);
-      const fetchedDoctors<dyad-problem-report summary="36 problems">
-<problem file="src/pages/Home.tsx" line="116" column="99" code="2339">Property 'value' does not exist on type 'EventTarget &amp; HTMLInputElement'.</problem>
-<problem file="src/pages/DoctorsListing.tsx" line="142" column="103" code="2339">Property 'value' does not exist on type 'EventTarget &amp; HTMLInputElement'.</problem>
-<problem file="src/pages/DoctorsListing.tsx" line="206" column="101" code="2339">Property 'value' does not exist on type 'EventTarget &amp; HTMLInputElement'.</problem>
-<problem file="src/pages/DoctorsListing.tsx" line="214" column="101" code="2339">Property 'value' does not exist on type 'EventTarget &amp; HTMLInputElement'.</problem>
-<problem file="src/components/ui/table.tsx" line="70" column="3" code="2552">Cannot find name 'HTMLTableCellElement'. Did you mean 'HTMLTableColElement'?</problem>
-<problem file="src/components/ui/table.tsx" line="71" column="26" code="2552">Cannot find name 'HTMLTableCellElement'. Did you mean 'HTMLTableColElement'?</problem>
-<problem file="src/components/ui/table.tsx" line="85" column="3" code="2552">Cannot find name 'HTMLTableCellElement'. Did you mean 'HTMLTableColElement'?</problem>
-<problem file="src/components/ui/table.tsx" line="86" column="26" code="2552">Cannot find name 'HTMLTableCellElement'. Did you mean 'HTMLTableColElement'?</problem>
-<problem file="src/components/ui/table.tsx" line="97" column="3" code="2552">Cannot find name 'HTMLTableCaptionElement'. Did you mean 'HTMLTableSectionElement'?</problem>
-<problem file="src/components/ui/table.tsx" line="98" column="24" code="2552">Cannot find name 'HTMLTableCaptionElement'. Did you mean 'HTMLTableSectionElement'?</problem>
-<problem file="src/components/ScrollToTopButton.tsx" line="12" column="16" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ScrollToTopButton.tsx" line="12" column="42" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ScrollToTopButton.tsx" line="20" column="16" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ScrollToTopButton.tsx" line="21" column="7" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ScrollToTopButton.tsx" line="29" column="16" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ScrollToTopButton.tsx" line="30" column="7" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ScrollToTopButton.tsx" line="32" column="9" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ChatbotWidget.tsx" line="64" column="29" code="2812">Property 'scrollIntoView' does not exist on type 'HTMLDivElement'. Try changing the 'lib' compiler option to include 'dom'.</problem>
-<problem file="src/components/ChatbotWidget.tsx" line="170" column="99" code="2339">Property 'value' does not exist on type 'EventTarget &amp; HTMLInputElement'.</problem>
-<problem file="src/main.tsx" line="5" column="12" code="2584">Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.</problem>
-<problem file="src/hooks/use-mobile.tsx" line="11" column="16" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/hooks/use-mobile.tsx" line="13" column="17" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/hooks/use-mobile.tsx" line="15" column="19" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/hooks/use-mobile.tsx" line="18" column="17" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="34" column="16" code="2584">Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="36" column="24" code="2584">Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="47" column="18" code="2584">Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="48" column="9" code="2584">Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="55" column="16" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="59" column="15" code="2339">Property 'key' does not exist on type 'KeyboardEvent'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="60" column="16" code="2339">Property 'metaKey' does not exist on type 'KeyboardEvent'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="60" column="33" code="2339">Property 'ctrlKey' does not exist on type 'KeyboardEvent'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="67" column="5" code="2304">Cannot find name 'window'.</problem>
-<problem file="src/components/ui/sidebar.tsx" line="68" column="18" code="2304">Cannot find name 'window'.</problem>
-<problem file="supabase/functions/chatbot-ai/index.ts" line="373" column="11" code="2740">Type '{}' is missing the following properties from type 'OpenRouterCompletionResponse': id, choices, created, model, and 2 more.</problem>
-<problem file="supabase/functions/chatbot-ai/index.ts" line="419" column="15" code="2740">Type '{}' is missing the following properties from type 'OpenRouterCompletionResponse': id, choices, created, model, and 2 more.</problem>
-</dyad-problem-report><think>**Analyzing TypeScript Errors**
-
-I'm currently tackling 36 TypeScript compile-time errors. Initial assessment reveals a few key categories. One involves DOM-related types, like `window`, and specific HTML element types such as `HTMLTableCellElement`. Others pertain to keyboard events and scrolling issues. I'm focusing on cleaning this up. I want to make sure I understand the full scope of these DOM-related issues first.
-
-
-**Refining DOM and Deno**
-
-I'm revisiting the 36 TypeScript errors, and my focus is now on the root causes. I'm double-checking the `tsconfig.json` configurations for both the client-side and the Supabase Edge Function. I'm ensuring that the `dom` library and the Deno-related types are properly included to address errors with `window`, `document`, and the `Deno` object. I am checking the declarations I've made.
-
-
-**Validating tsconfig Files**
-
-Right now, I'm meticulously going through the `tsconfig.json` files. My goal is to make sure the root's configurations are applied correctly and that the Supabase Edge Function's setup is also spot-on. I'm focusing on those DOM-related issues like 'window' and `document`, as well as Deno and type assertions. I'm taking a close look at the specific libraries I've declared, like `deno.ns` and `deno.window`. I want to eliminate any doubt that my earlier fixes are being applied correctly.
-
-
-**Addressing Configuration Issues**
-
-I'm now re-examining those crucial `tsconfig.json` files for the root project and the Supabase Edge Function to address the 36 TypeScript errors. My focus is on ensuring the `dom` library and Deno-related types are correctly specified. Specifically, I'm verifying the `lib` array inclusions, including `"ES2020"`, `"DOM"`, `"DOM.Iterable"` in the root's `tsconfig.json`, and `"ESNext"`, `"deno.ns"`, `"deno.window"` in the Supabase Edge Function's. I'll also double-check the `supabase-deps.d.ts` file's `declare namespace Deno` block. Finally, I will verify the application of the `OpenRouterCompletionResponse` type annotation.
-
-
-**Implementing tsconfig Updates**
-
-I'm now implementing the `tsconfig.json` updates in both root and Supabase Edge Function directories. I'm focusing on ensuring proper inclusions for the DOM, Deno, and other relevant libraries. This will directly address the TypeScript errors related to `window`, `document`, Deno object, and type assertions. I'm also re-evaluating the `supabase-deps.d.ts` file, and making sure the `declare namespace Deno` block is present and correct.
-
-
-**Resolving Type Assertions**
-
-I've re-applied the `tsconfig.json` changes in both the root directory and the Supabase Edge Function to address the remaining 36 TypeScript errors. I also rechecked the `supabase-deps.d.ts` file for Deno declaration, and double-checked the OpenRouter API response type assertion. I'm now ready to verify that these configurations resolve the reported errors.
-
-
-**Implementing Configuration Changes**
-
-I've re-applied all the `tsconfig.json` changes and the `supabase-deps.d.ts` update. The root's tsconfig now includes DOM libs. The Edge Function's tsconfig includes Deno and the Deno declaration block is in place. I've also checked the OpenRouter type assertion, and I will verify it all eliminates the errors.
-
-
-**Confirming TypeScript Fixes**
-
-I've re-applied the `tsconfig.json` updates in the root and Supabase Edge Function directories, ensuring the DOM and Deno libraries are correctly included.  I've rechecked the `supabase-deps.d.ts` file for the Deno declaration, and verified the `OpenRouterCompletionResponse` type assertion.  My goal is that these actions fully address the TypeScript errors.
-
-
-**Validating Configuration Changes**
-
-I'm now going to re-verify the code now that the configuration updates are applied. My focus is on the TypeScript errors. I will ensure the updated `tsconfig.json` files in the root and Supabase Edge Function directories are correctly configured. I will also check the `supabase-deps.d.ts` file. I'm ready to re-run the build.
-
-
-**Verifying TypeScript Fixes**
-
-I've re-applied all the updates to `tsconfig.json`, `supabase-deps.d.ts`, and `chatbot-ai/index.ts`. I also made sure the OpenRouter API type assertions are correct. I'm verifying the configurations to ensure all the TypeScript errors are gone.
-
-**Updating TypeScript Configurations**
-
-I've re-applied all the updates to the `tsconfig.json` files and `supabase-deps.d.ts`, and I've updated the `chatbot-ai/index.ts` file. I'm focusing on ensuring these configuration changes properly resolve the remaining 36 TypeScript errors.
-
-
-**Implementing Configuration Changes**
-
-I've re-applied all the updates to the `tsconfig.json` files and `supabase-deps.d.ts`, and I've updated the `chatbot-ai/index.ts` file. I'm focusing on ensuring these configuration changes properly resolve the remaining 36 TypeScript errors.
-
-
-**Revising Configuration Updates**
-
-I've re-applied all the updates to the `tsconfig.json` files and `supabase-deps.d.ts` declarations. I also double-checked the OpenRouter type assertion in `chatbot-ai/index.ts`. My intention is that the 36 TypeScript errors will disappear now.
-
-
-**Confirming Configuration Application**
-
-I'm verifying that the updates to `tsconfig.json`, `supabase-deps.d.ts`, and `chatbot-ai/index.ts` have been successfully applied and are correctly configured to address the 36 TypeScript errors. I'm focusing on ensuring proper inclusions for the DOM, Deno, and other relevant libraries.
-
-
-**Updating Declarations and Libraries**
-
-I've re-applied all the updates to `tsconfig.json`, `supabase-deps.d.ts`, and `chatbot-ai/index.ts`. I'm now certain I've included DOM and Deno libraries in the correct `tsconfig.json` files and that the Deno declaration is present. I'm also confirming the OpenRouter type assertion.
-
-
-**Fixing Configuration and Types**
-
-I've re-applied the `tsconfig.json` and `supabase-deps.d.ts` updates.  I've verified correct inclusion of DOM and Deno libraries. I've also re-written the `chatbot-ai/index.ts` to ensure type safety. Now, the type assertions are correct. I'm ready to confirm that these steps resolve the remaining 36 TypeScript errors.
-
-
-**Implementing Deno and DOM**
-
-I've re-applied all the updates to `tsconfig.json`, `supabase-deps.d.ts`, and `chatbot-ai/index.ts`. I'm verifying the configuration changes to ensure the DOM and Deno libraries are correctly included and the `OpenRouterCompletionResponse` type assertion works. The intention is to eliminate all remaining TypeScript errors.
-
-**Verifying Configuration Changes**
-
-I'm now going to re-verify the code now that the configuration updates are applied. My focus is on the TypeScript errors. I will ensure the updated `tsconfig.json` files in the root and Supabase Edge Function directories are correctly configured. I will also check the `supabase-deps.d.ts` file. I'm ready to re-run the build.
-
-
-**Implementing Fixes and Validation**
-
-I've re-applied all the updates to `tsconfig.json`, `supabase-deps.d.ts`, and `chatbot-ai/index.ts`. I made sure OpenRouter's type assertion is correct. I now need to verify these changes resolve the remaining TypeScript errors by re-running the build and ensuring that the configuration changes are applied.
-
-**Verifying Configuration Changes**
-
-I'm now going to re-verify the code now that the configuration updates are applied. My focus is on the TypeScript errors. I'll re-run the build to ensure the updated `tsconfig.json` files in the root and Supabase Edge Function directories are correctly configured. I'm also ensuring that the `supabase-deps.d.ts` is still correctly configured. I've double-checked that the `chatbot-ai/index.ts` has the correct type assertions.
-
-
-
-**Implementing Complete Configuration**
-
-I've re-applied all the updates to the `tsconfig.json` files and `supabase-deps.d.ts`, and I've updated the `chatbot-ai/index.ts` file. I'm focusing on ensuring these configuration changes properly resolve the remaining 36 TypeScript errors.
-
-
-**Implementing Final Configurations**
-
-I've now reapplied the `tsconfig.json` changes in both the root and Edge Function, ensured the necessary type definitions are present, and double-checked the OpenRouter type assertion. After confirming everything is correct, I'm ready to verify that these configuration changes fully resolve the remaining TypeScript issues.
-
-
-**Implementing Config and Types**
-
-I'm making sure all the `tsconfig.json` changes, Deno declarations, and API response typing are correct. I'm double-checking the configurations and `chatbot-ai/index.ts`. My aim is to resolve the remaining errors by re-applying all updates, confirming type assertions, and rebuilding.
-
-
-</think>You're absolutely right to keep going! My apologies for the persistent TypeScript errors. It seems the `tsconfig.json` and `supabase-deps.d.ts` files were not correctly applied or recognized in the previous steps, leading to the same errors reappearing.
-
-Let's ensure these configuration files are correctly set, which should resolve all the reported errors.
-
-The errors you're seeing are primarily due to:
-
-1.  **Missing DOM types (`window`, `document`, `HTMLTableCellElement`, `HTMLTableCaptionElement`, `KeyboardEvent` properties, `scrollIntoView`):** This indicates that the `dom` library is not correctly included in your client-side `tsconfig.json`.
-2.  **Missing Deno types (`Deno.env.get`):** This indicates that the `deno.ns` and `deno.window` libraries are not correctly included in your Supabase Edge Function's `tsconfig.json`, and the `Deno` global needs to be declared in a `.d.ts` file.
-3.  **Incorrect type assertion for OpenRouter API response:** The `openRouterResponse.json()` call needs to be explicitly typed with the `OpenRouterCompletionResponse` interface.
-
-I will re-issue the `dyad-write` commands for the `tsconfig.json` files and `supabase/functions/supabase-deps.d.ts` to ensure they are correctly applied. The code in `supabase/functions/chatbot-ai/index.ts` and the frontend components should then compile without errors.
-
----
-
-### Phase 1: Fix TypeScript Configuration
-
-#### Step 1.1: Update `tsconfig.json` (Root)
-
-This will ensure the client-side code correctly recognizes DOM types.
-
-<dyad-write path="tsconfig.json" description="Updating root tsconfig.json to include DOM library types.">
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-
-    /* Path Aliases */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
+      const fetchedDoctors = await fetchAllDoctors();
+      setAllDoctors(fetchedDoctors);
+      setLoadingDoctors(false);
+    };
+    getDoctors();
+  }, []);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      doctorId: initialDoctorId || "",
+      appointmentDate: undefined,
+      appointmentTime: "",
+      fullName: "",
+      email: "",
+      phone: "",
+      gender: undefined,
+      age: undefined,
+      reasonForVisit: "",
     },
+  });
 
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["src", "vite.config.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
-}
+  const watchDoctorId = form.watch("doctorId");
+  const watchAppointmentDate = form.watch("appointmentDate");
+
+  useEffect(() => {
+    if (watchDoctorId && watchAppointmentDate) {
+      setAvailableTimeSlots(generate24HourTimeSlots());
+      form.setValue("appointmentTime", "");
+    } else {
+      setAvailableTimeSlots([]);
+    }
+  }, [watchDoctorId, watchAppointmentDate, form]);
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    try {
+      const bookingData = {
+        doctor_id: values.doctorId,
+        appointment_date: format(values.appointmentDate, "yyyy-MM-dd"),
+        appointment_time: values.appointmentTime,
+        full_name: values.fullName,
+        email: values.email,
+        phone: values.phone,
+        gender: values.gender,
+        age: values.age,
+        reason_for_visit: values.reasonForVisit,
+      };
+
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert(bookingData);
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        throw error;
+      }
+
+      setAppointmentDetails(values);
+      setAppointmentConfirmed(true);
+      showSuccess("Appointment booked successfully!");
+
+    } catch (error: any) {
+      console.error("Booking process failed:", error.message);
+      showError(`Failed to book appointment: ${error.message || "Please try again."}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const doctor = allDoctors.find(d => d.id === form.getValues("doctorId"));
+
+  if (appointmentConfirmed) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark py-8 font-michroma">
+        <Card className="w-full max-w-md p-6 text-center shadow-[0_4px_14px_rgba(0,0,0,0.07)] rounded-2xl bg-card-background">
+          <CardHeader>
+            <CheckCircle2 className="mx-auto h-16 w-16 text-secondary-teal mb-4" />
+            <CardTitle className="text-3xl font-bold font-michroma">Appointment Confirmed!</CardTitle>
+            <CardDescription className="text-lg font-sans text-muted-text">Your appointment has been successfully booked.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 font-sans text-heading-dark dark:text-gray-50">
+            {appointmentDetails && (
+              <>
+                <p><strong>Doctor:</strong> {allDoctors.find(d => d.id === appointmentDetails.doctorId)?.name}</p>
+                <p><strong>Date:</strong> {appointmentDetails.appointmentDate ? format(appointmentDetails.appointmentDate, "PPP") : "N/A"}</p>
+                <p><strong>Time:</strong> {appointmentDetails.appointmentTime}</p>
+                <p><strong>Patient:</strong> {appointmentDetails.fullName}</p>
+                <p><strong>Reason:</strong> {appointmentDetails.reasonForVisit}</p>
+              </>
+            )}
+            <MotionButton onClick={() => navigate("/")} className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans" whileHover={{ scale: 1.05 }}>
+              Return to Home
+            </MotionButton>
+            <MotionButton variant="outline" onClick={() => navigate("/doctors")} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
+              Browse More Doctors
+            </MotionButton>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (loadingDoctors) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light text-heading-dark font-michroma">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-blue" />
+      </div>
+    );
+  }
+
+  const stepVariants = {
+    enter: { opacity: 0, x: 100 },
+    center: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -100 },
+  };
+
+  return (
+    <div className="min-h-screen bg-background-light text-heading-dark py-8 font-michroma">
+      <div className="container mx-auto px-4 max-w-3xl">
+        <MotionButton variant="link" asChild className="mb-6 pl-0 text-primary-blue dark:text-primary/70 font-sans">
+          <Link to={initialDoctorId ? `/doctors/${initialDoctorId}` : "/doctors"}>
+            ← Back to {initialDoctorId ? "Doctor Profile" : "Doctors Listing"}
+          </Link>
+        </MotionButton>
+
+        <Card className="p-6 shadow-[0_4px_14px_rgba(0,0,0,0.07)] bg-card-background rounded-2xl">
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold text-center font-michroma">Book Your Appointment</CardTitle>
+            <CardDescription className="text-center font-sans text-muted-text">
+              Please fill in the details to book your consultation.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <AnimatePresence mode="wait">
+                  {step === 1 && (
+                    <motion.div
+                      key="step1"
+                      variants={stepVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 1: Select Doctor & Time</h2>
+                      <FormField
+                        control={form.control}
+                        name="doctorId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-sans">Doctor</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="rounded-xl font-sans">
+                                  <SelectValue placeholder="Select a doctor" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {allDoctors.map((doc) => (
+                                  <SelectItem key={doc.id} value={doc.id} className="font-sans">
+                                    {doc.name} - {doc.specialization} (${doc.consultationFee})
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="font-sans" />
+                          </FormItem>
+                        )}
+                      />
+
+                      {watchDoctorId && (
+                        <>
+                          <FormField
+                            control={form.control}
+                            name="appointmentDate"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel className="font-sans">Appointment Date</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <MotionButton
+                                        variant={"outline"}
+                                        className={cn(
+                                          "w-full pl-3 text-left font-normal rounded-xl font-sans",
+                                          !field.value && "text-muted-text"
+                                        )}
+                                        whileHover={{ scale: 1.02 }}
+                                      >
+                                        <div className="flex items-center justify-between w-full">
+                                          {field.value ? (
+                                            format(field.value, "PPP")
+                                          ) : (
+                                            <span className="font-sans">Pick a date</span>
+                                          )}
+                                          <CalendarIcon className="h-4 w-4 opacity-50" />
+                                        </div>
+                                      </MotionButton>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0 rounded-2xl bg-card-background" align="start">
+                                    <Calendar
+                                      mode="single"
+                                      selected={field.value}
+                                      onSelect={(date) => {
+                                        field.onChange(date);
+                                        setSelectedDate(date);
+                                      }}
+                                      disabled={(date) => {
+                                        const today = new Date();
+                                        today.setHours(0, 0, 0, 0);
+                                        return date < today;
+                                      }}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage className="font-sans" />
+                              </FormItem>
+                            )}
+                          />
+
+                          {watchAppointmentDate && availableTimeSlots.length > 0 && (
+                            <FormField
+                              control={form.control}
+                              name="appointmentTime"
+                              render={({ field }) => (
+                                <FormItem className="space-y-3">
+                                  <FormLabel className="font-sans">Available Time Slots</FormLabel>
+                                  <FormControl>
+                                    <RadioGroup
+                                      onValueChange={field.onChange}
+                                      defaultValue={field.value}
+                                      className="flex flex-wrap gap-2"
+                                    >
+                                      {availableTimeSlots.map((slot) => (
+                                        <FormItem key={slot}>
+                                          <FormControl>
+                                            <RadioGroupItem value={slot} id={`time-slot-${slot}`} className="sr-only" />
+                                          </FormControl>
+                                          <FormLabel
+                                            htmlFor={`time-slot-${slot}`}
+                                            className="flex items-center justify-center rounded-xl border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary-blue text-sm cursor-pointer font-sans"
+                                          >
+                                            {slot}
+                                          </FormLabel>
+                                        </FormItem>
+                                      ))}
+                                    </RadioGroup>
+                                  </FormControl>
+                                  <FormMessage className="font-sans" />
+                                </FormItem>
+                              )}
+                            />
+                          )}
+                          {watchAppointmentDate && availableTimeSlots.length === 0 && (
+                            <p className="text-destructive text-sm font-sans">No slots available for this date.</p>
+                          )}
+                        </>
+                      )}
+                      <MotionButton
+                        type="button"
+                        onClick={() => {
+                          form.trigger(["doctorId", "appointmentDate", "appointmentTime"]).then((isValid) => {
+                            if (isValid) {
+                              setStep(2);
+                            } else {
+                              showError("Please complete all fields in Step 1.");
+                            }
+                          });
+                        }}
+                        className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        Next: Patient Details
+                      </MotionButton>
+                    </motion.div>
+                  )}
+
+                  {step === 2 && (
+                    <motion.div
+                      key="step2"
+                      variants={stepVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 2: Patient Details</h2>
+                      <FormField
+                        control={form.control}
+                        name="fullName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-sans">Full Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="John Doe" {...field} className="rounded-xl font-sans" />
+                            </FormControl>
+                            <FormMessage className="font-sans" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-sans">Email</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="john.doe@example.com" {...field} className="rounded-xl font-sans" />
+                            </FormControl>
+                            <FormMessage className="font-sans" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-sans">Phone Number</FormLabel>
+                            <FormControl>
+                              <Input type="tel" placeholder="+15551234567" {...field} className="rounded-xl font-sans" />
+                            </FormControl>
+                            <FormMessage className="font-sans" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="gender"
+                        render={({ field }) => (
+                          <FormItem className="space-y-3">
+                            <FormLabel className="font-sans">Gender</FormLabel>
+                            <FormControl>
+                              <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="flex flex-col space-y-1"
+                              >
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="male" className="rounded-full" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal font-sans">Male</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="female" className="rounded-full" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal font-sans">Female</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="other" className="rounded-full" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal font-sans">Other</FormLabel>
+                                </FormItem>
+                              </RadioGroup>
+                            </FormControl>
+                            <FormMessage className="font-sans" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="age"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-sans">Age</FormLabel>
+                            <FormControl>
+                              <Input type="number" placeholder="30" {...field} className="rounded-xl font-sans" />
+                            </FormControl>
+                            <FormMessage className="font-sans" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="reasonForVisit"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-sans">Reason for Visit</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Briefly describe your symptoms or reason for visit."
+                                className="resize-y rounded-xl font-sans"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="font-sans" />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex justify-between gap-4">
+                        <MotionButton type="button" variant="outline" onClick={() => setStep(1)} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
+                          Previous
+                        </MotionButton>
+                        <MotionButton
+                          type="button"
+                          onClick={() => {
+                            form.trigger(["fullName", "email", "phone", "gender", "age", "reasonForVisit"]).then((isValid) => {
+                              if (isValid) {
+                                setStep(3);
+                              } else {
+                                showError("Please complete all patient details.");
+                              }
+                            });
+                          }}
+                          className="w-full bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl font-sans"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          Next: Review & Confirm
+                        </MotionButton>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {step === 3 && (
+                    <motion.div
+                      key="step3"
+                      variants={stepVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <h2 className="text-2xl font-semibold mb-4 font-michroma">Step 3: Review & Confirm</h2>
+                      <Card className="p-4 bg-primary-blue/10 dark:bg-primary-blue/20 rounded-2xl">
+                        <CardHeader className="p-0 mb-4">
+                          <CardTitle className="text-xl font-michroma text-heading-dark dark:text-gray-50">Appointment Summary</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 space-y-2 text-muted-text font-sans">
+                          <p><strong>Doctor:</strong> {doctor?.name} ({doctor?.specialization})</p>
+                          <p><strong>Date:</strong> {form.getValues("appointmentDate") ? format(form.getValues("appointmentDate"), "PPP") : "N/A"}</p>
+                          <p><strong>Time:</strong> {form.getValues("appointmentTime")}</p>
+                          <p><strong>Consultation Fee:</strong> ${doctor?.consultationFee}</p>
+                          <p><strong>Patient Name:</strong> {form.getValues("fullName")}</p>
+                          <p><strong>Email:</strong> {form.getValues("email")}</p>
+                          <p><strong>Phone:</strong> {form.getValues("phone")}</p>
+                          <p><strong>Gender:</strong> {form.getValues("gender")}</p>
+                          <p><strong>Age:</strong> {form.getValues("age")}</p>
+                          <p><strong>Reason:</strong> {form.getValues("reasonForVisit")}</p>
+                        </CardContent>
+                      </Card>
+                      <div className="flex justify-between gap-4">
+                        <MotionButton type="button" variant="outline" onClick={() => setStep(2)} className="w-full rounded-xl border-muted-text text-muted-text hover:bg-muted-text/10 font-sans" whileHover={{ scale: 1.05 }}>
+                          Previous
+                        </MotionButton>
+                        <MotionButton type="submit" className="w-full bg-secondary-teal hover:bg-secondary-teal/90 text-white rounded-xl font-sans" disabled={isSubmitting} whileHover={{ scale: 1.05 }}>
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Confirming...
+                            </>
+                          ) : (
+                            "Confirm Appointment"
+                          )}
+                        </MotionButton>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default AppointmentBookingPage;
