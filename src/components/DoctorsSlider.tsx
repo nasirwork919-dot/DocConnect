@@ -6,9 +6,9 @@ import Autoplay from "embla-carousel-autoplay";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DoctorCardColumn from "./DoctorCardColumn";
-import { Doctor, fetchAllDoctors } from "@/data/doctors"; // Import fetchAllDoctors
+import { Doctor, fetchAllDoctors } from "@/data/doctors";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react"; // Import Loader2 for loading state
+import { Loader2 } from "lucide-react";
 
 const DoctorsSlider: React.FC = () => {
   const [doctors, setDoctors] = React.useState<Doctor[]>([]);
@@ -18,8 +18,7 @@ const DoctorsSlider: React.FC = () => {
     const getDoctors = async () => {
       setLoading(true);
       const fetchedDoctors = await fetchAllDoctors();
-      // For the slider, we might still want a curated list, e.g., top 6
-      setDoctors(fetchedDoctors.slice(0, 6));
+      setDoctors(fetchedDoctors.slice(0, 6)); // Curated list for slider
       setLoading(false);
     };
     getDoctors();

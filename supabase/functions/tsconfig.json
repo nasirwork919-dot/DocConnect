@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["ESNext", "deno.ns"],
+    "lib": ["ESNext", "deno.ns", "deno.window"],
     "module": "ESNext",
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["@supabase/supabase-js"]
+    "types": ["@supabase/functions-js/edge"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]

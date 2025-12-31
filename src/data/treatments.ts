@@ -5,9 +5,9 @@ export interface Treatment {
   name: string;
   specialization: string;
   description: string;
-  commonSymptoms: string[]; // Changed to match DB column name
+  commonSymptoms: string[]; // Changed to camelCase
   duration: string;
-  costRange: string; // Changed to match DB column name
+  costRange: string; // Changed to camelCase
 }
 
 export async function fetchAllTreatments(): Promise<Treatment[]> {
@@ -25,9 +25,9 @@ export async function fetchAllTreatments(): Promise<Treatment[]> {
     name: treatment.name,
     specialization: treatment.specialization,
     description: treatment.description,
-    commonSymptoms: treatment.common_symptoms,
+    commonSymptoms: treatment.common_symptoms, // Map from snake_case DB to camelCase interface
     duration: treatment.duration,
-    costRange: treatment.cost_range,
+    costRange: treatment.cost_range, // Map from snake_case DB to camelCase interface
   }));
 }
 
@@ -50,9 +50,9 @@ export async function fetchTreatmentById(id: string): Promise<Treatment | null> 
     name: data.name,
     specialization: data.specialization,
     description: data.description,
-    commonSymptoms: data.common_symptoms,
+    commonSymptoms: data.common_symptoms, // Map from snake_case DB to camelCase interface
     duration: data.duration,
-    costRange: data.cost_range,
+    costRange: data.cost_range, // Map from snake_case DB to camelCase interface
   };
 }
 

@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { showError } from "@/utils/toast";
-import { fetchAllDoctors, Doctor } from "@/data/doctors"; // Import fetchAllDoctors and Doctor
+import { fetchAllDoctors, Doctor } from "@/data/doctors";
 
 interface DoctorAttendance {
   id: string;

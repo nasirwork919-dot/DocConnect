@@ -7,10 +7,10 @@ import { CalendarIcon, Stethoscope, Heart, Brain, Syringe, Phone, Mail, MapPin, 
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import DoctorCard from "@/components/DoctorCard";
-import { fetchAllDoctors, Doctor } from "@/data/doctors"; // Import fetchAllDoctors and Doctor interface
-import React, { useState, useEffect } from "react"; // Import useState, useEffect
-import DoctorsSlider from "@/components/DoctorsSlider"; // Import the new DoctorsSlider component
-import { Loader2 } from "lucide-react"; // Import Loader2 for loading state
+import { fetchAllDoctors, Doctor } from "@/data/doctors";
+import React, { useState, useEffect } from "react";
+import DoctorsSlider from "@/components/DoctorsSlider";
+import { Loader2 } from "lucide-react";
 
 // Create a motion-compatible Button component
 const MotionButton = motion.create(Button);
@@ -26,8 +26,7 @@ const Home = () => {
     const getTopDoctors = async () => {
       setLoadingDoctors(true);
       const allDoctors = await fetchAllDoctors();
-      // For the Home page, we might want a smaller, curated list
-      setTopDoctors(allDoctors.slice(0, 6));
+      setTopDoctors(allDoctors.slice(0, 6)); // For the Home page, we might want a smaller, curated list
       setLoadingDoctors(false);
     };
     getTopDoctors();

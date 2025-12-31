@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import DoctorCard from "@/components/DoctorCard";
 import { SlidersHorizontal, Search, Loader2 } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import { fetchAllDoctors, Doctor } from "@/data/doctors"; // Import fetchAllDoctors
+import { fetchAllDoctors, Doctor } from "@/data/doctors";
 
 const MotionButton = motion.create(Button);
 
@@ -61,15 +61,15 @@ const DoctorsListing = () => {
 
       const matchesAvailability =
         availability === "any" ||
-        (availability === "today" && doctor.availability_status.includes("Today")) ||
-        (availability === "tomorrow" && doctor.availability_status.includes("Tomorrow"));
+        (availability === "today" && doctor.availabilityStatus.includes("Today")) ||
+        (availability === "tomorrow" && doctor.availabilityStatus.includes("Tomorrow"));
 
-      const fee = doctor.consultation_fee;
+      const fee = doctor.consultationFee;
       const matchesMinFee = minFee === "" || fee >= parseFloat(minFee);
       const matchesMaxFee = maxFee === "" || fee <= parseFloat(maxFee);
 
       const matchesAvailableNow = showAvailableNow
-        ? doctor.availability_status === "Now Available"
+        ? doctor.availabilityStatus === "Now Available"
         : true;
 
       return (

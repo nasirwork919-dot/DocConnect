@@ -20,7 +20,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Doctor, fetchDoctorById } from "@/data/doctors"; // Import fetchDoctorById
+import { Doctor, fetchDoctorById } from "@/data/doctors";
 
 const MotionButton = motion.create(Button);
 
@@ -84,7 +84,7 @@ const DoctorProfilePage = () => {
               className="flex-shrink-0"
             >
               <Avatar className="h-32 w-32 md:h-48 md:w-48">
-                <AvatarImage src={doctor.profile_photo_url || "/images/doctor-placeholder.jpg"} alt={doctor.name} className="object-cover object-top" />
+                <AvatarImage src={doctor.profilePhotoUrl || "/images/doctor-placeholder.jpg"} alt={doctor.name} className="object-cover object-top" />
                 <AvatarFallback className="text-5xl bg-muted-foreground/20 text-foreground">
                   {doctor.name.split(" ").map(n => n[0]).join("")}
                 </AvatarFallback>
@@ -98,8 +98,8 @@ const DoctorProfilePage = () => {
               </p>
               <div className="flex items-center justify-center md:justify-start gap-2 mb-4 font-sans">
                 <Star className="h-5 w-5 text-accent-yellow" fill="currentColor" />
-                <span className="text-lg font-semibold">{doctor.average_rating}</span>
-                <span className="text-muted-text">({doctor.reviews_count} Reviews)</span>
+                <span className="text-lg font-semibold">{doctor.averageRating}</span>
+                <span className="text-muted-text">({doctor.reviewsCount} Reviews)</span>
               </div>
               <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
                 {doctor.qualifications.map((q, index) => (
@@ -116,7 +116,7 @@ const DoctorProfilePage = () => {
                   <Hospital className="h-4 w-4 mr-2" /> {doctor.hospital}
                 </p>
                 <p className="flex items-center">
-                  <DollarSign className="h-4 w-4 mr-2" /> Fee: ${doctor.consultation_fee}
+                  <DollarSign className="h-4 w-4 mr-2" /> Fee: ${doctor.consultationFee}
                 </p>
               </div>
             </div>
@@ -149,7 +149,7 @@ const DoctorProfilePage = () => {
               <h3 className="text-xl font-semibold mb-3 flex items-center font-michroma">
                 <Mail className="h-5 w-5 mr-2 text-primary-blue" /> Contact
               </h3>
-              <p className="text-muted-text mb-6 font-sans">{doctor.contact_email}</p>
+              <p className="text-muted-text mb-6 font-sans">{doctor.contactEmail}</p>
             </div>
 
             <div>
@@ -158,8 +158,8 @@ const DoctorProfilePage = () => {
                 <CardContent className="p-0 font-sans">
                   <p className="flex items-center text-lg font-semibold text-heading-dark dark:text-gray-50">
                     <Clock className="h-5 w-5 mr-2 text-primary-blue" /> Current Status:
-                    <Badge className={`ml-2 ${getStatusColor(doctor.realtime_status)} text-white font-sans rounded-md`}>
-                      {doctor.realtime_status}
+                    <Badge className={`ml-2 ${getStatusColor(doctor.realtimeStatus)} text-white font-sans rounded-md`}>
+                      {doctor.realtimeStatus}
                     </Badge>
                   </p>
                 </CardContent>
@@ -167,7 +167,7 @@ const DoctorProfilePage = () => {
 
               <h3 className="text-xl font-semibold mb-3 font-michroma">Schedule</h3>
               <div className="space-y-2 text-muted-text font-sans mb-6">
-                {Object.entries(doctor.availability_schedule).map(([day, time]: [string, string]) => (
+                {Object.entries(doctor.availabilitySchedule).map(([day, time]: [string, string]) => (
                   <motion.div
                     key={day}
                     className="flex justify-between p-2 rounded-md hover:bg-muted/50 transition-colors duration-200"

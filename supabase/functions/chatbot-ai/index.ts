@@ -8,6 +8,35 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+// Interface for OpenRouter API response
+interface OpenRouterCompletionResponse {
+  id: string;
+  choices: Array<{
+    finish_reason: string;
+    index: number;
+    message: {
+      content: string | null;
+      role: string;
+      tool_calls?: Array<{
+        id: string;
+        type: "function";
+        function: {
+          name: string;
+          arguments: string;
+        };
+      }>;
+    };
+  }>;
+  created: number;
+  model: string;
+  object: string;
+  usage: {
+    completion_tokens: number;
+    prompt_tokens: number;
+    total_tokens: number;
+  };
+}
+
 // Helper function to get Supabase client with service role
 const getSupabaseServiceRoleClient = () => {
   return createClient(
@@ -341,7 +370,7 @@ serve(async (req) => {
       throw new Error(`OpenRouter API error: ${JSON.stringify(errorData)}`);
     }
 
-    const openRouterData = await openRouterResponse.json();
+    const openRouterData: OpenRouterCompletionResponse = await openRouterResponse.json();
     const responseMessage = openRouterData.choices[0].message;
 
     let botResponseContent = responseMessage.content || "I'm sorry, I couldn't process that request.";
@@ -387,7 +416,7 @@ serve(async (req) => {
           throw new Error(`OpenRouter API error after tool call: ${JSON.stringify(errorData)}`);
         }
 
-        const toolResponseData = await toolResponse.json();
+        const toolResponseData: OpenRouterCompletionResponse = await toolResponse.json();
         botResponseContent = toolResponseData.choices[0].message.content || "I processed your request.";
       } else {
         botResponseContent = `I tried to use a tool called "${functionName}" but it's not recognized.`;
