@@ -2,13 +2,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X, Send, Loader2 } from "lucide-react";
+import { MessageSquare, Send, Loader2, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { supabase } from "@/integrations/supabase/client"; // Import supabase client
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChatMessage {
   id: number;
@@ -16,103 +14,145 @@ interface ChatMessage {
   sender: 'user' | 'bot';
 }
 
+const QUICK_ACTIONS = [
+  { label: "🔍 Find a Doctor", message: "I need to find a doctor" },
+  { label: "📅 Book Appointment", message: "I want to book an appointment" },
+  { label: "💊 Treatments", message: "What treatments do you offer?" },
+  { label: "🏥 Hospital Info", message: "What are your hospital hours and location?" },
+  { label: "🚨 Emergency", message: "I need emergency guidance" },
+];
+
+// Safe markdown renderer — no external deps, no dangerouslySetInnerHTML
+function BotMessage({ text }: { text: string }) {
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+  let listBuffer: string[] = [];
+  let key = 0;
+
+  const parseLine = (line: string): React.ReactNode => {
+    const parts = line.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((p, i) =>
+      p.startsWith('**') && p.endsWith('**')
+        ? <strong key={i}>{p.slice(2, -2)}</strong>
+        : p
+    );
+  };
+
+  const flushList = () => {
+    if (listBuffer.length > 0) {
+      elements.push(
+        <ul key={key++} className="list-disc pl-4 my-1 space-y-0.5 text-sm">
+          {listBuffer.map((item, i) => <li key={i}>{parseLine(item)}</li>)}
+        </ul>
+      );
+      listBuffer = [];
+    }
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
+      listBuffer.push(trimmed.slice(2));
+    } else {
+      flushList();
+      if (trimmed) {
+        elements.push(
+          <p key={key++} className="text-sm leading-relaxed">{parseLine(trimmed)}</p>
+        );
+      } else {
+        elements.push(<div key={key++} className="h-1" />);
+      }
+    }
+  }
+  flushList();
+
+  return <div className="space-y-1">{elements}</div>;
+}
+
 const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Generate a session ID on component mount if not already present
   useEffect(() => {
-    let currentSessionId = localStorage.getItem('chatbotSessionId');
-    if (!currentSessionId) {
-      currentSessionId = crypto.randomUUID();
-      localStorage.setItem('chatbotSessionId', currentSessionId);
+    let sid = localStorage.getItem('chatbotSessionId');
+    if (!sid) {
+      sid = crypto.randomUUID();
+      localStorage.setItem('chatbotSessionId', sid);
     }
-    setSessionId(currentSessionId);
+    setSessionId(sid);
 
-    // Load initial messages from history if available
-    const loadChatHistory = async () => {
-      if (currentSessionId) {
-        const { data, error } = await supabase
-          .from('chatbot_messages')
-          .select('sender, message_content, id')
-          .eq('session_id', currentSessionId)
-          .order('timestamp', { ascending: true });
+    const load = async () => {
+      const { data, error } = await supabase
+        .from('chatbot_messages')
+        .select('sender, message_content, id')
+        .eq('session_id', sid!)
+        .order('timestamp', { ascending: true });
 
-        if (error) {
-          console.error("Error loading chat history:", error);
-          setMessages([{ id: 1, text: "Hello! I'm your DocConnect AI assistant. How can I help you today?", sender: 'bot' }]);
-        } else if (data && data.length > 0) {
-          setMessages(data.map((msg, index) => ({
-            id: msg.id || index + 1, // Use DB ID if available, fallback to index
-            text: msg.message_content,
-            sender: msg.sender as 'user' | 'bot',
-          })));
-        } else {
-          setMessages([{ id: 1, text: "Hello! I'm your DocConnect AI assistant. How can I help you today?", sender: 'bot' }]);
-        }
+      if (!error && data && data.length > 0) {
+        setMessages(data.map((msg, i) => ({
+          id: msg.id || i + 1,
+          text: msg.message_content,
+          sender: msg.sender as 'user' | 'bot',
+        })));
+      } else {
+        setMessages([{ id: 1, text: "Hello! I'm DocConnect AI 👋 I can help you find doctors, book appointments, learn about treatments, and more. What can I help you with?", sender: 'bot' }]);
       }
     };
-    loadChatHistory();
+    load();
   }, []);
 
-  const scrollToBottom = () => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, [messages]);
 
-  useEffect(scrollToBottom, [messages]);
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || !sessionId) return;
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (inputMessage.trim() === "" || !sessionId) return;
-
-    const newUserMessage: ChatMessage = { id: messages.length + 1, text: inputMessage, sender: 'user' };
-    setMessages((prevMessages) => [...prevMessages, newUserMessage]);
+    const userMsg: ChatMessage = { id: Date.now(), text, sender: 'user' };
+    setMessages(prev => [...prev, userMsg]);
     setInputMessage("");
     setIsBotTyping(true);
 
     try {
-      // Save user message to Supabase history
-      const { error: userMessageError } = await supabase.from('chatbot_messages').insert({
+      await supabase.from('chatbot_messages').insert({
         session_id: sessionId,
         sender: 'user',
-        message_content: newUserMessage.text,
+        message_content: text,
       });
-      if (userMessageError) console.error("Error saving user message to history:", userMessageError);
 
-      // Call the AI Edge Function
       const response = await supabase.functions.invoke('chatbot-ai', {
-        body: {
-          messages: [{ role: 'user', content: newUserMessage.text }], // Only send the latest message for the AI to process
-          sessionId: sessionId,
-        },
+        body: { messages: [{ role: 'user', content: text }], sessionId },
       });
 
-      if (response.error) {
-        console.error("Edge Function error:", response.error);
-        throw new Error(response.error.message);
-      }
+      if (response.error) throw new Error(response.error.message);
 
-      const botResponseText = (response.data as { response: string }).response;
-
-      const newBotMessage: ChatMessage = { id: messages.length + 2, text: botResponseText, sender: 'bot' };
-      setMessages((prevMessages) => [...prevMessages, newBotMessage]);
-
-      // The Edge Function already saves the bot's response to history
-      // No need to save it again here.
-
-    } catch (error) {
-      console.error("Chatbot API call failed:", error);
-      const errorMessage: ChatMessage = { id: messages.length + 2, text: "Oops! Something went wrong. Please try again.", sender: 'bot' };
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      const botText = (response.data as { response: string }).response;
+      setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, sender: 'bot' }]);
+    } catch (err) {
+      console.error("Chatbot error:", err);
+      setMessages(prev => [...prev, { id: Date.now() + 1, text: "Oops! Something went wrong. Please try again.", sender: 'bot' }]);
     } finally {
       setIsBotTyping(false);
     }
   };
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    sendMessage(inputMessage);
+  };
+
+  const handleNewChat = () => {
+    const newSid = crypto.randomUUID();
+    localStorage.setItem('chatbotSessionId', newSid);
+    setSessionId(newSid);
+    setMessages([{ id: 1, text: "Hello! I'm DocConnect AI 👋 How can I help you today?", sender: 'bot' }]);
+  };
+
+  const showQuickActions = messages.length <= 1;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -131,46 +171,93 @@ const ChatbotWidget = () => {
           </Button>
         </motion.div>
       </SheetTrigger>
+
       <SheetContent side="left" className="w-full md:w-[400px] p-0 flex flex-col bg-card-background dark:bg-heading-dark">
-        <SheetHeader className="bg-primary-blue text-white p-4 rounded-t-lg">
-          <SheetTitle className="text-lg font-semibold font-michroma">DocConnect AI Chat</SheetTitle>
-        </SheetHeader>
-        <CardContent className="flex-1 p-4 overflow-y-auto flex flex-col space-y-3">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+        {/* Header */}
+        <SheetHeader className="bg-primary-blue text-white px-4 py-3 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <SheetTitle className="text-base font-semibold font-michroma text-white">DocConnect AI</SheetTitle>
+              <p className="text-xs text-blue-100 font-sans mt-0.5">Hospital Assistant · Always here to help</p>
+            </div>
+            <button
+              onClick={handleNewChat}
+              title="Start new chat"
+              className="text-blue-200 hover:text-white transition-colors p-1 rounded"
             >
+              <RefreshCw className="h-4 w-4" />
+            </button>
+          </div>
+        </SheetHeader>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-[75%] p-2 rounded-lg text-sm font-sans ${
+                className={`max-w-[82%] px-3 py-2 rounded-2xl ${
                   msg.sender === 'user'
-                    ? 'bg-primary-blue text-white rounded-br-none'
-                    : 'bg-muted-foreground/10 text-heading-dark dark:text-gray-50 rounded-bl-none'
+                    ? 'bg-primary-blue text-white rounded-br-sm'
+                    : 'bg-muted-foreground/10 text-heading-dark dark:text-gray-100 rounded-bl-sm'
                 }`}
               >
-                {msg.text}
+                {msg.sender === 'bot'
+                  ? <BotMessage text={msg.text} />
+                  : <p className="text-sm">{msg.text}</p>
+                }
               </div>
             </div>
           ))}
-          {isBotTyping && (
-            <div className="flex justify-start">
-              <div className="max-w-[75%] p-2 rounded-lg text-sm font-sans bg-muted-foreground/10 text-heading-dark dark:text-gray-50 rounded-bl-none flex items-center">
-                <Loader2 className="h-4 w-4 animate-spin mr-2" /> Typing...
+
+          {/* Quick actions — only shown at start */}
+          {showQuickActions && !isBotTyping && (
+            <div className="space-y-1.5 pt-1">
+              <p className="text-xs text-muted-foreground font-sans px-1">Quick actions:</p>
+              <div className="flex flex-wrap gap-1.5">
+                {QUICK_ACTIONS.map((action) => (
+                  <button
+                    key={action.label}
+                    onClick={() => sendMessage(action.message)}
+                    className="text-xs px-3 py-1.5 rounded-full border border-primary-blue/30 text-primary-blue hover:bg-primary-blue hover:text-white transition-colors font-sans"
+                  >
+                    {action.label}
+                  </button>
+                ))}
               </div>
             </div>
           )}
+
+          {isBotTyping && (
+            <div className="flex justify-start">
+              <div className="px-3 py-2 rounded-2xl rounded-bl-sm bg-muted-foreground/10 flex items-center gap-2">
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary-blue" />
+                <span className="text-xs text-muted-foreground font-sans">Thinking...</span>
+              </div>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
-        </CardContent>
-        <form onSubmit={handleSendMessage} className="p-4 border-t bg-card-background dark:bg-card flex-shrink-0 flex">
+        </div>
+
+        {/* Input */}
+        <form
+          onSubmit={handleSubmit}
+          className="px-4 py-3 border-t bg-card-background dark:bg-card flex gap-2 flex-shrink-0"
+        >
           <Input
             type="text"
-            placeholder="Type your message..."
-            className="flex-1 p-2 border rounded-xl text-sm font-sans bg-background-light dark:bg-heading-dark dark:text-gray-50 mr-2"
+            placeholder="Ask me anything about DocConnect..."
+            className="flex-1 rounded-xl text-sm font-sans bg-background-light dark:bg-heading-dark dark:text-gray-50"
             value={inputMessage}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputMessage(e.currentTarget.value)}
+            onChange={(e) => setInputMessage(e.currentTarget.value)}
             disabled={isBotTyping}
           />
-          <Button type="submit" size="icon" className="bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl" disabled={isBotTyping}>
+          <Button
+            type="submit"
+            size="icon"
+            className="bg-primary-blue hover:bg-primary-blue/90 text-white rounded-xl flex-shrink-0"
+            disabled={isBotTyping || !inputMessage.trim()}
+          >
             <Send className="h-4 w-4" />
           </Button>
         </form>
