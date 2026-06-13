@@ -1,0 +1,11 @@
+{
+  "installCommand": "cd Doc && npm install",
+  "buildCommand": "cd Doc && npm run build",
+  "outputDirectory": "Doc/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
