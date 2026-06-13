@@ -1,28 +1,49 @@
-import { STATIC_DOCTORS, StaticDoctor as Doctor } from "./staticDoctors";
+import { supabase } from "@/integrations/supabase/client";
+import { StaticDoctor as Doctor } from "./staticDoctors";
 
 export type { Doctor };
 
+function mapDoctor(d: any): Doctor {
+  return {
+    id: d.id,
+    name: d.name,
+    specialization: d.specialization,
+    qualifications: d.qualifications || [],
+    experience: d.experience,
+    hospital: d.hospital,
+    consultationFee: d.consultation_fee,
+    languages: d.languages || [],
+    contactEmail: d.contact_email,
+    bio: d.bio,
+    availabilitySchedule: d.availability_schedule || {},
+    realtimeStatus: d.realtime_status,
+    averageRating: d.average_rating,
+    reviewsCount: d.reviews_count,
+    profilePhotoUrl: d.profile_photo_url || '/images/doctor-placeholder.jpg',
+    location: d.location,
+    gender: d.gender,
+    availabilityStatus: d.availability_status,
+  };
+}
+
 export async function fetchAllDoctors(): Promise<Doctor[]> {
-  // Simulate async operation
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(STATIC_DOCTORS);
-    }, 100);
-  });
+  const { data, error } = await supabase.from('doctors').select('*');
+  if (error) {
+    console.error("Error fetching doctors:", error);
+    return [];
+  }
+  return data.map(mapDoctor);
 }
 
 export async function fetchDoctorById(id: string): Promise<Doctor | null> {
-  // Simulate async operation
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const doctor = STATIC_DOCTORS.find(doc => doc.id === id) || null;
-      resolve(doctor);
-    }, 100);
-  });
+  const { data, error } = await supabase
+    .from('doctors')
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) return null;
+  return mapDoctor(data);
 }
 
-// Export arrays for backward compatibility
-export const ALL_DOCTORS: Doctor[] = STATIC_DOCTORS;
-export const TOP_DOCTORS: Doctor[] = [...STATIC_DOCTORS]
-  .sort((a, b) => b.averageRating - a.averageRating)
-  .slice(0, 3);
+export const ALL_DOCTORS: Doctor[] = [];
+export const TOP_DOCTORS: Doctor[] = [];
