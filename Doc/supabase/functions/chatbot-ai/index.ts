@@ -271,9 +271,21 @@ serve(async (req: Request) => {
       rawHistory.pop();
     }
 
+    // Merge consecutive same-role messages — happens when a previous request failed
+    // and the user message was saved but no bot response was stored
+    const mergedHistory: { role: string; content: string }[] = [];
+    for (const msg of rawHistory) {
+      const prev = mergedHistory[mergedHistory.length - 1];
+      if (prev && prev.role === msg.role) {
+        prev.content += '\n' + msg.content;
+      } else {
+        mergedHistory.push({ ...msg });
+      }
+    }
+
     const systemMessage = { role: 'system', content: SYSTEM_PROMPT(today) };
     const conversation = [
-      ...rawHistory,
+      ...mergedHistory,
       { role: 'user', content: currentUserMsg },
     ];
 
