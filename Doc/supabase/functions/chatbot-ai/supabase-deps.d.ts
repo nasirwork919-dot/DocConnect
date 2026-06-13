@@ -17,3 +17,23 @@ declare namespace Deno {
     function get(key: string): string | undefined;
   }
 }
+
+// Deno web globals (not in Node.js typedefs — needed for VS Code IntelliSense)
+declare class Request {
+  readonly method: string;
+  readonly url: string;
+  readonly headers: Headers;
+  json(): Promise<any>;
+  text(): Promise<string>;
+}
+
+declare class Response {
+  constructor(body?: BodyInit | null, init?: ResponseInit);
+  readonly ok: boolean;
+  readonly status: number;
+  readonly headers: Headers;
+  json(): Promise<any>;
+  text(): Promise<string>;
+}
+
+declare function fetch(input: string | Request, init?: RequestInit): Promise<Response>;

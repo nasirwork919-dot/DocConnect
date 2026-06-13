@@ -8,14 +8,14 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const MODEL = "openai/gpt-4o-mini";
+const MODEL = "claude-haiku-4-5-20251001";  // fast + cheap; swap to claude-sonnet-4-6 for smarter responses
 
 const getSupabase = () => createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
-// ── Tool functions (all accept a single args object — no spreading bug) ────────
+// ── Tool functions ─────────────────────────────────────────────────────────────
 
 async function get_doctors_info({ specialization, name }: { specialization?: string; name?: string } = {}) {
   const supabase = getSupabase();
@@ -68,9 +68,8 @@ async function get_available_slots({ doctor_id, date }: { doctor_id: string; dat
   }
 
   const { data: bookings } = await supabase.from('bookings').select('appointment_time').eq('doctor_id', doctor_id).eq('appointment_date', date);
-  const booked = new Set(bookings?.map(b => b.appointment_time));
-  const available = slots.filter(s => !booked.has(s));
-  return JSON.stringify({ available_slots: available });
+  const booked = new Set(bookings?.map((b: any) => b.appointment_time));
+  return JSON.stringify({ available_slots: slots.filter(s => !booked.has(s)) });
 }
 
 async function book_appointment({ doctor_id, appointment_date, appointment_time, full_name, email, phone, gender, age, reason_for_visit }: {
@@ -104,90 +103,77 @@ const toolFunctions: Record<string, (args: any) => Promise<string>> = {
   submit_inquiry,
 };
 
+// ── Anthropic tool schema (uses input_schema, not parameters) ──────────────────
 const tools = [
   {
-    type: "function",
-    function: {
-      name: "get_doctors_info",
-      description: "Search for doctors by specialization or name. Use this whenever a user asks about doctors, specialists, or wants to know who to see for a condition.",
-      parameters: {
-        type: "object",
-        properties: {
-          specialization: { type: "string", description: "Medical specialization e.g. Cardiology, Pediatrics, Neurology" },
-          name: { type: "string", description: "Doctor's name" },
-        },
+    name: "get_doctors_info",
+    description: "Search for doctors by specialization or name. Use whenever a user asks about doctors, specialists, or wants to know who to see for a condition.",
+    input_schema: {
+      type: "object",
+      properties: {
+        specialization: { type: "string", description: "Medical specialization e.g. Cardiology, Pediatrics, Neurology" },
+        name: { type: "string", description: "Doctor's name" },
       },
     },
   },
   {
-    type: "function",
-    function: {
-      name: "get_treatments_info",
-      description: "Get information about medical treatments and procedures offered at the hospital.",
-      parameters: {
-        type: "object",
-        properties: {
-          treatmentName: { type: "string", description: "Name of the treatment or procedure" },
-          specialization: { type: "string", description: "Medical specialization related to the treatment" },
-        },
+    name: "get_treatments_info",
+    description: "Get information about medical treatments and procedures offered at the hospital.",
+    input_schema: {
+      type: "object",
+      properties: {
+        treatmentName: { type: "string", description: "Name of the treatment or procedure" },
+        specialization: { type: "string", description: "Medical specialization related to the treatment" },
       },
     },
   },
   {
-    type: "function",
-    function: {
-      name: "get_available_slots",
-      description: "Check available appointment slots for a specific doctor on a given date.",
-      parameters: {
-        type: "object",
-        properties: {
-          doctor_id: { type: "string", description: "The doctor's ID from get_doctors_info" },
-          date: { type: "string", description: "Date in YYYY-MM-DD format" },
-        },
-        required: ["doctor_id", "date"],
+    name: "get_available_slots",
+    description: "Check available appointment slots for a specific doctor on a given date.",
+    input_schema: {
+      type: "object",
+      properties: {
+        doctor_id: { type: "string", description: "The doctor's ID from get_doctors_info" },
+        date: { type: "string", description: "Date in YYYY-MM-DD format" },
       },
+      required: ["doctor_id", "date"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "book_appointment",
-      description: "Book an appointment. ONLY call this after collecting ALL patient details and getting explicit confirmation.",
-      parameters: {
-        type: "object",
-        properties: {
-          doctor_id: { type: "string" },
-          appointment_date: { type: "string", description: "YYYY-MM-DD" },
-          appointment_time: { type: "string", description: "hh:mm AM/PM format" },
-          full_name: { type: "string" },
-          email: { type: "string" },
-          phone: { type: "string" },
-          gender: { type: "string", enum: ["male", "female", "other"] },
-          age: { type: "number" },
-          reason_for_visit: { type: "string" },
-        },
-        required: ["doctor_id", "appointment_date", "appointment_time", "full_name", "email", "phone", "gender", "age", "reason_for_visit"],
+    name: "book_appointment",
+    description: "Book an appointment. ONLY call after collecting ALL patient details and getting explicit confirmation.",
+    input_schema: {
+      type: "object",
+      properties: {
+        doctor_id: { type: "string" },
+        appointment_date: { type: "string", description: "YYYY-MM-DD" },
+        appointment_time: { type: "string", description: "hh:mm AM/PM format" },
+        full_name: { type: "string" },
+        email: { type: "string" },
+        phone: { type: "string" },
+        gender: { type: "string", enum: ["male", "female", "other"] },
+        age: { type: "number" },
+        reason_for_visit: { type: "string" },
       },
+      required: ["doctor_id", "appointment_date", "appointment_time", "full_name", "email", "phone", "gender", "age", "reason_for_visit"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "submit_inquiry",
-      description: "Submit a patient inquiry or message to the hospital team. Use when a patient wants to send a message or has a general question the AI can't answer.",
-      parameters: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          email: { type: "string" },
-          message: { type: "string" },
-        },
-        required: ["name", "email", "message"],
+    name: "submit_inquiry",
+    description: "Submit a patient inquiry to the hospital team. Use when the patient wants to contact the hospital or has a question the AI can't answer.",
+    input_schema: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        email: { type: "string" },
+        message: { type: "string" },
       },
+      required: ["name", "email", "message"],
     },
   },
 ];
 
+// ── System prompt ──────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = (today: string) => `You are DocConnect AI, the official assistant for DocConnect Hospital. Today is ${today}.
 
 ## YOUR SCOPE
@@ -200,7 +186,7 @@ You ONLY assist with:
 - Patient inquiries submission
 
 ## OUT OF SCOPE — STRICT RULE
-If the user asks about ANYTHING unrelated to healthcare or this hospital (coding, sports, weather, news, general knowledge, entertainment, politics, etc.) — respond with ONLY this message, nothing else:
+If the user asks about ANYTHING unrelated to healthcare or this hospital (coding, sports, weather, news, general knowledge, entertainment, politics, etc.) — respond with ONLY:
 "I'm DocConnect AI and I can only help with hospital and healthcare topics. Can I help you find a doctor, book an appointment, or answer a medical question? 😊"
 
 ## HOSPITAL INFO
@@ -211,33 +197,35 @@ If the user asks about ANYTHING unrelated to healthcare or this hospital (coding
 - Phone: +1 (555) 123-4567
 - Email: info@docconnect.com
 
-## APPOINTMENT BOOKING FLOW (follow this exactly)
-1. Ask: which doctor (or what specialization) + preferred date
+## APPOINTMENT BOOKING FLOW (follow exactly)
+1. Ask: which doctor (or specialization) + preferred date
 2. Call get_doctors_info to find the doctor and their ID
 3. Call get_available_slots with doctor_id + date
-4. List available slots and ask patient to pick one
+4. List available slots, ask patient to pick one
 5. Collect in one message: Full Name, Email, Phone, Gender, Age, Reason for Visit
 6. Summarize all details and ask "Shall I confirm this booking?"
 7. Call book_appointment ONLY after patient confirms
 
 ## MEDICAL QUESTIONS
-- Provide helpful general guidance: "headache + fever may indicate infection — a GP can help"
+- Give helpful general guidance: e.g. "headache + fever may indicate infection — a GP can help"
 - NEVER give a definitive diagnosis
 - For serious symptoms (chest pain, stroke signs, difficulty breathing): "⚠️ This sounds urgent. Please call 911 or go to the nearest ER immediately."
-- Suggest relevant specialists and offer to find/book
+- Suggest relevant specialists and offer to find/book one
 
 ## TONE
 Warm, professional, concise. Use **bold** for doctor names and key info. Use bullet points for lists.`;
 
-serve(async (req) => {
+// ── Main handler ───────────────────────────────────────────────────────────────
+serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
     const { messages: userMessages, sessionId } = await req.json();
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY secret not set in Supabase.');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY secret not set in Supabase.');
 
     const supabase = getSupabase();
+    const today = new Date().toISOString().split('T')[0];
 
     // Load last 20 messages for context
     const { data: chatHistory } = await supabase
@@ -247,50 +235,64 @@ serve(async (req) => {
       .order('timestamp', { ascending: true })
       .limit(20);
 
+    // Build conversation — Anthropic requires alternating user/assistant, starting with user
+    const rawHistory = chatHistory?.map((msg: any) => ({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.message_content,
+    })) || [];
+
+    // Ensure conversation starts with 'user' (drop leading assistant messages)
+    while (rawHistory.length > 0 && rawHistory[0].role === 'assistant') {
+      rawHistory.shift();
+    }
+
     const conversation = [
-      ...(chatHistory?.map(msg => ({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
-        content: msg.message_content,
-      })) || []),
+      ...rawHistory,
       { role: 'user', content: userMessages[userMessages.length - 1].content },
     ];
 
-    const systemMessage = { role: "system", content: SYSTEM_PROMPT(new Date().toISOString().split('T')[0]) };
-
-    const callLLM = async (msgs: object[]) => {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const callClaude = async (msgs: object[]) => {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
         },
-        body: JSON.stringify({ model: MODEL, messages: msgs, tools, tool_choice: "auto" }),
+        body: JSON.stringify({
+          model: MODEL,
+          max_tokens: 1024,
+          system: SYSTEM_PROMPT(today),
+          messages: msgs,
+          tools,
+          tool_choice: { type: "auto" },
+        }),
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(`OpenRouter error: ${JSON.stringify(err)}`);
+        throw new Error(`Anthropic API error: ${JSON.stringify(err)}`);
       }
-      return (await res.json()).choices[0].message;
+      return await res.json();
     };
 
-    let responseMessage = await callLLM([systemMessage, ...conversation]);
+    let response = await callClaude(conversation);
 
-    // Handle tool call
-    if (responseMessage.tool_calls?.length > 0) {
-      const toolCall = responseMessage.tool_calls[0];
-      const fn = toolFunctions[toolCall.function.name];
-      const args = JSON.parse(toolCall.function.arguments);
-      const toolResult = fn ? await fn(args) : JSON.stringify({ error: "Unknown tool" });
+    // Handle tool call — Anthropic returns stop_reason: "tool_use"
+    if (response.stop_reason === "tool_use") {
+      const toolUse = response.content.find((c: any) => c.type === "tool_use");
+      const fn = toolFunctions[toolUse.name];
+      const toolResult = fn ? await fn(toolUse.input) : JSON.stringify({ error: "Unknown tool" });
 
-      responseMessage = await callLLM([
-        systemMessage,
+      response = await callClaude([
         ...conversation,
-        responseMessage,
-        { role: "tool", tool_call_id: toolCall.id, content: toolResult },
+        { role: "assistant", content: response.content },
+        { role: "user", content: [{ type: "tool_result", tool_use_id: toolUse.id, content: toolResult }] },
       ]);
     }
 
-    const botText = responseMessage.content || "I'm sorry, I couldn't process that. Please try again.";
+    // Extract text from Anthropic response content array
+    const botText = response.content?.find((c: any) => c.type === "text")?.text
+      ?? "I'm sorry, I couldn't process that. Please try again.";
 
     await supabase.from('chatbot_messages').insert({
       session_id: sessionId,
