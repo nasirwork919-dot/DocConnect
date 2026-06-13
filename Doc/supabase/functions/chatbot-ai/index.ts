@@ -19,9 +19,9 @@ const getSupabase = () => createClient(
 
 async function get_doctors_info({ specialization, name }: { specialization?: string; name?: string } = {}) {
   const supabase = getSupabase();
-  let query = supabase.from('doctors').select(
-    'id, name, specialization, experience, hospital, consultation_fee, availability_status, bio, languages, contact_email, availability_schedule'
-  );
+  let query = supabase.from('doctors')
+    .select('id, name, specialization, experience, hospital, consultation_fee, availability_status, languages, contact_email')
+    .limit(8);
   if (specialization) query = query.ilike('specialization', `%${specialization}%`);
   if (name) query = query.ilike('name', `%${name}%`);
   const { data, error } = await query;
@@ -235,20 +235,29 @@ serve(async (req: Request) => {
       .order('timestamp', { ascending: true })
       .limit(20);
 
+    const currentUserMsg = userMessages[userMessages.length - 1].content;
+
     // Build conversation — Anthropic requires alternating user/assistant, starting with user
     const rawHistory = chatHistory?.map((msg: any) => ({
       role: msg.sender === 'user' ? 'user' : 'assistant',
       content: msg.message_content,
     })) || [];
 
-    // Ensure conversation starts with 'user' (drop leading assistant messages)
+    // Drop leading assistant messages
     while (rawHistory.length > 0 && rawHistory[0].role === 'assistant') {
       rawHistory.shift();
     }
 
+    // Frontend saves the user message to DB before calling this function, so history
+    // already contains it as the last entry — remove it to avoid duplication.
+    const last = rawHistory[rawHistory.length - 1];
+    if (last?.role === 'user' && last?.content === currentUserMsg) {
+      rawHistory.pop();
+    }
+
     const conversation = [
       ...rawHistory,
-      { role: 'user', content: userMessages[userMessages.length - 1].content },
+      { role: 'user', content: currentUserMsg },
     ];
 
     const callClaude = async (msgs: object[]) => {
