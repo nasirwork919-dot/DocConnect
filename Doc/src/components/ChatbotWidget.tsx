@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Send, Loader2, RefreshCw } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,14 +15,14 @@ interface ChatMessage {
 }
 
 const QUICK_ACTIONS = [
-  { label: "🔍 Find a Doctor", message: "I need to find a doctor" },
   { label: "📅 Book Appointment", message: "I want to book an appointment" },
-  { label: "💊 Treatments", message: "What treatments do you offer?" },
-  { label: "🏥 Hospital Info", message: "What are your hospital hours and location?" },
+  { label: "👨‍⚕️ View Doctors", message: "Who are your doctors?" },
+  { label: "❓ Ask a Question", message: "I have a question about the clinic" },
+  { label: "📞 Contact Us", message: "How can I contact the clinic?" },
   { label: "🚨 Emergency", message: "I need emergency guidance" },
 ];
 
-// Safe markdown renderer — no external deps, no dangerouslySetInnerHTML
+// Safe markdown renderer — no dangerouslySetInnerHTML
 function BotMessage({ text }: { text: string }) {
   const lines = text.split('\n');
   const elements: React.ReactNode[] = [];
@@ -30,6 +30,10 @@ function BotMessage({ text }: { text: string }) {
   let key = 0;
 
   const parseLine = (line: string): React.ReactNode => {
+    // Full-line italic (used for disclaimer: _Note: ..._)
+    if (line.startsWith('_') && line.endsWith('_') && line.length > 2) {
+      return <em className="text-xs text-muted-foreground not-italic opacity-75">{line.slice(1, -1)}</em>;
+    }
     const parts = line.split(/(\*\*[^*]+\*\*)/g);
     return parts.map((p, i) =>
       p.startsWith('**') && p.endsWith('**')
@@ -75,7 +79,40 @@ const ChatbotWidget = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [showPulse, setShowPulse] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Show pulse animation + tooltip after 10s of user inactivity (only when chat is closed)
+  useEffect(() => {
+    if (isOpen) {
+      setShowPulse(false);
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+      return;
+    }
+
+    const startTimer = () => {
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+      inactivityTimer.current = setTimeout(() => setShowPulse(true), 10000);
+    };
+
+    const resetTimer = () => {
+      setShowPulse(false);
+      startTimer();
+    };
+
+    startTimer();
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('click', resetTimer);
+
+    return () => {
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('click', resetTimer);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     let sid = localStorage.getItem('chatbotSessionId');
@@ -99,7 +136,11 @@ const ChatbotWidget = () => {
           sender: msg.sender as 'user' | 'bot',
         })));
       } else {
-        setMessages([{ id: 1, text: "Hello! I'm DocConnect AI 👋 I can help you find doctors, book appointments, learn about treatments, and more. What can I help you with?", sender: 'bot' }]);
+        setMessages([{
+          id: 1,
+          text: "Welcome to DocConnect! 👋 I'm here to help you with appointments, doctor info, or any questions about our clinic. How can I help you today?",
+          sender: 'bot',
+        }]);
       }
     };
     load();
@@ -134,7 +175,11 @@ const ChatbotWidget = () => {
       setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, sender: 'bot' }]);
     } catch (err) {
       console.error("Chatbot error:", err);
-      setMessages(prev => [...prev, { id: Date.now() + 1, text: "Oops! Something went wrong. Please try again.", sender: 'bot' }]);
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: "I'm having a little trouble right now. Please try again, or call us directly at +1 (555) 123-4567.",
+        sender: 'bot',
+      }]);
     } finally {
       setIsBotTyping(false);
     }
@@ -149,7 +194,11 @@ const ChatbotWidget = () => {
     const newSid = crypto.randomUUID();
     localStorage.setItem('chatbotSessionId', newSid);
     setSessionId(newSid);
-    setMessages([{ id: 1, text: "Hello! I'm DocConnect AI 👋 How can I help you today?", sender: 'bot' }]);
+    setMessages([{
+      id: 1,
+      text: "Welcome back! 👋 How can I help you today?",
+      sender: 'bot',
+    }]);
   };
 
   const showQuickActions = messages.length <= 1;
@@ -160,19 +209,36 @@ const ChatbotWidget = () => {
         <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="fixed bottom-8 left-8 z-50"
+          className="fixed bottom-8 right-8 z-50 flex items-center gap-2"
         >
-          <Button
-            className="rounded-full p-3 shadow-lg bg-secondary-teal hover:bg-secondary-teal/90 text-white"
-            size="icon"
-            aria-label="Open chatbot"
-          >
-            <MessageSquare className="h-5 w-5" />
-          </Button>
+          {/* Tooltip — shown during pulse */}
+          {showPulse && (
+            <motion.div
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-white text-gray-700 text-xs font-medium px-3 py-2 rounded-lg shadow-lg whitespace-nowrap border border-gray-100 font-sans"
+            >
+              Need help? Chat with us 💬
+            </motion.div>
+          )}
+
+          {/* Button with optional ping ring */}
+          <div className="relative">
+            {showPulse && (
+              <span className="absolute inset-0 rounded-full bg-secondary-teal/40 animate-ping" />
+            )}
+            <Button
+              className="rounded-full p-3 shadow-lg bg-secondary-teal hover:bg-secondary-teal/90 text-white relative"
+              size="icon"
+              aria-label="Open DocConnect AI assistant"
+            >
+              <MessageSquare className="h-5 w-5" />
+            </Button>
+          </div>
         </motion.div>
       </SheetTrigger>
 
-      <SheetContent side="left" className="w-full md:w-[400px] p-0 flex flex-col bg-card-background dark:bg-heading-dark">
+      <SheetContent side="right" className="w-full md:w-[400px] p-0 flex flex-col bg-card-background dark:bg-heading-dark">
         {/* Header */}
         <SheetHeader className="bg-primary-blue text-white px-4 py-3 flex-shrink-0">
           <div className="flex items-center justify-between">
@@ -209,7 +275,7 @@ const ChatbotWidget = () => {
             </div>
           ))}
 
-          {/* Quick actions — only shown at start */}
+          {/* Quick actions — only at conversation start */}
           {showQuickActions && !isBotTyping && (
             <div className="space-y-1.5 pt-1">
               <p className="text-xs text-muted-foreground font-sans px-1">Quick actions:</p>
