@@ -8,7 +8,9 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const MODEL = "claude-haiku-4-5-20251001";  // fast + cheap; swap to claude-sonnet-4-6 for smarter responses
+// Free via groq.com — alternatives: "llama-3.1-8b-instant" (faster) or "mixtral-8x7b-32768"
+const MODEL = "llama-3.3-70b-versatile";
+const GROQ_API = "https://api.groq.com/openai/v1/chat/completions";
 
 const getSupabase = () => createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
@@ -103,72 +105,87 @@ const toolFunctions: Record<string, (args: any) => Promise<string>> = {
   submit_inquiry,
 };
 
-// ── Anthropic tool schema (uses input_schema, not parameters) ──────────────────
+// ── Tool schema (OpenAI/Groq format) ──────────────────────────────────────────
 const tools = [
   {
-    name: "get_doctors_info",
-    description: "Search for doctors by specialization or name. Use whenever a user asks about doctors, specialists, or wants to know who to see for a condition.",
-    input_schema: {
-      type: "object",
-      properties: {
-        specialization: { type: "string", description: "Medical specialization e.g. Cardiology, Pediatrics, Neurology" },
-        name: { type: "string", description: "Doctor's name" },
+    type: "function",
+    function: {
+      name: "get_doctors_info",
+      description: "Search for doctors by specialization or name. Use whenever a user asks about doctors, specialists, or wants to know who to see for a condition.",
+      parameters: {
+        type: "object",
+        properties: {
+          specialization: { type: "string", description: "Medical specialization e.g. Cardiology, Pediatrics, Neurology" },
+          name: { type: "string", description: "Doctor's name" },
+        },
       },
     },
   },
   {
-    name: "get_treatments_info",
-    description: "Get information about medical treatments and procedures offered at the hospital.",
-    input_schema: {
-      type: "object",
-      properties: {
-        treatmentName: { type: "string", description: "Name of the treatment or procedure" },
-        specialization: { type: "string", description: "Medical specialization related to the treatment" },
+    type: "function",
+    function: {
+      name: "get_treatments_info",
+      description: "Get information about medical treatments and procedures offered at the hospital.",
+      parameters: {
+        type: "object",
+        properties: {
+          treatmentName: { type: "string", description: "Name of the treatment or procedure" },
+          specialization: { type: "string", description: "Medical specialization related to the treatment" },
+        },
       },
     },
   },
   {
-    name: "get_available_slots",
-    description: "Check available appointment slots for a specific doctor on a given date.",
-    input_schema: {
-      type: "object",
-      properties: {
-        doctor_id: { type: "string", description: "The doctor's ID from get_doctors_info" },
-        date: { type: "string", description: "Date in YYYY-MM-DD format" },
+    type: "function",
+    function: {
+      name: "get_available_slots",
+      description: "Check available appointment slots for a specific doctor on a given date.",
+      parameters: {
+        type: "object",
+        properties: {
+          doctor_id: { type: "string", description: "The doctor's ID from get_doctors_info" },
+          date: { type: "string", description: "Date in YYYY-MM-DD format" },
+        },
+        required: ["doctor_id", "date"],
       },
-      required: ["doctor_id", "date"],
     },
   },
   {
-    name: "book_appointment",
-    description: "Book an appointment. ONLY call after collecting ALL patient details and getting explicit confirmation.",
-    input_schema: {
-      type: "object",
-      properties: {
-        doctor_id: { type: "string" },
-        appointment_date: { type: "string", description: "YYYY-MM-DD" },
-        appointment_time: { type: "string", description: "hh:mm AM/PM format" },
-        full_name: { type: "string" },
-        email: { type: "string" },
-        phone: { type: "string" },
-        gender: { type: "string", enum: ["male", "female", "other"] },
-        age: { type: "number" },
-        reason_for_visit: { type: "string" },
+    type: "function",
+    function: {
+      name: "book_appointment",
+      description: "Book an appointment. ONLY call after collecting ALL patient details and getting explicit confirmation.",
+      parameters: {
+        type: "object",
+        properties: {
+          doctor_id: { type: "string" },
+          appointment_date: { type: "string", description: "YYYY-MM-DD" },
+          appointment_time: { type: "string", description: "hh:mm AM/PM format" },
+          full_name: { type: "string" },
+          email: { type: "string" },
+          phone: { type: "string" },
+          gender: { type: "string", enum: ["male", "female", "other"] },
+          age: { type: "number" },
+          reason_for_visit: { type: "string" },
+        },
+        required: ["doctor_id", "appointment_date", "appointment_time", "full_name", "email", "phone", "gender", "age", "reason_for_visit"],
       },
-      required: ["doctor_id", "appointment_date", "appointment_time", "full_name", "email", "phone", "gender", "age", "reason_for_visit"],
     },
   },
   {
-    name: "submit_inquiry",
-    description: "Submit a patient inquiry to the hospital team. Use when the patient wants to contact the hospital or has a question the AI can't answer.",
-    input_schema: {
-      type: "object",
-      properties: {
-        name: { type: "string" },
-        email: { type: "string" },
-        message: { type: "string" },
+    type: "function",
+    function: {
+      name: "submit_inquiry",
+      description: "Submit a patient inquiry to the hospital team. Use when the patient wants to contact the hospital or has a question the AI can't answer.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          email: { type: "string" },
+          message: { type: "string" },
+        },
+        required: ["name", "email", "message"],
       },
-      required: ["name", "email", "message"],
     },
   },
 ];
@@ -221,8 +238,8 @@ serve(async (req: Request) => {
 
   try {
     const { messages: userMessages, sessionId } = await req.json();
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY secret not set in Supabase.');
+    const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY');
+    if (!GROQ_API_KEY) throw new Error('GROQ_API_KEY secret not set in Supabase.');
 
     const supabase = getSupabase();
     const today = new Date().toISOString().split('T')[0];
@@ -237,71 +254,70 @@ serve(async (req: Request) => {
 
     const currentUserMsg = userMessages[userMessages.length - 1].content;
 
-    // Build conversation — Anthropic requires alternating user/assistant, starting with user
+    // Build conversation history
     const rawHistory = chatHistory?.map((msg: any) => ({
       role: msg.sender === 'user' ? 'user' : 'assistant',
       content: msg.message_content,
     })) || [];
 
-    // Drop leading assistant messages
+    // Drop leading assistant messages (Groq requires conversation to start with user)
     while (rawHistory.length > 0 && rawHistory[0].role === 'assistant') {
       rawHistory.shift();
     }
 
-    // Frontend saves the user message to DB before calling this function, so history
-    // already contains it as the last entry — remove it to avoid duplication.
+    // Frontend saves the user message before calling this function — remove duplicate
     const last = rawHistory[rawHistory.length - 1];
     if (last?.role === 'user' && last?.content === currentUserMsg) {
       rawHistory.pop();
     }
 
+    const systemMessage = { role: 'system', content: SYSTEM_PROMPT(today) };
     const conversation = [
       ...rawHistory,
       { role: 'user', content: currentUserMsg },
     ];
 
-    const callClaude = async (msgs: object[]) => {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const callGroq = async (msgs: object[]) => {
+      const res = await fetch(GROQ_API, {
         method: "POST",
         headers: {
-          "x-api-key": ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-          "content-type": "application/json",
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           model: MODEL,
-          max_tokens: 1024,
-          system: SYSTEM_PROMPT(today),
-          messages: msgs,
+          messages: [systemMessage, ...msgs],
           tools,
-          tool_choice: { type: "auto" },
+          tool_choice: "auto",
+          max_tokens: 1024,
         }),
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(`Anthropic API error: ${JSON.stringify(err)}`);
+        throw new Error(`Groq API error: ${JSON.stringify(err)}`);
       }
       return await res.json();
     };
 
-    let response = await callClaude(conversation);
+    let response = await callGroq(conversation);
+    let responseMessage = response.choices[0].message;
 
-    // Handle tool call — Anthropic returns stop_reason: "tool_use"
-    if (response.stop_reason === "tool_use") {
-      const toolUse = response.content.find((c: any) => c.type === "tool_use");
-      const fn = toolFunctions[toolUse.name];
-      const toolResult = fn ? await fn(toolUse.input) : JSON.stringify({ error: "Unknown tool" });
+    // Handle tool call (OpenAI-compatible format)
+    if (responseMessage.tool_calls?.length > 0) {
+      const toolCall = responseMessage.tool_calls[0];
+      const fn = toolFunctions[toolCall.function.name];
+      const args = JSON.parse(toolCall.function.arguments);
+      const toolResult = fn ? await fn(args) : JSON.stringify({ error: "Unknown tool" });
 
-      response = await callClaude([
+      response = await callGroq([
         ...conversation,
-        { role: "assistant", content: response.content },
-        { role: "user", content: [{ type: "tool_result", tool_use_id: toolUse.id, content: toolResult }] },
+        responseMessage,
+        { role: "tool", tool_call_id: toolCall.id, content: toolResult },
       ]);
+      responseMessage = response.choices[0].message;
     }
 
-    // Extract text from Anthropic response content array
-    const botText = response.content?.find((c: any) => c.type === "text")?.text
-      ?? "I'm sorry, I couldn't process that. Please try again.";
+    const botText = responseMessage.content ?? "I'm sorry, I couldn't process that. Please try again.";
 
     await supabase.from('chatbot_messages').insert({
       session_id: sessionId,
