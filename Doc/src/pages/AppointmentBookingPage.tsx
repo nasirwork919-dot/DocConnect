@@ -38,29 +38,14 @@ const formSchema = z.object({
   reasonForVisit: z.string().min(10, { message: "Please describe your reason for visit (at least 10 characters)." }),
 });
 
-const generateSlotsFromSchedule = (scheduleStr: string): string[] => {
-  try {
-    const [startStr, endStr] = scheduleStr.split(" - ");
-    const parseTime = (t: string) => {
-      const [time, period] = t.trim().split(" ");
-      let [hours, minutes] = time.split(":").map(Number);
-      if (period === "PM" && hours !== 12) hours += 12;
-      if (period === "AM" && hours === 12) hours = 0;
-      return hours * 60 + (minutes || 0);
-    };
-    const startMins = parseTime(startStr);
-    const endMins = parseTime(endStr);
-    const slots: string[] = [];
-    let current = startOfDay(new Date());
-    current = addHours(current, startMins / 60);
-    while ((current.getHours() * 60 + current.getMinutes()) < endMins) {
-      slots.push(format(current, "hh:mm a"));
-      current = addHours(current, 1);
-    }
-    return slots;
-  } catch {
-    return [];
+const generate24HourTimeSlots = (): string[] => {
+  const slots: string[] = [];
+  let currentTime = startOfDay(new Date());
+  for (let i = 0; i < 24; i++) {
+    slots.push(format(currentTime, "hh:mm a"));
+    currentTime = addHours(currentTime, 1);
   }
+  return slots;
 };
 
 const AppointmentBookingPage = () => {
@@ -106,38 +91,13 @@ const AppointmentBookingPage = () => {
   const watchAppointmentDate = form.watch("appointmentDate");
 
   useEffect(() => {
-    const loadSlots = async () => {
-      if (!watchDoctorId || !watchAppointmentDate) {
-        setAvailableTimeSlots([]);
-        return;
-      }
-      const doctor = allDoctors.find(d => d.id === watchDoctorId);
-      if (!doctor) return;
-
-      const dayName = format(watchAppointmentDate, "EEEE").toLowerCase();
-      const scheduleStr = doctor.availabilitySchedule?.[dayName];
-
-      if (!scheduleStr || scheduleStr === "Closed") {
-        setAvailableTimeSlots([]);
-        form.setValue("appointmentTime", "");
-        return;
-      }
-
-      const allSlots = generateSlotsFromSchedule(scheduleStr);
-
-      const dateStr = format(watchAppointmentDate, "yyyy-MM-dd");
-      const { data: booked } = await supabase
-        .from('bookings')
-        .select('appointment_time')
-        .eq('doctor_id', watchDoctorId)
-        .eq('appointment_date', dateStr);
-
-      const bookedTimes = new Set((booked || []).map((b: { appointment_time: string }) => b.appointment_time));
-      setAvailableTimeSlots(allSlots.filter(s => !bookedTimes.has(s)));
+    if (watchDoctorId && watchAppointmentDate) {
+      setAvailableTimeSlots(generate24HourTimeSlots());
       form.setValue("appointmentTime", "");
-    };
-    loadSlots();
-  }, [watchDoctorId, watchAppointmentDate, allDoctors, form]);
+    } else {
+      setAvailableTimeSlots([]);
+    }
+  }, [watchDoctorId, watchAppointmentDate, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
@@ -162,15 +122,6 @@ const AppointmentBookingPage = () => {
         console.error("Supabase insert error:", error);
         throw error;
       }
-
-      const selectedDoctor = allDoctors.find(d => d.id === values.doctorId);
-      await supabase.functions.invoke('send-booking-confirmation', {
-        body: {
-          to: values.email,
-          subject: "Your Appointment is Confirmed — DocConnect",
-          body: `Dear ${values.fullName},\n\nYour appointment has been successfully booked.\n\nDoctor: ${selectedDoctor?.name || values.doctorId}\nDate: ${format(values.appointmentDate, "PPP")}\nTime: ${values.appointmentTime}\nReason: ${values.reasonForVisit}\n\nThank you for choosing DocConnect.`,
-        },
-      });
 
       setAppointmentDetails(values);
       setAppointmentConfirmed(true);
