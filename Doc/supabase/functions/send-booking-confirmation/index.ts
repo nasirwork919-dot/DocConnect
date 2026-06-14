@@ -26,10 +26,10 @@ serve(async (req) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'nasir.work516@gmail.com', // Ensure this email is verified in your Resend account
+        from: Deno.env.get('EMAIL_FROM') ?? 'DocConnect Hospital <onboarding@resend.dev>',
         to: to,
         subject: subject,
-        html: body.replace(/\n/g, '<br>'), // Convert newlines to <br> for HTML email
+        html: body.replace(/\n/g, '<br>'),
       }),
     });
     

@@ -3,7 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BookingsTab from "@/components/admin/BookingsTab";
 import PatientInquiriesTab from "@/components/admin/PatientInquiriesTab";
 import AttendanceTab from "@/components/admin/AttendanceTab";
-import { CalendarCheck, MessageSquare, UserCheck } from "lucide-react";
+import ChatMessagesTab from "@/components/admin/ChatMessagesTab";
+import { CalendarCheck, MessageSquare, UserCheck, Bot } from "lucide-react";
 
 const AdminPanel = () => {
   return (
@@ -12,7 +13,7 @@ const AdminPanel = () => {
         <h1 className="text-4xl font-bold text-center mb-10 text-primary-blue dark:text-primary/70 font-michroma">Admin Panel</h1>
 
         <Tabs defaultValue="bookings" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-8 bg-card-background dark:bg-card rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.07)]">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8 bg-card-background dark:bg-card rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.07)]">
             <TabsTrigger value="bookings" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
               <CalendarCheck className="h-5 w-5" />
               <span>Bookings</span>
@@ -25,6 +26,10 @@ const AdminPanel = () => {
               <UserCheck className="h-5 w-5" />
               <span>Attendance</span>
             </TabsTrigger>
+            <TabsTrigger value="chats" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
+              <Bot className="h-5 w-5" />
+              <span>AI Chats</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
@@ -35,6 +40,9 @@ const AdminPanel = () => {
           </TabsContent>
           <TabsContent value="attendance">
             <AttendanceTab />
+          </TabsContent>
+          <TabsContent value="chats">
+            <ChatMessagesTab />
           </TabsContent>
         </Tabs>
       </div>

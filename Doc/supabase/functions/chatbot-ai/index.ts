@@ -139,24 +139,84 @@ async function get_available_slots({ doctor_id, date }: { doctor_id: string; dat
   return JSON.stringify({ available_slots: available, doctor_name: doctor.name, date });
 }
 
+// Normalize "4:30 PM" → "04:30 PM" so it matches the zero-padded slot strings
+function normalizeTime(t: string): string {
+  const m = t.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return t;
+  return `${String(parseInt(m[1])).padStart(2, '0')}:${m[2]} ${m[3].toUpperCase()}`;
+}
+
 async function book_appointment({ doctor_id, appointment_date, appointment_time, full_name, email, phone, gender, age, reason_for_visit }: {
   doctor_id: string; appointment_date: string; appointment_time: string;
   full_name: string; email: string; phone: string; gender: string; age: number; reason_for_visit: string;
 }) {
   const supabase = getSupabase();
+  const normalizedTime = normalizeTime(appointment_time);
   const slotsRes = JSON.parse(await get_available_slots({ doctor_id, date: appointment_date }));
-  if (!slotsRes.available_slots?.includes(appointment_time)) {
-    return JSON.stringify({ success: false, message: 'That time slot is no longer available. Please choose another time.' });
+  if (!slotsRes.available_slots?.includes(normalizedTime)) {
+    return JSON.stringify({
+      success: false,
+      message: `That time slot is not available. Available slots: ${slotsRes.available_slots?.join(', ') || 'none'}. Please choose from those.`,
+    });
   }
+  // Use the normalized time for the actual insert
+  appointment_time = normalizedTime;
+
+  // Fetch doctor name for the confirmation email
+  const { data: doctorRow } = await supabase.from('doctors').select('name').eq('id', doctor_id).single();
+  const doctorName = doctorRow?.name ?? 'your doctor';
+
   const { data, error } = await supabase.from('bookings')
     .insert({ doctor_id, appointment_date, appointment_time, full_name, email, phone, gender, age, reason_for_visit })
     .select();
   if (error) return JSON.stringify({ success: false, message: error.message });
+
   const shortId = (data?.[0]?.id as string)?.slice(0, 8)?.toUpperCase() ?? 'N/A';
+
+  // Send confirmation email — failure does NOT fail the booking
+  let emailSent = false;
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const emailBody =
+      `Dear ${full_name},\n\n` +
+      `Your appointment has been confirmed!\n\n` +
+      `Booking Reference: ${shortId}\n` +
+      `Doctor: ${doctorName}\n` +
+      `Date: ${appointment_date}\n` +
+      `Time: ${appointment_time}\n` +
+      `Reason: ${reason_for_visit}\n\n` +
+      `Please remember to bring:\n` +
+      `- Valid ID\n` +
+      `- Medical records (if any)\n` +
+      `- Insurance card\n\n` +
+      `Address: 123 Hospital Road, Health City\n` +
+      `Phone: +1 (555) 123-4567\n\n` +
+      `Thank you for choosing DocConnect Hospital!`;
+
+    const emailRes = await fetch(`${supabaseUrl}/functions/v1/send-booking-confirmation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({
+        to: email,
+        subject: `Appointment Confirmed — DocConnect Hospital (Ref: ${shortId})`,
+        body: emailBody,
+      }),
+    });
+    emailSent = emailRes.ok;
+  } catch (_) {
+    // intentionally silent — booking already succeeded
+  }
+
   return JSON.stringify({
     success: true,
     message: `Appointment booked successfully! ✅ Your booking reference is **${shortId}**.`,
     booking_id: data?.[0]?.id,
+    doctor_name: doctorName,
+    email_sent: emailSent,
   });
 }
 
@@ -435,7 +495,7 @@ Map what the patient describes to the right specialty before calling get_doctors
 8. Infer reason_for_visit from the earlier conversation (don't ask separately)
 9. Show booking summary and ask: "Shall I confirm this appointment?"
 10. Call **book_appointment** ONLY after explicit yes/confirm
-11. On success: share booking reference, remind to bring ID, medical records, insurance card
+11. On success: share the booking reference. If the tool result contains "email_sent": true, say "A confirmation email has been sent to [their email]". If email_sent is false or missing, do NOT mention email at all. Always remind patient to bring: ID, medical records, insurance card
 
 ## WHEN DOCTORS SEARCH RETURNS EMPTY OR NOTE
 - The result will include a "note" field and show ALL available doctors
