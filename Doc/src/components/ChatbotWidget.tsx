@@ -169,15 +169,19 @@ const ChatbotWidget = () => {
         body: { messages: [{ role: 'user', content: text }], sessionId },
       });
 
-      if (response.error) throw new Error(response.error.message);
+      // Extract actual error from response body when edge function returns 500
+      if (response.error) {
+        const detail = (response.data as any)?.error || response.error.message;
+        throw new Error(detail);
+      }
 
       const botText = (response.data as { response: string }).response;
       setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, sender: 'bot' }]);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Chatbot error:", err);
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
-        text: "I'm having a little trouble right now. Please try again, or call us directly at +1 (555) 123-4567.",
+        text: `I'm having a little trouble right now. Please try again.\n\n_Error: ${err?.message}_`,
         sender: 'bot',
       }]);
     } finally {

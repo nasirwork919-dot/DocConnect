@@ -37,3 +37,9 @@ declare class Response {
 }
 
 declare function fetch(input: string | Request, init?: RequestInit): Promise<Response>;
+
+declare const console: {
+  log(...args: any[]): void;
+  error(...args: any[]): void;
+  warn(...args: any[]): void;
+};

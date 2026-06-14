@@ -46,14 +46,15 @@ function detectEmergency(text: string): boolean {
 
 async function get_doctors_info({ specialization, name }: { specialization?: string; name?: string } = {}) {
   const supabase = getSupabase();
-  let query = supabase.from('doctors')
-    .select('id, name, specialization, experience, consultation_fee, availability_status, languages, contact_email')
-    .limit(8);
+  // Select only guaranteed core columns to avoid "column does not exist" errors
+  let query = supabase.from('doctors').select('*').limit(8);
   if (specialization) query = query.ilike('specialization', `%${specialization}%`);
   if (name) query = query.ilike('name', `%${name}%`);
   const { data, error } = await query;
   if (error) return JSON.stringify({ error: error.message });
-  return JSON.stringify(data);
+  // Strip heavy/irrelevant fields before sending to AI (encoding, avatar, etc.)
+  const clean = (data || []).map(({ encoding, avatar_url, created_at, updated_at, ...rest }: any) => rest);
+  return JSON.stringify(clean);
 }
 
 async function get_treatments_info({ treatmentName, specialization }: { treatmentName?: string; specialization?: string } = {}) {
@@ -109,7 +110,7 @@ async function book_appointment({ doctor_id, appointment_date, appointment_time,
     return JSON.stringify({ success: false, message: "That time slot is no longer available. Please choose another." });
   }
   const { data, error } = await supabase.from('bookings')
-    .insert({ doctor_id, appointment_date, appointment_time, full_name, email, phone, gender, age, reason_for_visit, source: 'chatbot' })
+    .insert({ doctor_id, appointment_date, appointment_time, full_name, email, phone, gender, age, reason_for_visit })
     .select();
   if (error) return JSON.stringify({ success: false, message: error.message });
   return JSON.stringify({ success: true, message: "Appointment booked successfully! ✅", booking_id: data?.[0]?.id });
@@ -581,21 +582,33 @@ serve(async (req: Request) => {
       return await res.json();
     };
 
+    console.log('Calling Groq, conversation length:', conversation.length);
     let response = await callGroq(conversation);
+
+    if (!response.choices?.[0]) {
+      throw new Error(`Groq returned no choices: ${JSON.stringify(response)}`);
+    }
     let responseMessage = response.choices[0].message;
+    console.log('Groq finish_reason:', response.choices[0].finish_reason);
 
     // Handle tool call (OpenAI-compatible format)
     if (responseMessage.tool_calls?.length > 0) {
       const toolCall = responseMessage.tool_calls[0];
+      console.log('Tool call:', toolCall.function.name, toolCall.function.arguments);
       const fn = toolFunctions[toolCall.function.name];
       const args = JSON.parse(toolCall.function.arguments);
       const toolResult = fn ? await fn(args) : JSON.stringify({ error: "Unknown tool" });
+      console.log('Tool result length:', toolResult.length);
 
       response = await callGroq([
         ...conversation,
         responseMessage,
         { role: "tool", tool_call_id: toolCall.id, content: toolResult },
       ]);
+
+      if (!response.choices?.[0]) {
+        throw new Error(`Groq returned no choices on 2nd call: ${JSON.stringify(response)}`);
+      }
       responseMessage = response.choices[0].message;
     }
 
