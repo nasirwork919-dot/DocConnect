@@ -256,9 +256,12 @@ async function request_callback({ patient_name, phone, reason }: { patient_name:
   return JSON.stringify({ success: true, message: 'Callback request logged! Our team will call you shortly.' });
 }
 
-async function submit_inquiry({ name, email, message }: { name: string; email: string; message: string }) {
+async function submit_inquiry({ name, email, subject, message }: { name: string; email: string; subject?: string; message: string }) {
   const supabase = getSupabase();
-  const { error } = await supabase.from('patient_inquiries').insert({ name, email, message });
+  const { error } = await supabase.from('patient_inquiries').insert({
+    name, email, message,
+    subject: subject || 'Chatbot Inquiry',
+  });
   if (error) return JSON.stringify({ success: false, message: error.message });
   return JSON.stringify({ success: true, message: 'Inquiry submitted! Our team will respond within 24 hours.' });
 }
@@ -390,6 +393,7 @@ const tools = [
       properties: {
         name: { type: 'string' },
         email: { type: 'string' },
+        subject: { type: 'string', description: 'Brief topic, e.g. "Appointment question" or "Billing inquiry"' },
         message: { type: 'string' },
       },
       required: ['name', 'email', 'message'],
