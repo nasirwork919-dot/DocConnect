@@ -4,7 +4,8 @@ import BookingsTab from "@/components/admin/BookingsTab";
 import PatientInquiriesTab from "@/components/admin/PatientInquiriesTab";
 import AttendanceTab from "@/components/admin/AttendanceTab";
 import ChatMessagesTab from "@/components/admin/ChatMessagesTab";
-import { CalendarCheck, MessageSquare, UserCheck, Bot, Lock, LogOut, Eye, EyeOff } from "lucide-react";
+import WhatsAppChatsTab from "@/components/admin/WhatsAppChatsTab";
+import { CalendarCheck, MessageSquare, UserCheck, Bot, Lock, LogOut, Eye, EyeOff, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -152,7 +153,7 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="bookings" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8 bg-card-background dark:bg-card rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.07)]">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 mb-8 bg-card-background dark:bg-card rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.07)]">
             <TabsTrigger value="bookings" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
               <CalendarCheck className="h-5 w-5" />
               <span>Bookings</span>
@@ -169,6 +170,10 @@ const AdminPanel = () => {
               <Bot className="h-5 w-5" />
               <span>AI Chats</span>
             </TabsTrigger>
+            <TabsTrigger value="whatsapp" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
+              <MessageCircle className="h-5 w-5" />
+              <span>WhatsApp</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
@@ -182,6 +187,9 @@ const AdminPanel = () => {
           </TabsContent>
           <TabsContent value="chats">
             <ChatMessagesTab />
+          </TabsContent>
+          <TabsContent value="whatsapp">
+            <WhatsAppChatsTab />
           </TabsContent>
         </Tabs>
       </div>
