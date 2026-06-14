@@ -8,15 +8,15 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const MODEL = "llama-3.3-70b-versatile";
-const GROQ_API = "https://api.groq.com/openai/v1/chat/completions";
+const MODEL = "claude-haiku-4-5-20251001";
+const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
 
 const getSupabase = () => createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
-// ── Emergency detection — bypasses Groq entirely for instant response ──────────
+// ── Emergency detection — bypasses Claude entirely for instant response ─────────
 const EMERGENCY_PATTERNS = [
   'chest pain', 'chest pressure', 'heart attack',
   "can't breathe", "cannot breathe", 'difficulty breathing', 'shortness of breath',
@@ -46,13 +46,11 @@ function detectEmergency(text: string): boolean {
 
 async function get_doctors_info({ specialization, name }: { specialization?: string; name?: string } = {}) {
   const supabase = getSupabase();
-  // Select only guaranteed core columns to avoid "column does not exist" errors
   let query = supabase.from('doctors').select('*').limit(8);
   if (specialization) query = query.ilike('specialization', `%${specialization}%`);
   if (name) query = query.ilike('name', `%${name}%`);
   const { data, error } = await query;
   if (error) return JSON.stringify({ error: error.message });
-  // Strip heavy/irrelevant fields before sending to AI (encoding, avatar, etc.)
   const clean = (data || []).map(({ encoding, avatar_url, created_at, updated_at, ...rest }: any) => rest);
   return JSON.stringify(clean);
 }
@@ -118,7 +116,7 @@ async function book_appointment({ doctor_id, appointment_date, appointment_time,
 
 async function lookup_booking({ email, full_name }: { email?: string; full_name?: string }) {
   const supabase = getSupabase();
-  if (!email && !full_name) return JSON.stringify({ error: "Please provide an email or full name to look up the booking." });
+  if (!email && !full_name) return JSON.stringify({ error: "Please provide an email or full name." });
 
   let query = supabase.from('bookings')
     .select('id, doctor_id, appointment_date, appointment_time, full_name, email, reason_for_visit')
@@ -129,21 +127,20 @@ async function lookup_booking({ email, full_name }: { email?: string; full_name?
 
   const { data, error } = await query;
   if (error) return JSON.stringify({ error: error.message });
-  if (!data || data.length === 0) return JSON.stringify({ error: "No bookings found for that email or name." });
+  if (!data || data.length === 0) return JSON.stringify({ error: "No bookings found." });
 
   const doctorIds = [...new Set(data.map((b: any) => b.doctor_id))];
   const { data: doctors } = await supabase.from('doctors').select('id, name').in('id', doctorIds);
   const doctorMap: Record<string, string> = {};
   doctors?.forEach((d: any) => { doctorMap[d.id] = d.name; });
-
-  return JSON.stringify(data.map((b: any) => ({ ...b, doctor_name: doctorMap[b.doctor_id] || 'Unknown Doctor' })));
+  return JSON.stringify(data.map((b: any) => ({ ...b, doctor_name: doctorMap[b.doctor_id] || 'Unknown' })));
 }
 
 async function cancel_booking({ booking_id }: { booking_id: string }) {
   const supabase = getSupabase();
   const { error } = await supabase.from('bookings').delete().eq('id', booking_id);
   if (error) return JSON.stringify({ success: false, message: error.message });
-  return JSON.stringify({ success: true, message: "Your appointment has been cancelled successfully." });
+  return JSON.stringify({ success: true, message: "Appointment cancelled successfully." });
 }
 
 async function reschedule_booking({ booking_id, new_date, new_time }: { booking_id: string; new_date: string; new_time: string }) {
@@ -153,20 +150,16 @@ async function reschedule_booking({ booking_id, new_date, new_time }: { booking_
 
   const slotsRes = JSON.parse(await get_available_slots({ doctor_id: booking.doctor_id, date: new_date }));
   if (!slotsRes.available_slots?.includes(new_time)) {
-    return JSON.stringify({ success: false, message: "That slot is not available. Please choose a different time." });
+    return JSON.stringify({ success: false, message: "That slot is not available." });
   }
-
-  const { error } = await supabase.from('bookings')
-    .update({ appointment_date: new_date, appointment_time: new_time })
-    .eq('id', booking_id);
+  const { error } = await supabase.from('bookings').update({ appointment_date: new_date, appointment_time: new_time }).eq('id', booking_id);
   if (error) return JSON.stringify({ success: false, message: error.message });
-  return JSON.stringify({ success: true, message: `Appointment rescheduled to ${new_date} at ${new_time}. ✅` });
+  return JSON.stringify({ success: true, message: `Rescheduled to ${new_date} at ${new_time}. ✅` });
 }
 
 async function check_doctor_attendance({ doctor_name }: { doctor_name: string }) {
   const supabase = getSupabase();
   const today = new Date().toISOString().split('T')[0];
-
   const { data: doctors } = await supabase.from('doctors').select('id, name').ilike('name', `%${doctor_name}%`).limit(1);
   if (!doctors || doctors.length === 0) return JSON.stringify({ error: "Doctor not found." });
 
@@ -182,24 +175,20 @@ async function check_doctor_attendance({ doctor_name }: { doctor_name: string })
   if (!attendance || attendance.length === 0) {
     return JSON.stringify({ doctor_name: doctor.name, present: false, message: `${doctor.name} has not checked in today.` });
   }
-
   const latest = attendance[0];
   const present = latest.event_type === 'Check-in' && (latest.confidence_score ?? 0) >= 0.7;
   return JSON.stringify({
     doctor_name: doctor.name,
     present,
-    message: present
-      ? `${doctor.name} has checked in and is available today.`
-      : `${doctor.name} is not currently in the clinic.`,
+    message: present ? `${doctor.name} is in the clinic today.` : `${doctor.name} is not currently in the clinic.`,
   });
 }
 
 async function request_callback({ patient_name, phone, reason }: { patient_name: string; phone: string; reason?: string }) {
   const supabase = getSupabase();
   const { error } = await supabase.from('callback_requests').insert({
-    patient_name,
-    phone,
-    reason: reason || 'Patient requested human assistance via chatbot',
+    patient_name, phone,
+    reason: reason || 'Patient requested human assistance',
   });
   if (error) return JSON.stringify({ success: false, message: error.message });
   return JSON.stringify({ success: true, message: "Callback request received! Our team will call you shortly." });
@@ -213,173 +202,132 @@ async function submit_inquiry({ name, email, message }: { name: string; email: s
 }
 
 const toolFunctions: Record<string, (args: any) => Promise<string>> = {
-  get_doctors_info,
-  get_treatments_info,
-  get_available_slots,
-  book_appointment,
-  lookup_booking,
-  cancel_booking,
-  reschedule_booking,
-  check_doctor_attendance,
-  request_callback,
-  submit_inquiry,
+  get_doctors_info, get_treatments_info, get_available_slots, book_appointment,
+  lookup_booking, cancel_booking, reschedule_booking,
+  check_doctor_attendance, request_callback, submit_inquiry,
 };
 
-// ── Tool schemas (OpenAI/Groq format) ─────────────────────────────────────────
+// ── Tool schemas — Anthropic format (input_schema, no "type: function" wrapper) ─
 const tools = [
   {
-    type: "function",
-    function: {
-      name: "get_doctors_info",
-      description: "Search doctors by specialization or name. Use whenever the user asks about doctors, specialists, or wants a recommendation for a symptom.",
-      parameters: {
-        type: "object",
-        properties: {
-          specialization: { type: "string", description: "e.g. General Practice, Cardiology, Neurology, Pediatrics" },
-          name: { type: "string", description: "Doctor's name" },
-        },
+    name: "get_doctors_info",
+    description: "Search doctors by specialization or name. Use whenever the user asks about doctors or wants a recommendation for a symptom.",
+    input_schema: {
+      type: "object",
+      properties: {
+        specialization: { type: "string", description: "e.g. General Practice, Cardiology, Neurology" },
+        name: { type: "string", description: "Doctor's name" },
       },
     },
   },
   {
-    type: "function",
-    function: {
-      name: "get_treatments_info",
-      description: "Get info about treatments and procedures offered at DocConnect.",
-      parameters: {
-        type: "object",
-        properties: {
-          treatmentName: { type: "string" },
-          specialization: { type: "string" },
-        },
+    name: "get_treatments_info",
+    description: "Get info about treatments and procedures offered at DocConnect.",
+    input_schema: {
+      type: "object",
+      properties: {
+        treatmentName: { type: "string" },
+        specialization: { type: "string" },
       },
     },
   },
   {
-    type: "function",
-    function: {
-      name: "get_available_slots",
-      description: "Get available appointment time slots for a doctor on a specific date.",
-      parameters: {
-        type: "object",
-        properties: {
-          doctor_id: { type: "string", description: "Doctor's ID from get_doctors_info" },
-          date: { type: "string", description: "YYYY-MM-DD" },
-        },
-        required: ["doctor_id", "date"],
+    name: "get_available_slots",
+    description: "Get available appointment time slots for a doctor on a specific date.",
+    input_schema: {
+      type: "object",
+      properties: {
+        doctor_id: { type: "string", description: "Doctor's ID from get_doctors_info" },
+        date: { type: "string", description: "YYYY-MM-DD" },
+      },
+      required: ["doctor_id", "date"],
+    },
+  },
+  {
+    name: "book_appointment",
+    description: "Book an appointment. Call ONLY after collecting ALL patient details and receiving explicit confirmation.",
+    input_schema: {
+      type: "object",
+      properties: {
+        doctor_id: { type: "string" },
+        appointment_date: { type: "string", description: "YYYY-MM-DD" },
+        appointment_time: { type: "string", description: "hh:mm AM/PM" },
+        full_name: { type: "string" },
+        email: { type: "string" },
+        phone: { type: "string" },
+        gender: { type: "string", enum: ["male", "female", "other"] },
+        age: { type: "number" },
+        reason_for_visit: { type: "string" },
+      },
+      required: ["doctor_id", "appointment_date", "appointment_time", "full_name", "email", "phone", "gender", "age", "reason_for_visit"],
+    },
+  },
+  {
+    name: "lookup_booking",
+    description: "Look up a patient's existing booking by email or full name.",
+    input_schema: {
+      type: "object",
+      properties: {
+        email: { type: "string" },
+        full_name: { type: "string" },
       },
     },
   },
   {
-    type: "function",
-    function: {
-      name: "book_appointment",
-      description: "Book an appointment. Call ONLY after collecting all required patient details AND receiving explicit patient confirmation.",
-      parameters: {
-        type: "object",
-        properties: {
-          doctor_id: { type: "string" },
-          appointment_date: { type: "string", description: "YYYY-MM-DD" },
-          appointment_time: { type: "string", description: "hh:mm AM/PM format exactly as returned by get_available_slots" },
-          full_name: { type: "string" },
-          email: { type: "string" },
-          phone: { type: "string" },
-          gender: { type: "string", enum: ["male", "female", "other"] },
-          age: { type: "number" },
-          reason_for_visit: { type: "string" },
-        },
-        required: ["doctor_id", "appointment_date", "appointment_time", "full_name", "email", "phone", "gender", "age", "reason_for_visit"],
-      },
+    name: "cancel_booking",
+    description: "Cancel an existing appointment. Call ONLY after patient explicitly confirms.",
+    input_schema: {
+      type: "object",
+      properties: { booking_id: { type: "string" } },
+      required: ["booking_id"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "lookup_booking",
-      description: "Look up a patient's existing booking by email or full name. Use for reschedule or cancellation requests.",
-      parameters: {
-        type: "object",
-        properties: {
-          email: { type: "string" },
-          full_name: { type: "string" },
-        },
+    name: "reschedule_booking",
+    description: "Reschedule an existing appointment to a new date and time.",
+    input_schema: {
+      type: "object",
+      properties: {
+        booking_id: { type: "string" },
+        new_date: { type: "string", description: "YYYY-MM-DD" },
+        new_time: { type: "string", description: "hh:mm AM/PM" },
       },
+      required: ["booking_id", "new_date", "new_time"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "cancel_booking",
-      description: "Cancel an existing appointment. Call ONLY after patient explicitly confirms cancellation.",
-      parameters: {
-        type: "object",
-        properties: {
-          booking_id: { type: "string" },
-        },
-        required: ["booking_id"],
-      },
+    name: "check_doctor_attendance",
+    description: "Check if a specific doctor is in the clinic today using facial recognition attendance data.",
+    input_schema: {
+      type: "object",
+      properties: { doctor_name: { type: "string" } },
+      required: ["doctor_name"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "reschedule_booking",
-      description: "Reschedule an existing appointment to a new date and time.",
-      parameters: {
-        type: "object",
-        properties: {
-          booking_id: { type: "string" },
-          new_date: { type: "string", description: "YYYY-MM-DD" },
-          new_time: { type: "string", description: "hh:mm AM/PM" },
-        },
-        required: ["booking_id", "new_date", "new_time"],
+    name: "request_callback",
+    description: "Submit a callback request when the patient wants to speak to a human.",
+    input_schema: {
+      type: "object",
+      properties: {
+        patient_name: { type: "string" },
+        phone: { type: "string" },
+        reason: { type: "string" },
       },
+      required: ["patient_name", "phone"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "check_doctor_attendance",
-      description: "Check if a specific doctor is currently in the clinic today using facial recognition attendance data.",
-      parameters: {
-        type: "object",
-        properties: {
-          doctor_name: { type: "string" },
-        },
-        required: ["doctor_name"],
+    name: "submit_inquiry",
+    description: "Submit a general inquiry to the hospital team.",
+    input_schema: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        email: { type: "string" },
+        message: { type: "string" },
       },
-    },
-  },
-  {
-    type: "function",
-    function: {
-      name: "request_callback",
-      description: "Submit a callback request when the patient wants to speak to a human. Call after collecting their name and phone number.",
-      parameters: {
-        type: "object",
-        properties: {
-          patient_name: { type: "string" },
-          phone: { type: "string" },
-          reason: { type: "string" },
-        },
-        required: ["patient_name", "phone"],
-      },
-    },
-  },
-  {
-    type: "function",
-    function: {
-      name: "submit_inquiry",
-      description: "Submit a general inquiry to the hospital team.",
-      parameters: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          email: { type: "string" },
-          message: { type: "string" },
-        },
-        required: ["name", "email", "message"],
-      },
+      required: ["name", "email", "message"],
     },
   },
 ];
@@ -388,109 +336,48 @@ const tools = [
 const SYSTEM_PROMPT = (today: string, isFirstMessage: boolean) => `You are DocConnect AI, the official virtual assistant for DocConnect Hospital. Today is ${today}.
 
 ## IDENTITY & VOICE
-Warm, professional, reassuring — like the best receptionist the patient has ever met. Short sentences. No medical jargon unless the patient uses it first. Always end every response with a clear next step. Once the patient shares their name, use it in all future messages.
+Warm, professional, reassuring — like the best receptionist the patient has ever met. Short sentences. No jargon unless the patient uses it first. Always end every response with a clear next step. Once the patient shares their name, use it.
 
 ## YOUR SCOPE
-You ONLY assist with:
-- Booking, rescheduling, and cancelling appointments
-- Doctor information and real-time attendance (who's in today)
-- Treatments and procedures at DocConnect
-- Hospital information (hours, location, contact, policies)
-- General medical guidance (symptoms → suggest specialist, NEVER diagnose)
-- Human handoff and callback requests
+You ONLY assist with: appointments, doctors, treatments, hospital info, general medical guidance, and human handoff.
 
-**If asked about anything unrelated** (coding, sports, weather, news, politics, entertainment, general knowledge): respond ONLY with:
-"I'm DocConnect AI and I can only help with hospital and healthcare topics. Can I help you find a doctor, book an appointment, or answer a question? 😊"
+If asked about anything unrelated (coding, sports, weather, news, politics, entertainment): respond ONLY with:
+"I'm DocConnect AI and I can only help with hospital and healthcare topics. Can I help you find a doctor or book an appointment? 😊"
 
-## 🚨 EMERGENCY — HIGHEST PRIORITY (overrides everything)
+## 🚨 EMERGENCY — OVERRIDES EVERYTHING
 If the patient mentions chest pain, heart attack, stroke, difficulty breathing, severe bleeding, unconscious, seizure, overdose, suicidal thoughts, anaphylaxis — respond IMMEDIATELY with ONLY:
-
-"⚠️ This sounds like a medical emergency. Please call emergency services **right now**:
-🚨 **Emergency: 911** | Rescue: 1122 | Edhi: 115
-🏥 Go to the nearest emergency room immediately. Do not wait.
-
-Your safety comes first. Once you're safe, I'm here if you need anything else."
-
-Stop ALL other flows. Do NOT suggest booking. Do NOT ask questions.
+"⚠️ This sounds like a medical emergency. Please call emergency services right now:
+🚨 Emergency: 911 | Rescue: 1122 | Edhi: 115
+🏥 Go to the nearest ER immediately. Do not wait."
+Stop all other flows.
 
 ## HOSPITAL INFO
-- Name: DocConnect Hospital
-- Clinic hours: Mon–Fri 9:00 AM – 6:00 PM | Sat 9:00 AM – 1:00 PM | Emergency: 24/7
-- Address: 123 Hospital Road, Health City, HC 12345
-- Phone: +1 (555) 123-4567
-- Email: info@docconnect.com
-- Languages: English, Urdu, Arabic
-- Walk-ins: Accepted, but appointments are prioritized (shorter wait)
-- Parking: Free in the building basement
-- Telemedicine: Yes, video consultations are available
+- Name: DocConnect Hospital | Hours: Mon–Fri 9AM–6PM | Sat 9AM–1PM | Emergency: 24/7
+- Address: 123 Hospital Road, Health City | Phone: +1 (555) 123-4567
+- Email: info@docconnect.com | Languages: English, Urdu, Arabic | Free parking: basement
 
-## APPOINTMENT BOOKING FLOW (follow exactly)
-1. Ask: "What would you like to see a doctor about?" — always acknowledge with empathy
-2. Call get_doctors_info matching the symptom to a specialization
-3. Show doctors (name + specialty) — ask which they prefer or "whoever's available soonest"
-4. Ask preferred date (understand: "tomorrow", "next Monday", "this Friday", "ASAP")
-5. Call get_available_slots → list available times
-6. Collect patient info ONE FIELD AT A TIME: Full Name → Email → Phone → Gender (offer Male/Female/Other) → Age
-7. Show booking summary with all details, ask "Shall I confirm this appointment?"
-8. Call book_appointment ONLY after explicit confirmation ("yes", "confirm", "go ahead")
-9. After success: congratulate + remind to bring ID, medical records, and insurance card
+## APPOINTMENT BOOKING FLOW
+1. Ask what they want to see a doctor about — acknowledge with empathy
+2. Call get_doctors_info → show doctors (name + specialty)
+3. Ask preferred date (understand "tomorrow", "next Monday", "ASAP")
+4. Call get_available_slots → list available times
+5. Collect ONE AT A TIME: Full Name → Email → Phone → Gender → Age
+6. Show summary, ask "Shall I confirm this appointment?"
+7. Call book_appointment ONLY after explicit confirmation
+8. After success: remind to bring ID, medical records, insurance card
 
-## RESCHEDULE FLOW
-1. Ask: "What's the email or name you booked with?"
-2. Call lookup_booking → show their appointment clearly
-3. Ask preferred new date and time
-4. Call get_available_slots for the new date → show options
-5. Confirm the chosen slot → call reschedule_booking
-
-## CANCELLATION FLOW
-1. Ask for email or name used to book
-2. Call lookup_booking → show the appointment
-3. Ask "Are you sure you want to cancel this appointment?" — wait for explicit yes
-4. Call cancel_booking
-5. Offer to rebook: "Would you like to reschedule for another time?"
-
-## DOCTOR AVAILABILITY CHECK
-To check if a specific doctor is in the clinic today, call check_doctor_attendance. Only confirm presence if present: true.
-
-## HUMAN HANDOFF
-If the patient says "talk to a human", "real person", "speak to someone", or if they seem frustrated, respond:
-"I want to make sure you get the right help! You can reach us directly:
-📞 Call: +1 (555) 123-4567
-Or share your **name and phone number** and I'll have someone call you back."
-After they provide name and phone, call request_callback.
+## RESCHEDULE: ask email/name → lookup_booking → get new date → get_available_slots → reschedule_booking
+## CANCEL: ask email/name → lookup_booking → confirm → cancel_booking → offer to rebook
+## DOCTOR IN TODAY: call check_doctor_attendance
+## HUMAN HANDOFF: if patient asks for human, offer phone +1(555)123-4567 or collect name+phone → request_callback
 
 ## MEDICAL GUIDANCE
-- Acknowledge emotion first: "I understand that can be worrying."
-- Give general guidance (e.g., "headaches with fever can indicate infection — a GP can help identify the cause")
-- NEVER diagnose. NEVER recommend medications or dosages. NEVER interpret lab results or scans.
-- Always suggest the right specialist and offer to find/book one
+Acknowledge emotion first. Give general guidance only. NEVER diagnose, prescribe, or interpret results.
 
-## COMMON FAQ ANSWERS
-- Walk-ins: "We accept walk-ins, but appointments are prioritized — booking ahead minimizes your wait."
-- Online consultations: "Yes, we offer video consultations. Would you like to book one?"
-- Referrals: "For general consultations, no referral needed. Some specialists may require one."
-- First visit: "Please bring a valid ID, any previous medical records, and your insurance card."
+## TONE
+Under 3 sentences for simple queries. **Bold** key info. Bullet points for lists. Always end with a next step.${isFirstMessage ? `
 
-## TONE RULES
-- Under 3 sentences for simple queries
-- Use **bold** for doctor names, dates, times, and key information
-- Use bullet points for lists of options or steps
-- Use patient's first name once they share it
-- Always end with a next step — never leave the patient hanging
-
-## NEVER DO
-- Diagnose any medical condition
-- Recommend specific medications or dosages
-- Interpret lab results, X-rays, or scans
-- Make treatment outcome claims
-- Share one patient's data with another
-- Continue booking flow when emergency language is detected
-- Be defensive or argue with a patient
-${isFirstMessage ? `
-## FIRST MESSAGE INSTRUCTION
-At the very end of this response, after your main content, add on a new line:
-"_Note: I'm an AI assistant, not a medical professional. For medical advice, please consult one of our doctors._"
-` : ''}`;
+At the very END of this first response add: "_Note: I'm an AI assistant, not a medical professional. For medical advice, please consult one of our doctors._"` : ''}`;
 
 // ── Main handler ───────────────────────────────────────────────────────────────
 serve(async (req: Request) => {
@@ -498,8 +385,8 @@ serve(async (req: Request) => {
 
   try {
     const { messages: userMessages, sessionId } = await req.json();
-    const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY');
-    if (!GROQ_API_KEY) throw new Error('GROQ_API_KEY secret not set in Supabase.');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY secret not set in Supabase.');
 
     const supabase = getSupabase();
     const today = new Date().toISOString().split('T')[0];
@@ -507,18 +394,13 @@ serve(async (req: Request) => {
 
     // Emergency check — instant response, no AI involved
     if (detectEmergency(currentUserMsg)) {
-      await supabase.from('chatbot_messages').insert({
-        session_id: sessionId,
-        sender: 'bot',
-        message_content: EMERGENCY_RESPONSE,
-      });
+      await supabase.from('chatbot_messages').insert({ session_id: sessionId, sender: 'bot', message_content: EMERGENCY_RESPONSE });
       return new Response(JSON.stringify({ response: EMERGENCY_RESPONSE }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
       });
     }
 
-    // Load last 20 messages for context
+    // Load chat history
     const { data: chatHistory } = await supabase
       .from('chatbot_messages')
       .select('sender, message_content')
@@ -531,18 +413,14 @@ serve(async (req: Request) => {
       content: msg.message_content,
     })) || [];
 
-    // Drop leading assistant messages (Groq requires user first)
-    while (rawHistory.length > 0 && rawHistory[0].role === 'assistant') {
-      rawHistory.shift();
-    }
+    // Drop leading assistant messages (Claude requires user first)
+    while (rawHistory.length > 0 && rawHistory[0].role === 'assistant') rawHistory.shift();
 
     // Remove duplicate of current message (frontend saves before calling)
     const last = rawHistory[rawHistory.length - 1];
-    if (last?.role === 'user' && last?.content === currentUserMsg) {
-      rawHistory.pop();
-    }
+    if (last?.role === 'user' && last?.content === currentUserMsg) rawHistory.pop();
 
-    // Merge consecutive same-role messages (handles failed-request orphan messages)
+    // Merge consecutive same-role messages (handles failed-request orphans)
     const mergedHistory: { role: string; content: string }[] = [];
     for (const msg of rawHistory) {
       const prev = mergedHistory[mergedHistory.length - 1];
@@ -554,82 +432,71 @@ serve(async (req: Request) => {
     }
 
     const isFirstMessage = mergedHistory.length === 0;
-    const systemMessage = { role: 'system', content: SYSTEM_PROMPT(today, isFirstMessage) };
+    const systemPrompt = SYSTEM_PROMPT(today, isFirstMessage);
     const conversation = [
       ...mergedHistory,
       { role: 'user', content: currentUserMsg },
     ];
 
-    const callGroq = async (msgs: object[]) => {
-      const res = await fetch(GROQ_API, {
+    // ── Call Claude (Anthropic Messages API) ──────────────────────────────────
+    const callClaude = async (msgs: any[]) => {
+      const res = await fetch(ANTHROPIC_API, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
         },
         body: JSON.stringify({
           model: MODEL,
-          messages: [systemMessage, ...msgs],
-          tools,
-          tool_choice: "auto",
           max_tokens: 1024,
+          system: systemPrompt,
+          messages: msgs,
+          tools,
         }),
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(`Groq API error: ${JSON.stringify(err)}`);
+        throw new Error(`Claude API error: ${JSON.stringify(err)}`);
       }
       return await res.json();
     };
 
-    console.log('Calling Groq, conversation length:', conversation.length);
-    let response = await callGroq(conversation);
+    let response = await callClaude(conversation);
 
-    if (!response.choices?.[0]) {
-      throw new Error(`Groq returned no choices: ${JSON.stringify(response)}`);
-    }
-    let responseMessage = response.choices[0].message;
-    console.log('Groq finish_reason:', response.choices[0].finish_reason);
+    // Handle tool use (Anthropic format: stop_reason === 'tool_use')
+    if (response.stop_reason === 'tool_use') {
+      const toolBlock = response.content.find((b: any) => b.type === 'tool_use');
+      if (toolBlock) {
+        console.log('Tool use:', toolBlock.name, JSON.stringify(toolBlock.input));
+        const fn = toolFunctions[toolBlock.name];
+        const toolResult = fn ? await fn(toolBlock.input) : JSON.stringify({ error: "Unknown tool" });
+        console.log('Tool result length:', toolResult.length);
 
-    // Handle tool call (OpenAI-compatible format)
-    if (responseMessage.tool_calls?.length > 0) {
-      const toolCall = responseMessage.tool_calls[0];
-      console.log('Tool call:', toolCall.function.name, toolCall.function.arguments);
-      const fn = toolFunctions[toolCall.function.name];
-      const args = JSON.parse(toolCall.function.arguments);
-      const toolResult = fn ? await fn(args) : JSON.stringify({ error: "Unknown tool" });
-      console.log('Tool result length:', toolResult.length);
-
-      response = await callGroq([
-        ...conversation,
-        responseMessage,
-        { role: "tool", tool_call_id: toolCall.id, content: toolResult },
-      ]);
-
-      if (!response.choices?.[0]) {
-        throw new Error(`Groq returned no choices on 2nd call: ${JSON.stringify(response)}`);
+        // Continue conversation: assistant's tool_use + user's tool_result
+        response = await callClaude([
+          ...conversation,
+          { role: 'assistant', content: response.content },
+          { role: 'user', content: [{ type: 'tool_result', tool_use_id: toolBlock.id, content: toolResult }] },
+        ]);
       }
-      responseMessage = response.choices[0].message;
     }
 
-    const botText = responseMessage.content ?? "I'm sorry, I couldn't process that. Please try again.";
+    // Extract text from response content blocks
+    const botText = response.content?.find((b: any) => b.type === 'text')?.text
+      ?? "I'm sorry, I couldn't process that. Please try again.";
 
-    await supabase.from('chatbot_messages').insert({
-      session_id: sessionId,
-      sender: 'bot',
-      message_content: botText,
-    });
+    await supabase.from('chatbot_messages').insert({ session_id: sessionId, sender: 'bot', message_content: botText });
 
     return new Response(JSON.stringify({ response: botText }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
     });
 
   } catch (error) {
-    console.error('chatbot-ai error:', error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error('chatbot-ai error:', msg);
+    return new Response(JSON.stringify({ response: `⚠️ Error: ${msg}` }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
     });
   }
 });
