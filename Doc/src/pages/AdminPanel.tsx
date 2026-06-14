@@ -153,25 +153,25 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="bookings" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 mb-8 bg-card-background dark:bg-card rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.07)]">
-            <TabsTrigger value="bookings" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
-              <CalendarCheck className="h-5 w-5" />
+          <TabsList className="flex w-full mb-8 bg-card-background dark:bg-card rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.07)] overflow-x-auto scrollbar-hide p-1 gap-1">
+            <TabsTrigger value="bookings" className="flex items-center justify-center gap-2 font-sans text-sm md:text-base py-2.5 px-3 md:px-5 rounded-lg whitespace-nowrap flex-1 min-w-[100px] data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
+              <CalendarCheck className="h-4 w-4 flex-shrink-0" />
               <span>Bookings</span>
             </TabsTrigger>
-            <TabsTrigger value="inquiries" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
-              <MessageSquare className="h-5 w-5" />
+            <TabsTrigger value="inquiries" className="flex items-center justify-center gap-2 font-sans text-sm md:text-base py-2.5 px-3 md:px-5 rounded-lg whitespace-nowrap flex-1 min-w-[100px] data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
+              <MessageSquare className="h-4 w-4 flex-shrink-0" />
               <span>Inquiries</span>
             </TabsTrigger>
-            <TabsTrigger value="attendance" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
-              <UserCheck className="h-5 w-5" />
+            <TabsTrigger value="attendance" className="flex items-center justify-center gap-2 font-sans text-sm md:text-base py-2.5 px-3 md:px-5 rounded-lg whitespace-nowrap flex-1 min-w-[100px] data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
+              <UserCheck className="h-4 w-4 flex-shrink-0" />
               <span>Attendance</span>
             </TabsTrigger>
-            <TabsTrigger value="chats" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
-              <Bot className="h-5 w-5" />
+            <TabsTrigger value="chats" className="flex items-center justify-center gap-2 font-sans text-sm md:text-base py-2.5 px-3 md:px-5 rounded-lg whitespace-nowrap flex-1 min-w-[90px] data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
+              <Bot className="h-4 w-4 flex-shrink-0" />
               <span>AI Chats</span>
             </TabsTrigger>
-            <TabsTrigger value="whatsapp" className="flex items-center justify-center space-x-2 font-sans text-lg py-3 rounded-xl data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
-              <MessageCircle className="h-5 w-5" />
+            <TabsTrigger value="whatsapp" className="flex items-center justify-center gap-2 font-sans text-sm md:text-base py-2.5 px-3 md:px-5 rounded-lg whitespace-nowrap flex-1 min-w-[110px] data-[state=active]:bg-primary-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200">
+              <MessageCircle className="h-4 w-4 flex-shrink-0" />
               <span>WhatsApp</span>
             </TabsTrigger>
           </TabsList>
