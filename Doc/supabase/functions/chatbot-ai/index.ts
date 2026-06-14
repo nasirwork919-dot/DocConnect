@@ -162,10 +162,6 @@ async function book_appointment({ doctor_id, appointment_date, appointment_time,
   // Use the normalized time for the actual insert
   appointment_time = normalizedTime;
 
-  // Fetch doctor name for the confirmation email
-  const { data: doctorRow } = await supabase.from('doctors').select('name').eq('id', doctor_id).single();
-  const doctorName = doctorRow?.name ?? 'your doctor';
-
   const { data, error } = await supabase.from('bookings')
     .insert({ doctor_id, appointment_date, appointment_time, full_name, email, phone, gender, age, reason_for_visit })
     .select();
@@ -173,50 +169,10 @@ async function book_appointment({ doctor_id, appointment_date, appointment_time,
 
   const shortId = (data?.[0]?.id as string)?.slice(0, 8)?.toUpperCase() ?? 'N/A';
 
-  // Send confirmation email — failure does NOT fail the booking
-  let emailSent = false;
-  try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const emailBody =
-      `Dear ${full_name},\n\n` +
-      `Your appointment has been confirmed!\n\n` +
-      `Booking Reference: ${shortId}\n` +
-      `Doctor: ${doctorName}\n` +
-      `Date: ${appointment_date}\n` +
-      `Time: ${appointment_time}\n` +
-      `Reason: ${reason_for_visit}\n\n` +
-      `Please remember to bring:\n` +
-      `- Valid ID\n` +
-      `- Medical records (if any)\n` +
-      `- Insurance card\n\n` +
-      `Address: 123 Hospital Road, Health City\n` +
-      `Phone: +1 (555) 123-4567\n\n` +
-      `Thank you for choosing DocConnect Hospital!`;
-
-    const emailRes = await fetch(`${supabaseUrl}/functions/v1/send-booking-confirmation`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${serviceKey}`,
-      },
-      body: JSON.stringify({
-        to: email,
-        subject: `Appointment Confirmed — DocConnect Hospital (Ref: ${shortId})`,
-        body: emailBody,
-      }),
-    });
-    emailSent = emailRes.ok;
-  } catch (_) {
-    // intentionally silent — booking already succeeded
-  }
-
   return JSON.stringify({
     success: true,
     message: `Appointment booked successfully! ✅ Your booking reference is **${shortId}**.`,
     booking_id: data?.[0]?.id,
-    doctor_name: doctorName,
-    email_sent: emailSent,
   });
 }
 
@@ -495,7 +451,7 @@ Map what the patient describes to the right specialty before calling get_doctors
 8. Infer reason_for_visit from the earlier conversation (don't ask separately)
 9. Show booking summary and ask: "Shall I confirm this appointment?"
 10. Call **book_appointment** ONLY after explicit yes/confirm
-11. On success: share the booking reference. If the tool result contains "email_sent": true, say "A confirmation email has been sent to [their email]". If email_sent is false or missing, do NOT mention email at all. Always remind patient to bring: ID, medical records, insurance card
+11. On success: share the booking reference. Remind patient to bring: ID, medical records, insurance card
 
 ## WHEN DOCTORS SEARCH RETURNS EMPTY OR NOTE
 - The result will include a "note" field and show ALL available doctors
